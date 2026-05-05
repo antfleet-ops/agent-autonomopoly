@@ -16,6 +16,6 @@
     "sourceMap": true,
     "isolatedModules": true
   },
-  "include": ["harness/**/*.ts", "skills/**/*.ts"],
+  "include": ["harness/**/*.ts", "skills/**/*.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules", "dist", "memory/**/*"]
 }
