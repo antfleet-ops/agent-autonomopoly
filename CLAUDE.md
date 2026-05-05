@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## TL;DR
 
-Foundation scaffold landed. §5 (agent template + identity layer) is locked but not yet committed (see Linear MOG-405 / `PLAN.md` Batch 1). **Read `ARCHITECTURE_v2.md` first** — it supersedes three "explicitly confirmed" decisions below (pair token, agent wallet substrate, Venice custody) per the 2026-04-30 design discussion.
+Foundation scaffold landed. §5 (agent template + identity layer) committed — read [`SECTION_5.md`](SECTION_5.md) for the spec, [`identity/README.md`](identity/README.md) for orientation, [`BUNDLE.md`](BUNDLE.md) for the file index. **Also read [`ARCHITECTURE_v2.md`](ARCHITECTURE_v2.md)** — it supersedes three "explicitly confirmed" decisions below (pair token, agent wallet substrate, Venice custody) per the 2026-04-30 design discussion.
 
 **Active implementation plan:** `PLAN.md` — sequenced ticket-batch dispatch plan covering all 28 Linear issues. **MVP plan:** `MVP_PLAN.md` — sessions to ship the v0 funding loop end-to-end.
 
-**Build:** `npm run typecheck` · `npm run build` · `npm test` (vitest). Lint script (`scripts/lint-identity.ts`) lands with the §5 bundle.
+**Build:** `npm run typecheck` · `npm run build` · `npm test` (vitest) · `npm run lint:identity` (drift + SCHEMA conformance, runs on every commit via the pre-commit hook landing with MOG-449).
 
 ## Repo status
 
-Foundation scaffold merged (PRs #1–#3): Node 20 + TypeScript 5 strict + Vitest, `harness/index.ts` stub, `platform/STATUS.md` (read after `ARCHITECTURE_v2.md` — STATUS reflects v2 service-graph), `dune/agent-fleet-overview.sql`, `DECISIONS.md`. The original brainstorm transcript (`Terminal Saved Output.txt`) is gitignored (`.gitignore:31`) and not present on disk in this branch — its content is now distilled across this file, `ARCHITECTURE_v2.md`, `SECTION_5.md` (pending — MOG-409), and the MOG-405..433 Linear ticket descriptions.
+Foundation scaffold merged (PRs #1–#4): Node 20 + TypeScript 5 strict + Vitest, `harness/index.ts` stub, `platform/STATUS.md` (read after `ARCHITECTURE_v2.md` — STATUS reflects v2 service-graph), `dune/agent-fleet-overview.sql`, `DECISIONS.md`, `PLAN.md`, `MVP_PLAN.md`, `ARCHITECTURE_v2.md`. §5 identity bundle (this PR): `SECTION_5.md`, `BUNDLE.md`, `identity/{SCHEMA, README, SOUL.genesis, SOUL, STYLE.genesis, STYLE, influences}.md(.template)`, `identity/examples/{good,bad}-outputs.md`, `identity/examples/promoted/.gitkeep`, `scripts/lint-identity.ts`. The original brainstorm transcript (`Terminal Saved Output.txt`) is gitignored (`.gitignore:31`) and not present on disk — its content is now distilled across this file, `ARCHITECTURE_v2.md`, `SECTION_5.md`, and the MOG-405..451 Linear ticket descriptions.
 
 This repo is configured as a **GitHub template repository** (`Liquid-Protocol-Ops/deploy-autonomous`) — each launched agent is spawned as a new repo generated from this template, which is why the agent-harness code lives here and not in `deploy-autonomous-platform`. Keep that in mind when organizing files: anything added at the root ships into every per-agent repo.
 
@@ -87,7 +87,7 @@ A `.gitignore` that excludes `.claude/skills/` would break the agent self-evolut
 
 - This file — locked decisions (with v2 supersedes inline).
 - `ARCHITECTURE_v2.md` — the 2026-04-30 funding-loop pivot.
-- `SECTION_5.md` — §5 spec (pending commit, MOG-409).
+- `SECTION_5.md` — §5 spec, dogfooded in its own schema. `identity/README.md` is the operator-level orientation; `identity/SCHEMA.md` is the manual of style every page conforms to.
 - `DECISIONS.md` — open per-deploy questions (DIEM_USD source, seed model, comms scope, gig platform, holder threshold).
 - Linear epic [MOG-405](https://linear.app/mog-capital/issue/MOG-405) and its 28 children — full ticket-level decision history.
 - Drive session summary: https://docs.google.com/document/d/1Ohw7ANqme9aYNMvgKoYVlK9RbR-e_tUaxcMwVy6_6sA/edit

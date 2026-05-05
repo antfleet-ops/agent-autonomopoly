@@ -12,7 +12,8 @@
     "build": "tsc -p .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "harness:tick": "node --import tsx harness/index.ts"
+    "harness:tick": "node --import tsx harness/index.ts",
+    "lint:identity": "node --import tsx scripts/lint-identity.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

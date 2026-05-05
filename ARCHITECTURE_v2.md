@@ -1,3 +1,11 @@
+---
+page_type: authored
+genesis_lock: true
+created: 2026-04-30T00:00:00Z
+updated: 2026-04-30T00:00:00Z
+tags: [spec, decision]
+---
+
 # Architecture v2 — DIEM-paired, TEE-sealed, self-funding
 
 **Status:** ratified 2026-04-30 from the design discussion of the same date. **Supersedes** three "Decisions explicitly confirmed by the user" in `CLAUDE.md` (see §3). Section 5 of the brainstorm is unaffected — identity layer survives the pivot intact.
