@@ -3,7 +3,9 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const REPO_ROOT = process.env['LINT_REPO_ROOT']
+  ? resolve(process.env['LINT_REPO_ROOT'])
+  : resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const CONTROLLED_TAGS = new Set([
   'identity', 'schema', 'soul', 'style', 'influence',
