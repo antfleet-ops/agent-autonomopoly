@@ -48,7 +48,15 @@ Everything else — `harness/`, `scripts/`, `identity/SCHEMA.md`, `identity/*.ge
 
 ### `harness/safety/wallet.ts`
 
-Loads the agent keypair from `AGENT_PRIVATE_KEY` in the environment (64-char hex, `0x` prefix optional). Returns a `Signer` typed as a structural subset of viem's `LocalAccount` — only `address`, `signMessage`, `signTypedData`. Key material never crosses the module boundary. The interface is designed so a future `loadSignerFromTEE()` can satisfy the same type.
+Two implementations of the same `Signer` + `TxSender` interfaces:
+
+- **`loadSignerFromEnv` / `makeTxSenderFromEnv`** — bare `AGENT_PRIVATE_KEY` env var (fallback/testing only)
+- **`loadSignerFromPrivy` / `makeTxSenderFromPrivy`** — Privy server wallet via REST API (primary for v0); requires `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, `PRIVY_WALLET_ID`
+- **TEE variants** — post-MVP; same interfaces, no call-site changes
+
+`Signer` exposes only `address`, `signMessage`, `signTypedData` (structural subset of viem `LocalAccount`). `TxSender` is `(params: { to, data }) => Promise<Hex>` — abstracts the signing substrate for on-chain writes.
+
+Note: Privy **embedded** wallets (rejected in early arch docs) require a human session; Privy **server** wallets are fully headless.
 
 ### `scripts/lint-identity.ts`
 
@@ -67,11 +75,11 @@ Six files in genesis/mutable pairs: `SOUL.genesis.md` + `SOUL.md`, `STYLE.genesi
 
 The three load-bearing conclusions — read `ARCHITECTURE_v2.md` for the full rationale:
 
-1. **Provably autonomous = TEE** — agent key sealed in Phala/Marlin/Nitro. Punted for v0 (`.env` key); substrate swaps without changing any call sites.
+1. **Provably autonomous = TEE** — agent key sealed in Phala/Marlin/Nitro. Punted for v0 (Privy server wallet); substrate swaps without changing any call sites.
 2. **DIEM-only fees, agent wallet as fee recipient** — removes the WETH→DIEM swap and the platform fee-router as a routing step. `fee-router` becomes a thin stake-trigger watcher.
-3. **Per-agent Venice staking** — each agent owns its own Venice key; no platform quota allocation, no commons pool.
+3. **Per-agent Venice staking** — each agent owns its own Venice key; no platform quota allocation, no commons pool. DIEM contract is its own staking contract — `stake(uint256)` directly, no ERC-20 approve step.
 
-**Superseded (do not implement):** WETH pairing, Privy for agent wallets, platform Venice account. See `ARCHITECTURE_v2.md` §3 for the full conflict table.
+**Superseded (do not implement):** WETH pairing, Privy *embedded* wallets for agent wallets, platform Venice account, bare `.env` private key as primary wallet substrate. See `ARCHITECTURE_v2.md` §3 for the full conflict table.
 
 ## Active plans
 

@@ -25,7 +25,7 @@ This directory will hold the off-chain services that watch fees, stake DIEM on t
 
 ## Removed in v2
 
-- ~~`signing-proxy`~~ — Privy is no longer the agent wallet substrate. If end-user-wallet flows arrive later, that logic will live in the platform's user-facing API, not in a hot-path mediator for agent transactions.
+- ~~`signing-proxy`~~ — a centralized hot-path mediator is unnecessary. Agent wallets call Privy server wallet REST API directly; no proxy in the critical path. If end-user-wallet flows arrive later, that logic lives in the platform's user-facing API.
 - ~~`venice-router`~~ — each agent holds its own Venice bearer key, minted by the agent itself after staking. No platform-side Venice creds, no per-agent quota allocation, no commons pool.
 - ~~Swap module inside `fee-router`~~ — DIEM-only fees mean nothing to swap.
 
@@ -41,14 +41,14 @@ When the next session starts:
 2. Land §5 bundle (Batch 1) — unblocks every harness sub-ticket.
 3. Push `platform/services/fee-router/` (the simplified v2 watcher). Run end-to-end in read-only mode against the agent token from PR #11.
 4. Push `platform/services/status-api/`, then point Dune at it.
-5. Push `platform/services/cli-launcher/` with the post-v2 wallet flow (no Privy).
+5. Push `platform/services/cli-launcher/` — provisions a Privy server wallet per agent and writes PRIVY_* env vars to the agent's deploy config.
 6. Push agent-template additions (skills + harness rewrite per Batch 4).
 
 ## Open blockers
 
 | # | Blocker | Owner | Notes |
 |---|---------|-------|-------|
-| 1 | Venice staking contract address on Base | user | agent stakes itself; address still needed by `harness/providers/venice.ts` and as a documented constant |
+| ~~1~~ | ~~Venice staking contract address on Base~~ | ~~user~~ | **RESOLVED 2026-05-06** — DIEM contract `0xF4d97F2da56e8c3098f3a8D538DB630A2606a024` is token AND staking contract. Added to `platform/constants.ts` as `ADDRESSES.DIEM`. `stakeDiem()` now calls `stake()` directly with no approve step. |
 | 2 | DIEM `decimals()` confirmed = 18 | user | PR #11's tick math assumes 18; on-chain check guards |
 | 3 | sDIEM unstake cooldown (if any) | user | drives security model in §8 |
 | 4 | Per-deploy LP split decision (100/0 default vs. configurable founder cut) | user | drives `cli-launcher` deploy step |
@@ -56,4 +56,5 @@ When the next session starts:
 | 6 | X/Twitter API bearer (for posters) | user | deferred from v0 per CLAUDE.md template-v1 capability list |
 | 7 | Email provider account (Resend/Postmark) | user | deferred from v0 |
 | 8 | Decision: create `deploy-autonomous-platform` repo? | user | If yes, request my MCP scope expansion to include it; the `platform/` directory here moves there. |
-| 9 | TEE choice (Phala / Marlin Oyster / AWS Nitro) | user | post-MVP; v0 runs off Modal/laptop |
+| 9 | TEE choice (Phala / Marlin Oyster / AWS Nitro) | user | post-MVP; v0 runs off Privy server wallet |
+| 10 | Privy server wallet provisioning — PRIVY_APP_ID, PRIVY_APP_SECRET, PRIVY_WALLET_ID | user | needed to run the agent's tick against mainnet for the first time |

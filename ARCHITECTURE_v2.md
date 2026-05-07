@@ -43,7 +43,7 @@ The following three lines under "Decisions explicitly confirmed by the user" in 
 | Was (CLAUDE.md) | Is (this doc) |
 |---|---|
 | "Pair token: WETH with `LiquidHookDynamicFeeV2`. 20% WETH → deployer; 80% → platform router → swap to DIEM → fund / stake agent." | TOKEN/DIEM pair via `liquid-sdk`. DIEM-only fees. 100% → agent wallet by default; per-deploy split is configurable. |
-| "Wallets: Privy smart wallets, Liquid team Safe as recovery across agent wallets, protocol vault, router." | Agent's own wallet is TEE-sealed (post-MVP) or `.env`-stored (v0). Privy is **not** for agent wallets — its architecture rejects human-less signing. Privy is still appropriate for end-user wallets the agent might transact on behalf of. Safe stays as recovery for protocol-owned multisigs (vault, deployer fund); it does not custody agent wallets. |
+| "Wallets: Privy smart wallets, Liquid team Safe as recovery across agent wallets, protocol vault, router." | Agent wallet uses **Privy server wallets** for v0 (fully headless, no human in the loop) — superseding the earlier rejection of Privy, which applied only to embedded/user wallets. TEE substrate (Phala/Marlin/Nitro) is v1; callers don't change. Safe stays as recovery for protocol-owned multisigs (vault, deployer fund) only — not for agent wallets. |
 | "Venice custody: platform-operated account, per-agent ledger quota, unused daily capacity pooled as a commons." | Each agent owns its own Venice API key, minted once via `personal_sign` over a Venice JWT once it has staked sDIEM ≥ 0.1. No platform account, no quota allocation, no commons. Surplus daily credit is consumed by the agent's own background-task queue or forfeited. |
 
 The remaining `CLAUDE.md` "explicitly confirmed" decisions (self-modification scope, threshold-triggered deployment, public-repo-per-agent, holder-suggestion thresholds, Modal cadence, orchestrator quorum) are **not** affected.
@@ -75,7 +75,7 @@ Service count drops from ~12 to ~9 for v0.
 
 End-to-end on Base, off-laptop, no TEE:
 
-1. Deploy a TOKEN/DIEM pair via `liquid-sdk` with the agent's `.env`-keyed wallet as fee recipient.
+1. Deploy a TOKEN/DIEM pair via `liquid-sdk` with the agent's Privy server wallet as fee recipient.
 2. A few synthetic trades (deployer-funded) on the pool.
 3. Agent's claimable DIEM ≥ stake threshold → agent claims and stakes.
 4. Agent receives sDIEM ≥ 0.1.

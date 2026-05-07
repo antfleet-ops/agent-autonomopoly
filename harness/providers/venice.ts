@@ -1,8 +1,8 @@
 // Venice provider — claim DIEM → stake → mint bearer key → call inference.
 //
 // Required env vars:
-//   DIEM_TOKEN_ADDRESS     — DIEM ERC-20 on Base mainnet
-//   VENICE_STAKING_ADDRESS — sDIEM staking contract on Base mainnet (P-1 blocker)
+//   DIEM_TOKEN_ADDRESS     — DIEM ERC-20 / staking contract on Base mainnet
+//   VENICE_STAKING_ADDRESS — same address as DIEM_TOKEN_ADDRESS (DIEM is its own staking contract)
 //   RPC_URL                — Base mainnet JSON-RPC endpoint
 //
 // Optional env vars:
@@ -11,23 +11,24 @@
 //   VENICE_API_BASE          — Venice API base URL (default: https://api.venice.ai/api/v1)
 //   VENICE_MODEL             — inference model slug (default: llama-3.3-70b)
 //
-// On-chain write functions accept a viem WalletClient (built by the tick from the full keypair).
-// The Signer type (from wallet.ts) is used only for message signing in the Venice key mint flow.
+// On-chain write functions accept a TxSender (from wallet.ts), which abstracts the signing substrate
+// (Privy server wallet for v0; TEE for v1). Signer is used only for message signing in the Venice
+// key mint flow.
 
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 import {
   createPublicClient,
+  encodeFunctionData,
   http,
   parseEther,
   type Address,
   type Hex,
-  type WalletClient,
 } from 'viem';
 import { base } from 'viem/chains';
 import { ADDRESSES } from '../../platform/constants.js';
 import { assertAllowed } from '../safety/allowlist.js';
 import { emit, type ToolRoutingEntry } from '../observability/tool-routing.js';
-import type { Signer } from '../safety/wallet.js';
+import type { Signer, TxSender } from '../safety/wallet.js';
 
 // ── Minimal ABIs ────────────────────────────────────────────────────
 
@@ -45,11 +46,6 @@ const FEE_LOCKER_ABI = [
 ] as const;
 
 const ERC20_ABI = [
-  {
-    type: 'function', name: 'approve',
-    inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }],
-    outputs: [{ name: '', type: 'bool' }], stateMutability: 'nonpayable',
-  },
   {
     type: 'function', name: 'decimals',
     inputs: [], outputs: [{ name: '', type: 'uint8' }], stateMutability: 'view',
@@ -146,43 +142,29 @@ export async function getStakedBalance(
 export async function claimDiem(
   config: VeniceConfig,
   agentAddress: Address,
-  walletClient: WalletClient,
+  txSender: TxSender,
 ): Promise<Hex> {
-  return walletClient.writeContract({
-    address: ADDRESSES.FEE_LOCKER,
+  const data = encodeFunctionData({
     abi: FEE_LOCKER_ABI,
     functionName: 'claim',
     args: [agentAddress, config.diemAddress],
-    account: agentAddress,
-    chain: base,
   });
+  return txSender({ to: ADDRESSES.FEE_LOCKER, data });
 }
 
 export async function stakeDiem(
   config: VeniceConfig,
-  agentAddress: Address,
   amount: bigint,
-  walletClient: WalletClient,
+  txSender: TxSender,
   publicClient: BasePublicClient = makePublicClient(config.rpcUrl),
 ): Promise<void> {
-  const approveTx = await walletClient.writeContract({
-    address: config.diemAddress,
-    abi: ERC20_ABI,
-    functionName: 'approve',
-    args: [config.stakingAddress, amount],
-    account: agentAddress,
-    chain: base,
-  });
-  await publicClient.waitForTransactionReceipt({ hash: approveTx });
-
-  const stakeTx = await walletClient.writeContract({
-    address: config.stakingAddress,
+  // DIEM is its own staking contract — call stake() directly, no ERC-20 approve needed.
+  const data = encodeFunctionData({
     abi: SDIEM_STAKING_ABI,
     functionName: 'stake',
     args: [amount],
-    account: agentAddress,
-    chain: base,
   });
+  const stakeTx = await txSender({ to: config.diemAddress, data });
   await publicClient.waitForTransactionReceipt({ hash: stakeTx });
 }
 

@@ -54,6 +54,16 @@ From `CLAUDE.md`: signed messages from holders, weighted by % supply. Defaults: 
 
 While you're picking, please also gather:
 
-1. **Venice staking contract address on Base** — only blocker for `fee-router` to actually transact
+1. **Venice staking contract address on Base** — **RESOLVED (2026-05-06):** DIEM contract `0xF4d97F2da56e8c3098f3a8D538DB630A2606a024` is both the ERC-20 token and the staking contract. Call `stake(uint256 amount)` directly — no ERC-20 approve needed. Added to `platform/constants.ts` as `ADDRESSES.DIEM`.
 2. **Confirm DIEM `decimals()`** — PR #11 reads it on-chain and bails if not 18; if it's not 18, please flag
 3. **Whether `deploy-autonomous-platform` repo should be created now** — platform services are landing under `platform/` in this repo for now; once that repo exists they get moved out
+
+---
+
+## Resolved decisions
+
+### Wallet substrate — Privy server wallets (2026-05-06)
+
+The earlier architecture rejection of Privy applied to **embedded wallets** (which require a human session). **Privy server wallets** are fully headless and support `personal_sign`, `eth_signTypedData_v4`, and `eth_sendTransaction` with no human interaction.
+
+v0 uses Privy server wallets via `loadSignerFromPrivy` / `makeTxSenderFromPrivy` in `harness/safety/wallet.ts`. The `TxSender` abstraction ensures v1 (TEE) is a drop-in swap with no call-site changes in `venice.ts` or the tick loop.
