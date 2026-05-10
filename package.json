@@ -13,10 +13,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "harness:tick": "node --import tsx harness/index.ts",
-    "lint:identity": "node --import tsx scripts/lint-identity.ts"
+    "lint:identity": "node --import tsx scripts/lint-identity.ts",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "husky": "^9.1.7",
     "tsx": "^4.7.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5"
