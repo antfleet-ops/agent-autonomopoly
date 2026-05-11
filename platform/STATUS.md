@@ -55,6 +55,6 @@ When the next session starts:
 | 5 | GitHub App token (with template-fork scope) | user | `cli-launcher` step 1 |
 | 6 | X/Twitter API bearer (for posters) | user | deferred from v0 per CLAUDE.md template-v1 capability list |
 | 7 | Email provider account (Resend/Postmark) | user | deferred from v0 |
-| 8 | Decision: create `deploy-autonomous-platform` repo? | user | If yes, request my MCP scope expansion to include it; the `platform/` directory here moves there. |
+| ~~8~~ | ~~Decision: create `deploy-autonomous-platform` repo?~~ | ~~user~~ | **RESOLVED 2026-05-10** — stage all platform services under `platform/services/` in this repo for MVP; migrate to a dedicated repo post-MVP once the loop is proven. |
 | 9 | TEE choice (Phala / Marlin Oyster / AWS Nitro) | user | post-MVP; v0 runs off Privy server wallet |
 | 10 | Privy server wallet provisioning — PRIVY_APP_ID, PRIVY_APP_SECRET, PRIVY_WALLET_ID | user | needed to run the agent's tick against mainnet for the first time |
