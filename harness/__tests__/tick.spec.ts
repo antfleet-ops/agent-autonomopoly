@@ -65,7 +65,7 @@ beforeEach(() => {
   vMocks.loadConfig.mockReturnValue(TEST_CONFIG);
   vMocks.makePublicClient.mockReturnValue(MOCK_PUBLIC_CLIENT);
   vMocks.getClaimable.mockResolvedValue(0n);
-  vMocks.getDiemBalance.mockResolvedValue(parseEther('0.5'));  // post-claim wallet balance
+  vMocks.getDiemBalance.mockResolvedValue(0n);  // no DIEM in wallet — falls through to inference
   vMocks.getStakedBalance.mockResolvedValue(parseEther('1'));  // well-funded
   vMocks.claimDiem.mockResolvedValue('0xclaim' as `0x${string}`);
   vMocks.loadOrMintBearer.mockResolvedValue('test-bearer');
@@ -127,19 +127,43 @@ describe('runTick — inference path', () => {
 describe('runTick — claim path', () => {
   it('claims when claimable ≥ threshold', async () => {
     vMocks.getClaimable.mockResolvedValue(parseEther('0.5'));
+    vMocks.getDiemBalance.mockResolvedValue(parseEther('0.5'));
     await runTick(DEPS);
     expect(vMocks.claimDiem).toHaveBeenCalledOnce();
     expect(vMocks.claimDiem).toHaveBeenCalledWith(TEST_CONFIG, AGENT_ADDRESS, MOCK_TX_SENDER);
   });
 
-  it('waits for claim receipt before reinvesting (accumulate mode)', async () => {
+  it('LPs after claim when wallet balance is above threshold', async () => {
     vMocks.getClaimable.mockResolvedValue(parseEther('0.5'));
+    vMocks.getDiemBalance.mockResolvedValue(parseEther('0.5'));
+    await runTick(DEPS);
+    expect(lMocks.reinvestToLP).toHaveBeenCalledOnce();
+  });
+
+  it('skips LP when wallet balance is zero after claim (RPC lag)', async () => {
+    vMocks.getClaimable.mockResolvedValue(parseEther('0.5'));
+    vMocks.getDiemBalance.mockResolvedValue(0n);
+    await runTick(DEPS);
+    expect(lMocks.reinvestToLP).not.toHaveBeenCalled();
+  });
+
+  it('waits for claim receipt before reading wallet balance (accumulate mode)', async () => {
+    vMocks.getClaimable.mockResolvedValue(parseEther('0.5'));
+    vMocks.getDiemBalance.mockResolvedValue(parseEther('0.5'));
     const order: string[] = [];
     vMocks.claimDiem.mockImplementation(async () => { order.push('claim'); return '0xclaim'; });
     MOCK_PUBLIC_CLIENT.waitForTransactionReceipt.mockImplementation(async () => { order.push('wait'); return {}; });
     await runTick(DEPS);
-    // accumulate mode: wait for claim receipt, then reinvestToLP, then wait for mint receipt
+    // claim receipt first, then LP mint receipt
     expect(order).toEqual(['claim', 'wait', 'wait']);
+  });
+
+  it('LPs wallet DIEM even when nothing to claim (prior tick left dust)', async () => {
+    vMocks.getClaimable.mockResolvedValue(0n);
+    vMocks.getDiemBalance.mockResolvedValue(parseEther('0.5'));
+    await runTick(DEPS);
+    expect(vMocks.claimDiem).not.toHaveBeenCalled();
+    expect(lMocks.reinvestToLP).toHaveBeenCalledOnce();
   });
 
   it('skips claim when claimable < threshold', async () => {
