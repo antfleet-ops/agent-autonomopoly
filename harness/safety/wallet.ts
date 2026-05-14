@@ -155,7 +155,10 @@ export function makeTxSenderFromPrivy(
         params: { transaction: { to, data } },
       }),
     });
-    if (!rpcRes.ok) throw new Error(`Privy eth_sendTransaction failed: ${rpcRes.status}`);
+    if (!rpcRes.ok) {
+      const errBody = await rpcRes.text();
+      throw new Error(`Privy eth_sendTransaction failed: ${rpcRes.status} — ${errBody}`);
+    }
     const body = await rpcRes.json() as { data: { hash: Hex } };
     return body.data.hash;
   };
