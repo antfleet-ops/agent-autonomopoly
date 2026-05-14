@@ -12,6 +12,9 @@ const vMocks = vi.hoisted(() => ({
   claimDiem: vi.fn(),
   loadOrMintBearer: vi.fn(),
   callInference: vi.fn(),
+  // constants used directly in tick.ts
+  FAST_MODEL: 'llama-3.3-70b',
+  REASONING_MODEL: 'claude-opus-4-7',
 }));
 
 vi.mock('../providers/venice.js', () => vMocks);
@@ -48,6 +51,10 @@ const DEPS: TickDeps = { signer: MOCK_SIGNER, txSender: MOCK_TX_SENDER };
 
 // ── Setup ────────────────────────────────────────────────────────────
 
+// Default plan: fast path, no reasoning needed.
+const PLAN_NO_REASON = JSON.stringify({ needs_reasoning: false, task: 'tick', rationale: 'simple' });
+const PLAN_NEEDS_REASON = JSON.stringify({ needs_reasoning: true, task: 'think deeply', rationale: 'complex task' });
+
 beforeEach(() => {
   vMocks.loadConfig.mockReturnValue(TEST_CONFIG);
   vMocks.makePublicClient.mockReturnValue(MOCK_PUBLIC_CLIENT);
@@ -55,7 +62,8 @@ beforeEach(() => {
   vMocks.getStakedBalance.mockResolvedValue(parseEther('1'));  // well-funded
   vMocks.claimDiem.mockResolvedValue('0xclaim' as `0x${string}`);
   vMocks.loadOrMintBearer.mockResolvedValue('test-bearer');
-  vMocks.callInference.mockResolvedValue('tick');
+  // Default: fast plan returns no-reasoning JSON; reason step returns prose.
+  vMocks.callInference.mockResolvedValue(PLAN_NO_REASON);
 });
 
 afterEach(() => { vi.clearAllMocks(); });
@@ -63,19 +71,29 @@ afterEach(() => { vi.clearAllMocks(); });
 // ── Tests ────────────────────────────────────────────────────────────
 
 describe('runTick — inference path', () => {
-  it('calls inference when staked ≥ threshold', async () => {
+  it('calls fast inference when staked ≥ threshold', async () => {
     await runTick(DEPS);
     expect(vMocks.callInference).toHaveBeenCalledOnce();
-  });
-
-  it('passes the bearer and a non-empty prompt to callInference', async () => {
-    await runTick(DEPS);
     expect(vMocks.callInference).toHaveBeenCalledWith(
-      TEST_CONFIG,
-      'test-bearer',
-      expect.objectContaining({ prompt: expect.any(String), maxTokens: expect.any(Number) }),
+      TEST_CONFIG, 'test-bearer',
+      expect.objectContaining({ model: 'llama-3.3-70b', prompt: expect.any(String) }),
       expect.any(String),
     );
+  });
+
+  it('calls reason inference only when fast plan sets needs_reasoning: true', async () => {
+    vMocks.callInference
+      .mockResolvedValueOnce(PLAN_NEEDS_REASON)   // fast plan
+      .mockResolvedValueOnce('detailed answer');    // reason step
+    await runTick(DEPS);
+    expect(vMocks.callInference).toHaveBeenCalledTimes(2);
+    const reasonCall = vMocks.callInference.mock.calls[1]!;
+    expect(reasonCall[2]).toMatchObject({ model: 'claude-opus-4-7' });
+  });
+
+  it('skips reason call when fast plan returns needs_reasoning: false', async () => {
+    await runTick(DEPS);
+    expect(vMocks.callInference).toHaveBeenCalledOnce();
   });
 
   it('loads or mints a bearer before inference', async () => {
