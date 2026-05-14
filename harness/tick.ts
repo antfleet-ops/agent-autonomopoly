@@ -104,20 +104,22 @@ export async function runTick(deps: TickDeps): Promise<void> {
   if (claimable >= config.stakeThreshold) {
     const claimHash = await claimDiem(config, agentAddress, txSender);
     await publicClient.waitForTransactionReceipt({ hash: claimHash });
+    console.log(`[tick] claimed ${claimable} DIEM`);
+  }
 
-    // Read actual wallet balance after claim — may differ from pre-claim estimate
-    // due to rounding or dust already in wallet.
+  // 1a. Accumulate mode: LP any DIEM sitting in wallet (from this claim or a prior
+  //     incomplete tick where RPC lag caused getDiemBalance to return 0).
+  //     If no DIEM to LP, fall through to llama maintenance inference (free).
+  if (AGENT_MODE === 'accumulate') {
     const diemBalance = await getDiemBalance(config, agentAddress, publicClient);
-    console.log(`[tick] claimed ${claimable} DIEM | wallet balance: ${diemBalance}`);
-
-    // 1a. Accumulate mode: reinvest claimed DIEM into ETH/DIEM v3 1% pool.
-    //     Single-sided DIEM, range below current tick — earns fees as DIEM appreciates.
-    if (AGENT_MODE === 'accumulate') {
+    console.log(`[tick] wallet DIEM: ${diemBalance}`);
+    if (diemBalance >= config.stakeThreshold) {
       const lp = await reinvestToLP(config.rpcUrl, agentAddress, diemBalance, 'short', txSender);
       await publicClient.waitForTransactionReceipt({ hash: lp.mintTxHash });
       console.log(`[tick] LP reinvested | ticks=[${lp.tickLower},${lp.tickUpper}] currentTick=${lp.currentTick}`);
-      return;  // accumulate mode does not proceed to inference
+      return;  // LP done — skip inference this tick
     }
+    console.log(`[tick] wallet DIEM below threshold — running maintenance inference`);
   }
 
   // 2. sVVV balance gates Venice API key access.
