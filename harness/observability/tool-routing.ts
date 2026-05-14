@@ -11,6 +11,7 @@ export type ToolRoutingEntry = {
     output: number;
   };
   cost_usd: number;
+  cost_diem?: number;
 };
 
 export function emit(entry: ToolRoutingEntry, logPath: string): void {

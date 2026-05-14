@@ -67,6 +67,22 @@ const SVVV_ABI = [
   },
 ] as const;
 
+// ── Model constants ──────────────────────────────────────────────────
+
+export const FAST_MODEL = 'llama-3.3-70b';
+export const REASONING_MODEL = 'claude-opus-4-7';
+
+// DIEM per 1M tokens (Venice rates, 2026-05). llama is free under VVV staking.
+const DIEM_PRICE: Record<string, { input: number; output: number }> = {
+  'claude-opus-4-7': { input: 6, output: 30 },
+  'llama-3.3-70b':   { input: 0, output: 0 },
+};
+
+function diemCost(model: string, inputTokens: number, outputTokens: number): number {
+  const p = DIEM_PRICE[model] ?? { input: 0, output: 0 };
+  return (inputTokens * p.input + outputTokens * p.output) / 1_000_000;
+}
+
 // ── Config ──────────────────────────────────────────────────────────
 
 export type VeniceConfig = {
@@ -231,6 +247,7 @@ export type InferenceOpts = {
   prompt: string;
   systemPrompt?: string;
   maxTokens?: number;
+  model?: string;  // overrides config.model for this call
 };
 
 export async function callInference(
@@ -240,12 +257,13 @@ export async function callInference(
   logPath: string,
   fetchFn: typeof fetch = fetch,
 ): Promise<string> {
+  const model = opts.model ?? config.model;
   const start = Date.now();
   const res = await fetchFn(`${config.veniceApiBase}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${bearer}` },
     body: JSON.stringify({
-      model: config.model,
+      model,
       messages: [
         ...(opts.systemPrompt ? [{ role: 'system', content: opts.systemPrompt }] : []),
         { role: 'user', content: opts.prompt },
@@ -265,11 +283,12 @@ export async function callInference(
   const entry: ToolRoutingEntry = {
     ts: new Date().toISOString(),
     provider: 'venice',
-    variant: `:${config.model}`,
+    variant: `:${model}`,
     cache_hit: false,
     latency_ms,
     tokens: { input: data.usage.prompt_tokens, output: data.usage.completion_tokens },
     cost_usd: 0,
+    cost_diem: diemCost(model, data.usage.prompt_tokens, data.usage.completion_tokens),
   };
   emit(entry, logPath);
 

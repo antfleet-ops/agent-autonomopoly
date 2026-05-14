@@ -1,10 +1,15 @@
 // Main tick loop — one execution per Modal invocation (v0).
 //
+// Inference routing:
+//   fast   → llama-3.3-70b (free under VVV staking) — planning, classification, cheap calls
+//   reason → claude-opus-4-7 (6/30 DIEM per 1M in/out) — reasoning, only when warranted
+//
 // Flow per tick:
-//   1. Check claimable LP DIEM fees → claim if ≥ threshold (revenue collection)
-//   2. Verify sVVV balance ≥ threshold (gates Venice API key access)
-//   3. Load or mint Venice bearer key
-//   4. Execute the active task via Venice inference
+//   1. Claim LP DIEM fees if ≥ threshold
+//   2. Verify sVVV balance gates Venice key access
+//   3. Load or mint Venice bearer
+//   4. Fast call: classify the tick task and decide if deep reasoning is needed
+//   5. Reason call (conditional): do the substantive work with Opus 4.7
 //
 // Run locally:  npm run harness:tick
 
@@ -16,6 +21,8 @@ import {
   claimDiem,
   loadOrMintBearer,
   callInference,
+  FAST_MODEL,
+  REASONING_MODEL,
 } from './providers/venice.js';
 import {
   loadPrivyConfig,
@@ -49,9 +56,31 @@ export async function loadTickDeps(): Promise<TickDeps> {
   return { signer, txSender };
 }
 
-// ── Tick ─────────────────────────────────────────────────────────────
+// ── Model routing helpers ────────────────────────────────────────────
 
 const LOG_PATH = process.env['TOOL_ROUTING_LOG'] ?? 'memory/tool-routing.jsonl';
+
+type InferCtx = { config: ReturnType<typeof loadVeniceConfig>; bearer: string };
+
+async function callFast(ctx: InferCtx, prompt: string, opts: { maxTokens?: number; systemPrompt?: string } = {}): Promise<string> {
+  return callInference(ctx.config, ctx.bearer, { ...opts, model: FAST_MODEL, prompt }, LOG_PATH);
+}
+
+async function callReason(ctx: InferCtx, prompt: string, opts: { maxTokens?: number; systemPrompt?: string } = {}): Promise<string> {
+  return callInference(ctx.config, ctx.bearer, { ...opts, model: REASONING_MODEL, prompt }, LOG_PATH);
+}
+
+// ── Tick ─────────────────────────────────────────────────────────────
+
+// Fast model returns a JSON decision: { needs_reasoning: bool, task: string, rationale: string }
+const PLAN_SYSTEM = `You are the AUTONOMOPOLY agent's planning layer.
+Given the current tick context, decide whether this tick requires deep reasoning (claude-opus-4-7) or a simple fast response (llama).
+Respond with valid JSON only:
+{ "needs_reasoning": <bool>, "task": "<one-line task description>", "rationale": "<why>" }`;
+
+const REASON_SYSTEM = `You are AUTONOMOPOLY, a self-funding autonomous agent on Base.
+You earn LP DIEM fees, stake them for Venice inference credits, and grow your capabilities over time.
+Complete the assigned task thoughtfully. Be concrete and brief.`;
 
 export async function runTick(deps: TickDeps): Promise<void> {
   const { signer, txSender } = deps;
@@ -59,32 +88,47 @@ export async function runTick(deps: TickDeps): Promise<void> {
   const config = loadVeniceConfig();
   const publicClient = makePublicClient(config.rpcUrl);
 
-  // 1. Claim LP DIEM fees from FeeLocker whenever above threshold (revenue collection).
-  //    VVV staking (for Venice access) is a separate one-time setup — see scripts/swap-diem-vvv.ts.
+  // 1. Claim LP DIEM fees from FeeLocker whenever above threshold.
   const claimable = await getClaimable(config, agentAddress, publicClient);
   if (claimable >= config.stakeThreshold) {
     const claimHash = await claimDiem(config, agentAddress, txSender);
     await publicClient.waitForTransactionReceipt({ hash: claimHash });
+    console.log(`[tick] claimed ${claimable} DIEM`);
   }
 
   // 2. sVVV balance gates Venice API key access.
   const staked = await getStakedBalance(config, agentAddress, publicClient);
   if (staked < config.stakeThreshold) {
-    console.log(`[tick] staked=${staked} below threshold=${config.stakeThreshold} — skipping inference`);
+    console.log(`[tick] sVVV=${staked} below threshold=${config.stakeThreshold} — skipping inference`);
     return;
   }
 
-  // 3. Ensure Venice bearer (cached after first mint).
+  // 3. Load bearer (cached after first mint).
   const bearer = await loadOrMintBearer(config, signer);
+  const ctx: InferCtx = { config, bearer };
 
-  // 4. Execute active task — placeholder until session 9 wires memory/wiki.
-  const reply = await callInference(
-    config,
-    bearer,
-    { prompt: 'Respond with exactly one word: tick', maxTokens: 10 },
-    LOG_PATH,
-  );
-  console.log(`[tick] ${reply}`);
+  // 4. Fast call: plan the tick — decide if Opus 4.7 is needed.
+  const tickContext = `Current tick. Agent wallet: ${agentAddress}. claimable DIEM: ${claimable}. sVVV staked: ${staked}.`;
+  const planRaw = await callFast(ctx, tickContext, { systemPrompt: PLAN_SYSTEM, maxTokens: 128 });
+  console.log(`[tick] fast plan: ${planRaw.trim()}`);
+
+  let plan: { needs_reasoning: boolean; task: string; rationale: string };
+  try {
+    plan = JSON.parse(planRaw) as typeof plan;
+  } catch {
+    // If fast model didn't return valid JSON, skip reasoning and log the raw reply.
+    console.log('[tick] plan parse failed — skipping reason step');
+    return;
+  }
+
+  // 5. Reason call (conditional): Opus 4.7 only when the fast model says it's warranted.
+  if (plan.needs_reasoning) {
+    console.log(`[tick] routing to ${REASONING_MODEL}: ${plan.task}`);
+    const result = await callReason(ctx, plan.task, { systemPrompt: REASON_SYSTEM, maxTokens: 512 });
+    console.log(`[tick] reason: ${result.trim()}`);
+  } else {
+    console.log(`[tick] fast path sufficient: ${plan.task}`);
+  }
 }
 
 // ── Entry point ──────────────────────────────────────────────────────
