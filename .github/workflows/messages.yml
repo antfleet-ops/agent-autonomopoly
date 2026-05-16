@@ -633,7 +633,7 @@ jobs:
 
       - name: Install Claude Code
         if: steps.msg.outputs.source != ''
-        run: npm install -g @anthropic-ai/claude-code
+        run: npm install -g @anthropic-ai/claude-code @musistudio/claude-code-router
 
       - name: Run
         id: run
@@ -641,6 +641,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          VENICE_API_KEY: ${{ secrets.VENICE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GH_GLOBAL || secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_GLOBAL || secrets.GITHUB_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -659,7 +660,40 @@ jobs:
         run: |
           TODAY=$(date -u +%Y-%m-%d)
           CONFIG_MODEL=$(grep -E '^model:' aeon.yml | sed 's/^model: *//' | tr -d ' ')
-          MODEL="${CONFIG_MODEL:-claude-opus-4-7}"
+          MODEL="${CONFIG_MODEL:-claude-sonnet-4-6}"
+
+          # Gateway routing — Venice or direct Anthropic
+          GATEWAY=$(grep -A1 '^gateway:' aeon.yml | grep 'provider:' | sed 's/.*provider: *//' | tr -d ' "\'' || echo "direct")
+          GATEWAY="${GATEWAY:-direct}"
+          if [ "$GATEWAY" = "venice" ]; then
+            if [ -z "${VENICE_API_KEY:-}" ]; then
+              echo "::error::gateway.provider=venice but VENICE_API_KEY secret is not set"
+              exit 1
+            fi
+            mkdir -p ~/.claude-code-router
+            jq -n               --arg key "$VENICE_API_KEY"               --arg model "$MODEL"               '{
+                LOG: false,
+                NON_INTERACTIVE_MODE: true,
+                Providers: [{
+                  name: "venice",
+                  api_base_url: "https://api.venice.ai/api/v1/chat/completions",
+                  api_key: $key,
+                  models: ["claude-opus-4-5","claude-sonnet-4-5","claude-opus-4-6","claude-sonnet-4-6"],
+                  transformer: {use: ["anthropic"]}
+                }],
+                Router: {
+                  default: ("venice," + $model),
+                  background: "venice,claude-sonnet-4-6",
+                  longContext: ("venice," + $model)
+                }
+              }' > ~/.claude-code-router/config.json
+            nohup ccr start > /tmp/ccr.log 2>&1 &
+            sleep 3
+            export ANTHROPIC_BASE_URL="http://localhost:3456"
+            unset ANTHROPIC_API_KEY
+            unset CLAUDE_CODE_OAUTH_TOKEN
+            echo "Using Venice gateway (http://localhost:3456, model: $MODEL)"
+          fi
 
           cat > ./notify << 'NOTIFY_SCRIPT'
           #!/usr/bin/env bash

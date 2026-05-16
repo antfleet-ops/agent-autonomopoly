@@ -39,9 +39,9 @@ skills:
 # Default model for skills without a per-skill override
 model: claude-sonnet-4-6
 
-# AI Gateway — direct Anthropic API
+# AI Gateway — route Claude Code through Venice (staked DIEM pays for inference)
 gateway:
-  provider: direct
+  provider: venice
 
 # Reactive triggers — auto-repair on consecutive failures
 reactive:
