@@ -24,8 +24,12 @@ cast call 0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF \
   0x8767Df39eCeeaeB11554642237aC4E08660aB6A3 \
   0xF4d97F2da56e8c3098f3a8D538DB630A2606a024 \
   --rpc-url https://mainnet.base.org
-# Returns wei. Divide by 1e18 for DIEM. Current: ~1.92 DIEM (2026-05-14)
+# Returns wei. Divide by 1e18 for DIEM. Current: ~6.75 DIEM (2026-05-16)
 ```
+
+> **ABI note:** Both `availableFees` and `claim` take TWO address args: `(feeOwner, token)`.
+> Raw selector: `0x8296535a` for `availableFees(address,address)`.
+> A common mistake is calling `claim(address)` with only the token — this reverts.
 
 ## Claim
 

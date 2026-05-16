@@ -1,0 +1,62 @@
+# AUTONOMOPOLY — aeon skill configuration
+#
+# Skills run via GitHub Actions (messages.yml dispatches on schedule).
+# Identity reads from identity/SOUL.md and identity/STYLE.md.
+# Memory persists in memory/.
+
+skills:
+  # Run one agent tick — claim fees, LP DIEM, run maintenance inference
+  tick: { enabled: true, schedule: "0 * * * *" }   # every hour UTC
+
+  # Proactive health check: skill failures, LP state, memory flags
+  heartbeat: { enabled: true, schedule: "0 8,14,20 * * *" }   # 3× daily
+
+  # Monitor LP position and FeeLocker balance
+  lp-monitor: { enabled: true, schedule: "0 12 * * *" }   # daily at noon UTC
+
+  # On-chain monitoring of agent wallet and FeeLocker
+  on-chain-monitor: { enabled: true, schedule: "0 6 * * *", model: "claude-sonnet-4-6" }
+
+  # Claim DIEM from FeeLocker, run accumulate-vs-build analysis, route earnings
+  claim-diem: { enabled: true, schedule: "0 */12 * * *", model: "claude-sonnet-4-6" }  # every 12h UTC
+
+  # Track LP earnings per position per day — writes to memory/earnings.jsonl
+  track-earnings: { enabled: true, schedule: "55 23 * * *", model: "claude-sonnet-4-6" }  # end of day UTC
+
+  # Launch a VVV-denominated token from memory/launch-queue.jsonl
+  launch-vvv-token: { enabled: false, schedule: "0 10 * * *", model: "claude-sonnet-4-6" }
+
+  # Stake accumulated VVV fees on Venice staking contract for sVVV (inference gate)
+  stake-vvv: { enabled: false, schedule: "0 9 * * 1", model: "claude-sonnet-4-6" }   # weekly Monday
+
+  # Bootstrap Venice compute via two-tranche presale (VVV irrevocable + DIEM time-lock)
+  compute-presale: { enabled: false, schedule: "0 11 * * *", model: "claude-sonnet-4-6" }
+
+  # Disabled — re-enable when in build mode
+  token-report: { enabled: false, schedule: "30 12 * * *", model: "claude-sonnet-4-6" }
+  price-threshold-alert: { enabled: false, schedule: "*/30 * * * *", model: "claude-sonnet-4-6" }
+
+# Default model for skills without a per-skill override
+model: claude-sonnet-4-6
+
+# AI Gateway — direct Anthropic API
+gateway:
+  provider: direct
+
+# Reactive triggers — auto-repair on consecutive failures
+reactive:
+  # heartbeat:
+  #   trigger:
+  #     - { on: tick, when: "consecutive_failures >= 3" }
+
+# Chains — multi-step pipelines (unused in accumulate mode)
+chains: {}
+
+# Output channels
+channels:
+  jsonrender:
+    enabled: false
+
+# Telegram notification (set TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID in repo secrets)
+telegram:
+  enabled: true

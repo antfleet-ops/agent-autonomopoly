@@ -71,6 +71,7 @@ export type PrivyWalletConfig = {
   appId: string;
   appSecret: string;
   walletId: string;
+  gasPolicyId?: string;  // set to sponsor gas via Privy policy; omit to pay gas from wallet
 };
 
 export function loadPrivyConfig(): PrivyWalletConfig {
@@ -80,7 +81,10 @@ export function loadPrivyConfig(): PrivyWalletConfig {
   if (!appId) throw new Error('PRIVY_APP_ID is required');
   if (!appSecret) throw new Error('PRIVY_APP_SECRET is required');
   if (!walletId) throw new Error('PRIVY_WALLET_ID is required');
-  return { appId, appSecret, walletId };
+  const cfg: PrivyWalletConfig = { appId, appSecret, walletId };
+  const gasPolicyId = process.env['PRIVY_GAS_POLICY_ID'];
+  if (gasPolicyId) cfg.gasPolicyId = gasPolicyId;
+  return cfg;
 }
 
 function privyBasicAuth(config: PrivyWalletConfig): string {
@@ -145,21 +149,24 @@ export function makeTxSenderFromPrivy(
   fetchFn: typeof fetch = fetch,
 ): TxSender {
   return async ({ to, data }: { to: Address; data: Hex }): Promise<Hex> => {
+    const body: Record<string, unknown> = {
+      method: 'eth_sendTransaction',
+      caip2: 'eip155:8453',
+      chain_type: 'ethereum',
+      params: { transaction: { to, data } },
+    };
+    if (config.gasPolicyId) body['policy_ids'] = [config.gasPolicyId];
+
     const rpcRes = await fetchFn(`${PRIVY_API_BASE}/wallets/${config.walletId}/rpc`, {
       method: 'POST',
       headers: privyHeaders(config),
-      body: JSON.stringify({
-        method: 'eth_sendTransaction',
-        caip2: 'eip155:8453',
-        chain_type: 'ethereum',
-        params: { transaction: { to, data } },
-      }),
+      body: JSON.stringify(body),
     });
     if (!rpcRes.ok) {
       const errBody = await rpcRes.text();
       throw new Error(`Privy eth_sendTransaction failed: ${rpcRes.status} — ${errBody}`);
     }
-    const body = await rpcRes.json() as { data: { hash: Hex } };
-    return body.data.hash;
+    const result = await rpcRes.json() as { data: { hash: Hex } };
+    return result.data.hash;
   };
 }

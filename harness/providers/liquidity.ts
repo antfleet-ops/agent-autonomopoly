@@ -27,6 +27,8 @@ import { base } from 'viem/chains';
 import { ADDRESSES, ETH_DIEM_V3 } from '../../platform/constants.js';
 import type { TxSender } from '../safety/wallet.js';
 
+const MAX_UINT128 = (2n ** 128n) - 1n;
+
 // ── ABIs ─────────────────────────────────────────────────────────────
 
 const SLOT0_ABI = [{
@@ -50,6 +52,41 @@ const ERC20_APPROVE_ABI = [{
     { name: 'amount',  type: 'uint256' },
   ],
   outputs: [{ name: '', type: 'bool' }],
+}] as const;
+
+const NFPM_DECREASE_ABI = [{
+  name: 'decreaseLiquidity', type: 'function', stateMutability: 'payable',
+  inputs: [{
+    name: 'params', type: 'tuple',
+    components: [
+      { name: 'tokenId',    type: 'uint256' },
+      { name: 'liquidity',  type: 'uint128' },
+      { name: 'amount0Min', type: 'uint256' },
+      { name: 'amount1Min', type: 'uint256' },
+      { name: 'deadline',   type: 'uint256' },
+    ],
+  }],
+  outputs: [
+    { name: 'amount0', type: 'uint256' },
+    { name: 'amount1', type: 'uint256' },
+  ],
+}] as const;
+
+const NFPM_COLLECT_ABI = [{
+  name: 'collect', type: 'function', stateMutability: 'payable',
+  inputs: [{
+    name: 'params', type: 'tuple',
+    components: [
+      { name: 'tokenId',     type: 'uint256' },
+      { name: 'recipient',   type: 'address' },
+      { name: 'amount0Max',  type: 'uint128' },
+      { name: 'amount1Max',  type: 'uint128' },
+    ],
+  }],
+  outputs: [
+    { name: 'amount0', type: 'uint256' },
+    { name: 'amount1', type: 'uint256' },
+  ],
 }] as const;
 
 const NFPM_MINT_ABI = [{
@@ -90,6 +127,13 @@ function tickBelowCurrent(currentTick: number, spacing: number): number {
 
 export type TickRange = 'short' | 'medium';  // short=2 spacings, medium=5 spacings
 
+export type RemoveResult = {
+  decreaseTxHash: Hex;
+  collectTxHash:  Hex;
+  amount0:        bigint;  // WETH recovered
+  amount1:        bigint;  // DIEM recovered
+};
+
 export type ReinvestResult = {
   approveTxHash: Hex;
   mintTxHash:    Hex;
@@ -97,6 +141,54 @@ export type ReinvestResult = {
   tickUpper:     number;
   currentTick:   number;
 };
+
+// ── Remove ────────────────────────────────────────────────────────────
+
+export async function removeLiquidityPosition(
+  tokenId:       bigint,
+  liquidity:     bigint,
+  agentAddress:  Address,
+  rpcUrl:        string,
+  txSender:      TxSender,
+  publicClient?: ReturnType<typeof createPublicClient>,
+): Promise<RemoveResult> {
+  const client = publicClient ?? createPublicClient({ chain: base, transport: http(rpcUrl) });
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 600);
+
+  const decreaseData = encodeFunctionData({
+    abi: NFPM_DECREASE_ABI, functionName: 'decreaseLiquidity',
+    args: [{ tokenId, liquidity, amount0Min: 0n, amount1Min: 0n, deadline }],
+  });
+  const decreaseTxHash = await txSender({ to: ADDRESSES.NFPM_V3, data: decreaseData });
+  await client.waitForTransactionReceipt({ hash: decreaseTxHash });
+
+  const collectData = encodeFunctionData({
+    abi: NFPM_COLLECT_ABI, functionName: 'collect',
+    args: [{ tokenId, recipient: agentAddress, amount0Max: MAX_UINT128, amount1Max: MAX_UINT128 }],
+  });
+  const collectTxHash = await txSender({ to: ADDRESSES.NFPM_V3, data: collectData });
+  const collectReceipt = await client.waitForTransactionReceipt({ hash: collectTxHash });
+
+  // Parse Collect event (topic[0] = keccak256("Collect(uint256,address,uint256,uint256)"))
+  // Fallback to 0 if we can't parse — amounts are logged only.
+  let amount0 = 0n;
+  let amount1 = 0n;
+  const COLLECT_TOPIC = '0x40d0efd1a53d60ecbf40971b9daf7dc90178c3edd5fe1e2193a7948cc10a8f5f';
+  for (const log of collectReceipt.logs) {
+    if (log.topics[0]?.toLowerCase() === COLLECT_TOPIC) {
+      const data = log.data.slice(2);
+      amount0 = BigInt('0x' + data.slice(0, 64));
+      amount1 = BigInt('0x' + data.slice(64, 128));
+    }
+  }
+
+  console.log(
+    `[liquidity] removed position ${tokenId} | ` +
+    `WETH=${amount0} DIEM=${amount1}`,
+  );
+
+  return { decreaseTxHash, collectTxHash, amount0, amount1 };
+}
 
 // ── Main ──────────────────────────────────────────────────────────────
 
