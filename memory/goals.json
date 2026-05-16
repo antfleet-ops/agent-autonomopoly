@@ -1,0 +1,40 @@
+{
+  "mission": "Accelerate autopoietic, perpetual inference for tokenized agents on Liquid Protocol.",
+  "milestones": [
+    {
+      "id": "accumulate-100-diem",
+      "label": "Accumulate 100 DIEM",
+      "description": "Claim and stake 100 DIEM total on Venice AI. Triggers full build mode — agent switches inference from free llama to Opus and begins launchpad development.",
+      "status": "in_progress",
+      "target": 100,
+      "unit": "DIEM",
+      "current": 9.28,
+      "currentNote": "9.28 DIEM in FeeLocker as of 2026-05-16. Unclaimed. Live AUTONO/DIEM volume ($763K/day) accumulating more.",
+      "updatedAt": "2026-05-16T19:00:00Z"
+    },
+    {
+      "id": "build-agent-launchpad",
+      "label": "Build the Agent Launchpad",
+      "description": "A webapp where anyone can launch a Liquid Protocol agent token with a VVV/DIEM presale vault. Every launched agent pays a protocol fee in DIEM to AUTONOMOPOLY. Built by the agent in build mode, one tick at a time.",
+      "status": "blocked_on_compute",
+      "blockedBy": "accumulate-100-diem",
+      "spec": "wiki/flywheel.md",
+      "techRef": [
+        "src/extensions/MintDiemPresaleVault.sol",
+        "scripts/deploy-compute-presale.ts",
+        "scripts/launch-diem-token.ts",
+        "liquid-website-april-10/src/app/launch/"
+      ],
+      "updatedAt": "2026-05-16T19:00:00Z"
+    }
+  ],
+  "mode": "accumulate",
+  "modeThresholds": {
+    "buildModeOnDailyRate": 5,
+    "buildModeOnTotal": 100,
+    "unit": "DIEM"
+  },
+  "agentWallet": "0x8767Df39eCeeaeB11554642237aC4E08660aB6A3",
+  "feeLockerAddress": "0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF",
+  "diemAddress": "0xF4d97F2da56e8c3098f3a8D538DB630A2606a024"
+}
