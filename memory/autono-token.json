@@ -1,0 +1,83 @@
+{
+  "token": {
+    "name": "AUTONOMOPOLY",
+    "symbol": "AUTONO",
+    "address": "0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e",
+    "chain": "base",
+    "chainId": 8453,
+    "decimals": 18,
+    "totalSupply": "100000000000000000000000000000",
+    "totalSupplyHuman": "100,000,000,000",
+    "pairedToken": "DIEM",
+    "pairedTokenAddress": "0xF4d97F2da56e8c3098f3a8D538DB630A2606a024",
+    "protocol": "Liquid Protocol",
+    "factory": "0x04F1a284168743759BE6554f607a10CEBdB77760",
+    "feeLocker": "0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF",
+    "verifiedAt": "2026-05-16T18:00:00Z",
+    "verificationMethod": "cast call on-chain read + DexScreener API"
+  },
+  "purpose": "Accelerate autopoietic, perpetual inference for tokenized agents on Liquid Protocol. AUTONO is the vehicle: as AUTONO/DIEM pool volume grows, DIEM LP fees compound into Venice inference credits, funding the cognition that drives more protocol activity, which compounds into more fees. Self-sustaining, self-reinforcing, self-extending.",
+  "market": {
+    "note": "Live snapshot — update each tick via DexScreener API",
+    "checkedAt": "2026-05-16T18:00:00Z",
+    "primaryPair": "AUTONO/DIEM (Uniswap V4)",
+    "priceUsd": "0.00001537",
+    "priceDiem": "0.00000001132",
+    "marketCapUsd": "1537403",
+    "fdvUsd": "1537403",
+    "liquidityUsd": "921469",
+    "volume24hUsd": "763735",
+    "priceChange24hPct": "+486",
+    "buys24h": 1567,
+    "sells24h": 2777,
+    "otherPairs": [
+      {
+        "pair": "AUTONO/USDC",
+        "priceUsd": "0.00001664",
+        "volume24hUsd": "13523",
+        "liquidityUsd": "9660",
+        "priceChange24hPct": "+2102"
+      },
+      {
+        "pair": "AUTONO/ETH",
+        "priceUsd": "0.00001059",
+        "volume24hUsd": "29.71",
+        "liquidityUsd": "1007",
+        "priceChange24hPct": "+5644"
+      }
+    ],
+    "holderCount": "unavailable — query Basescan with valid API key or run check-portfolio"
+  },
+  "diemEarnings": {
+    "claimCount": 1,
+    "claimsDryRun": true,
+    "totalDiemClaimedHuman": "6.978",
+    "totalDiemClaimedWei": "6978418891095036020",
+    "claims": [
+      {
+        "date": "2026-05-16",
+        "amountDiem": "6.97841889109503602",
+        "amountWei": "6978418891095036020",
+        "mode": "accumulate",
+        "dryRun": true,
+        "disposition": "all → ETH/DIEM v3 1% LP (accumulate mode: compounding yield, not spending on inference)"
+      }
+    ],
+    "feeLockerClaimableDiem": "9.283",
+    "feeLockerClaimableWei": "9283843683621384031",
+    "feeLockerCheckedAt": "2026-05-16T18:00:00Z",
+    "diemDisposition": {
+      "accumulate_mode": "all DIEM → ETH/DIEM Uniswap v3 1% LP to compound yield. Venice inference runs free on llama-3.3-70b until daily fee rate clears 5 DIEM/day threshold.",
+      "build_mode": "DIEM → stake on Venice for inference credits → fund Opus reasoning on product work"
+    }
+  },
+  "agent": {
+    "wallet": "0x8767Df39eCeeaeB11554642237aC4E08660aB6A3",
+    "role": "deployer and DIEM LP fee recipient",
+    "autonoBalance": "0",
+    "mode": "accumulate",
+    "buildModeThresholdDiemPerDay": 5,
+    "estimatedCurrentDailyRateDiem": "~0.08",
+    "estimatedDaysToThreshold": "~62"
+  }
+}

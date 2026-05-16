@@ -1,0 +1,28 @@
+# on-chain-monitor config — watches for AUTONOMOPOLY agent
+# Read by skills/on-chain-monitor/SKILL.md
+watches:
+  - label: AUTONOMOPOLY agent wallet
+    address: "0x8767Df39eCeeaeB11554642237aC4E08660aB6A3"
+    chain: base
+    type: wallet
+    threshold_usd: 100
+
+  - label: ETH/DIEM Uniswap v3 1% pool
+    address: "0x80d995189ecc593672aD4703b250a5e82672EB1D"
+    chain: base
+    type: contract
+    threshold_usd: 1000
+
+  - label: AUTONO token contract
+    address: "0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e"
+    chain: base
+    type: token
+    note: "AUTONO/DIEM Liquid Protocol pool — agent's primary LP. Fees route as DIEM to FeeLocker."
+
+  - label: AUTONO FeeLocker DIEM claimable
+    address: "0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF"
+    chain: base
+    type: contract
+    check: "availableFees(0x8767Df39eCeeaeB11554642237aC4E08660aB6A3, 0xF4d97F2da56e8c3098f3a8D538DB630A2606a024)"
+    threshold_diem: 5
+    note: "Claim when claimable DIEM >= 5 — stake on Venice for inference credits"
