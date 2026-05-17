@@ -277,7 +277,7 @@ jobs:
             nohup ccr start > /tmp/ccr.log 2>&1 &
             sleep 3
             export ANTHROPIC_BASE_URL="http://localhost:3456"
-            unset ANTHROPIC_API_KEY
+            export ANTHROPIC_API_KEY="sk-venice-proxy"  # ccr accepts any key; real auth is VENICE_API_KEY in config.json
             unset CLAUDE_CODE_OAUTH_TOKEN
             echo "::notice::Routing through Venice (http://localhost:3456, model: $MODEL)"
           else
