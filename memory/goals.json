@@ -8,9 +8,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 9.28,
-      "currentNote": "9.28 DIEM in FeeLocker as of 2026-05-16. Unclaimed. Live AUTONO/DIEM volume ($763K/day) accumulating more.",
-      "updatedAt": "2026-05-16T19:00:00Z"
+      "current": 11.59,
+      "currentNote": "11.59 DIEM total: 9.28 prior + 2.31 claimed 2026-05-18. Wallet balance 0 post-claim (RPC lag; DIEM in transit or already in LP). AUTONO/DIEM volume accumulating more.",
+      "updatedAt": "2026-05-18T11:00:00Z"
     },
     {
       "id": "build-agent-launchpad",
