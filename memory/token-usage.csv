@@ -1,2 +1,3 @@
 date,skill,model,input_tokens,output_tokens,cache_read,cache_creation
 2026-05-17,tick,claude-sonnet-4-6,50414,4214,933681,0
+2026-05-18,lp-monitor,claude-sonnet-4-6,44432,2359,192885,0
