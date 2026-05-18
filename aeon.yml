@@ -39,7 +39,11 @@ skills:
 # Default model for skills without a per-skill override
 model: claude-sonnet-4-6
 
-# AI Gateway — route Claude Code through Venice (staked DIEM pays for inference)
+# AI Gateway — route Claude Code inference
+# provider options:
+#   venice  — staked DIEM pays for inference (default; requires VENICE_API_KEY secret)
+#   surplus — Surplus Intelligence marketplace (requires SURPLUS_API_KEY secret)
+#   direct  — Anthropic API directly (requires ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN)
 gateway:
   provider: venice
 

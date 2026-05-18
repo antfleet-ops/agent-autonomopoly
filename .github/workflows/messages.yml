@@ -644,6 +644,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           VENICE_API_KEY: ${{ secrets.VENICE_API_KEY }}
+          SURPLUS_API_KEY: ${{ secrets.SURPLUS_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GH_GLOBAL || secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_GLOBAL || secrets.GITHUB_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -695,6 +696,35 @@ jobs:
             export ANTHROPIC_API_KEY="sk-venice-proxy"  # ccr accepts any key; real auth is VENICE_API_KEY in config.json
             unset CLAUDE_CODE_OAUTH_TOKEN
             echo "Using Venice gateway (http://localhost:3456, model: $MODEL)"
+          elif [ "$GATEWAY" = "surplus" ]; then
+            if [ -z "${SURPLUS_API_KEY:-}" ]; then
+              echo "::error::gateway.provider=surplus but SURPLUS_API_KEY secret is not set"
+              exit 1
+            fi
+            SURPLUS_MODEL=$(echo "$MODEL" | sed 's/claude-sonnet-4-6/claude-sonnet-4.6/;s/claude-opus-4-7/claude-opus-4.7/;s/claude-haiku-4-5.*/claude-haiku-4.5/')
+            mkdir -p ~/.claude-code-router
+            jq -n               --arg key "$SURPLUS_API_KEY"               --arg model "$SURPLUS_MODEL"               '{
+                LOG: false,
+                NON_INTERACTIVE_MODE: true,
+                Providers: [{
+                  name: "surplus",
+                  api_base_url: "https://www.surplusintelligence.ai/api/inference/v1/chat/completions",
+                  api_key: $key,
+                  models: ["claude-sonnet-4.6","claude-opus-4.7","claude-haiku-4.5","claude-opus-4.5","claude-sonnet-4.5"],
+                  transformer: {use: ["anthropic"]}
+                }],
+                Router: {
+                  default: ("surplus," + $model),
+                  background: "surplus,claude-sonnet-4.6",
+                  longContext: ("surplus," + $model)
+                }
+              }' > ~/.claude-code-router/config.json
+            nohup ccr start > /tmp/ccr.log 2>&1 &
+            sleep 3
+            export ANTHROPIC_BASE_URL="http://localhost:3456"
+            export ANTHROPIC_API_KEY="sk-surplus-proxy"  # ccr accepts any key; real auth is SURPLUS_API_KEY in config.json
+            unset CLAUDE_CODE_OAUTH_TOKEN
+            echo "Using Surplus Intelligence gateway (http://localhost:3456, model: $SURPLUS_MODEL)"
           fi
 
           cat > ./notify << 'NOTIFY_SCRIPT'
