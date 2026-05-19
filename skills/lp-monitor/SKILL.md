@@ -1,70 +1,82 @@
 ---
 name: LP Monitor
-description: Check ETH/DIEM LP position health, FeeLocker balance, and capital allocation
+description: Check all ETH/DIEM LP positions for health and range — reposition any out-of-range position immediately
 var: ""
 tags: [defi, on-chain]
 ---
 
-Monitor the AUTONOMOPOLY agent's LP position and FeeLocker state.
+Monitor all AUTONOMOPOLY LP positions. Claim fees and reposition any out-of-range position immediately — do not wait.
 
 Agent wallet: `0x8767Df39eCeeaeB11554642237aC4E08660aB6A3`
 
-## On-chain reads
-
-Run each of these and record the results:
+## Step 1 — Read all positions
 
 ```bash
-AGENT=0x8767Df39eCeeaeB11554642237aC4E08660aB6A3
-DIEM=0xF4d97F2da56e8c3098f3a8D538DB630A2606a024
-NFPM=0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1
-POOL=0x80d995189ecc593672aD4703b250a5e82672EB1D
-FEE_LOCKER=0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF
-
-# 1. FeeLocker claimable
-cast call $FEE_LOCKER "availableFees(address,address)(uint256)" $AGENT $DIEM --rpc-url https://mainnet.base.org
-
-# 2. Wallet DIEM balance
-cast call $DIEM "balanceOf(address)(uint256)" $AGENT --rpc-url https://mainnet.base.org
-
-# 3. Pool current tick and sqrtPrice
-cast call $POOL "slot0()(uint160,int24,uint16,uint16,uint16,uint8,bool)" --rpc-url https://mainnet.base.org
+node --env-file=.env --import tsx scripts/check-portfolio.ts
 ```
 
-Read the current tokenId from `memory/lp-positions.jsonl` (last line). Then:
+This reads all NFPM tokenIds owned by the agent, the current pool tick, FeeLocker balance, and wallet balances. Record every tokenId and whether each is in-range or out-of-range.
+
+## Step 2 — Triage
+
+For each position:
+
+- **In range** → note fee accrual, log status. No action needed.
+- **Out of range** → proceed to Step 3 immediately.
+
+If ALL positions are in range → write a one-liner to `memory/logs/${today}.md` and exit:
+```
+lp-monitor: all positions in range | tick=C | FeeLocker=X DIEM
+```
+
+## Step 3 — Reposition out-of-range position
+
+For each out-of-range tokenId, run a dry-run first:
 
 ```bash
-# 4. LP position state (use the tokenId from memory)
-cast call $NFPM "positions(uint256)(uint96,address,address,address,uint24,int24,int24,uint128,uint256,uint256,uint128,uint128)" <tokenId> --rpc-url https://mainnet.base.org
+node --env-file=.env --import tsx scripts/reposition.ts --token-id <tokenId> --dry-run
 ```
 
-## Analysis
+Review the dry-run output. If amounts are reasonable and the new range brackets the current tick, run live:
 
-1. **Position status**: Is currentTick in [tickLower, tickUpper]? If yes → in range, earning fees. If currentTick > tickUpper → above range (DIEM only, waiting). If currentTick < tickLower → below range (WETH only).
+```bash
+node --env-file=.env --import tsx scripts/reposition.ts --token-id <tokenId>
+```
 
-2. **Uncollected fees**: tokensOwed0 (WETH) and tokensOwed1 (DIEM) from the positions() read.
+The script:
+1. Reads liquidity on-chain from NFPM (no hardcoded values)
+2. Detects whether position is below range (all WETH) or above range (all DIEM)
+3. Claims FeeLocker fees
+4. Swaps 50% of the withdrawn token to the other side
+5. Mints a new position at `[snapTick(currentTick) - spacing, snapTick(currentTick) + 2*spacing]`
+6. Records the new tokenId in `memory/lp-positions.jsonl`
 
-3. **Capital efficiency**: Compare claimable fees against tick being in/out of range. If out of range for >7 days, note in output.
+## Step 4 — Log and notify
 
-4. **DIEM price**: Compute from sqrtPriceX96 using:
-   ```bash
-   node -e "const s=BigInt('<sqrtPriceX96>'); console.log('DIEM/WETH:', Number(s*s*(10n**18n)/(2n**192n))/1e18)"
-   ```
-
-## Output
-
-Write a brief report to `memory/logs/${today}.md`:
+Write to `memory/logs/${today}.md`:
 ```
 ### lp-monitor
-- FeeLocker: X DIEM claimable
-- Wallet: Y DIEM
-- Position tokenId: Z | ticks=[A,B] | currentTick=C | status=IN_RANGE/ABOVE/BELOW
-- Uncollected: W0 WETH + W1 DIEM
+- Positions checked: [tokenId1 IN_RANGE, tokenId2 REPOSITIONED]
+- FeeLocker claimed: X DIEM
+- New position: tokenId=Z range=[A,B] tick=C
 - DIEM/WETH: P
 ```
 
-If FeeLocker claimable ≥ 1.0 DIEM, send a notification via `./notify`:
+Send notification via `./notify`:
 ```
-AUTONOMOPOLY LP: ${claimable} DIEM claimable in FeeLocker. Tick ${currentTick} vs range [${tickLower},${tickUpper}].
+AUTONOMOPOLY LP: repositioned tokenId <old> → <new> | range [A,B] | tick C | FeeLocker X DIEM claimed
 ```
 
-If position has been out of range for >7 days (check recent memory/logs/), notify with a recommendation to reposition.
+Or if no action taken:
+```
+AUTONOMOPOLY LP: all positions in range | tick=C | FeeLocker=X DIEM claimable
+```
+
+## Safety checks before running live
+
+1. Dry-run output shows correct tokenId and non-zero liquidity
+2. New tick range brackets the current tick
+3. Swap amount is reasonable relative to available balance
+4. ETH balance > 0.003 ETH for gas reserve
+
+If any check fails, log the issue and notify without taking action.
