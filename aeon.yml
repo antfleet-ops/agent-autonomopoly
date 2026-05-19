@@ -11,8 +11,8 @@ skills:
   # Proactive health check: skill failures, LP state, memory flags
   heartbeat: { enabled: true, schedule: "0 8,14,20 * * *" }   # 3× daily
 
-  # Monitor LP position and FeeLocker balance
-  lp-monitor: { enabled: true, schedule: "0 12 * * *" }   # daily at noon UTC
+  # Monitor LP position and FeeLocker balance — hourly to catch out-of-range positions quickly
+  lp-monitor: { enabled: true, schedule: "0 * * * *" }   # hourly UTC
 
   # On-chain monitoring of agent wallet and FeeLocker
   on-chain-monitor: { enabled: true, schedule: "0 6 * * *", model: "claude-sonnet-4-6" }
