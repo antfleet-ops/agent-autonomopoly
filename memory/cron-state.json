@@ -1,13 +1,13 @@
 {
   "tick": {
-    "last_status": "dispatched",
-    "last_failed": "2026-05-17T18:10:56Z",
-    "total_runs": 15,
+    "last_status": "failed",
+    "last_failed": "2026-05-19T17:55:19Z",
+    "total_runs": 16,
     "total_successes": 14,
-    "total_failures": 1,
-    "consecutive_failures": 0,
-    "success_rate": 0.93,
-    "last_error": "c172814\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"",
+    "total_failures": 2,
+    "consecutive_failures": 1,
+    "success_rate": 0.88,
+    "last_error": ",{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01CsAPGtXfQRhyW8wvRi5gFm\",\"tool_input\":{\"command\":\"printenv 2>&1 | grep -iE \\\"diem|venice|privy|agent|wallet|fee|locker|uniswap\\\" | grep -vE \\\"PRIVATE|SECRET|",
     "last_success": "2026-05-19T15:46:58Z",
     "last_dispatch": "2026-05-19T17:54:14Z"
   },
