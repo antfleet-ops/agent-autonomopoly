@@ -318,7 +318,7 @@ async function main() {
   if (lpDiem >= LP_THRESHOLD_WEI) {
     const stepNum = stakeVenice > 0n ? '2b' : '2';
     console.log(`\nStep ${stepNum}: LP ${formatUnits(lpDiem, 18)} DIEM into ETH/DIEM v3 1% pool...`);
-    const result = await reinvestToLP(rpcUrl, agentAddress, lpDiem, 'short', txSender);
+    const result = await reinvestToLP(rpcUrl, agentAddress, lpDiem, 'medium', txSender);
     lpTxHash = result.mintTxHash;
     console.log(`  ✓ LP minted | range=[${result.tickLower},${result.tickUpper}] tick=${result.currentTick}`);
   }

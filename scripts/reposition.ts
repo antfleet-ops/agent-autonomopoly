@@ -202,9 +202,10 @@ function latestOtherPosition(closingId: bigint): bigint | null {
 // ── Main ───────────────────────────────────────────────────────────────
 
 async function main() {
-  const argv    = process.argv.slice(2);
-  const dryRun  = argv.includes('--dry-run');
-  const rpcUrl  = process.env['RPC_URL'] ?? 'https://mainnet.base.org';
+  const argv     = process.argv.slice(2);
+  const dryRun   = argv.includes('--dry-run');
+  const mintOnly = argv.includes('--mint-only');
+  const rpcUrl   = process.env['RPC_URL'] ?? 'https://mainnet.base.org';
 
   // Resolve tokenId: --token-id flag or last entry in lp-positions.jsonl
   let tokenId: bigint;
@@ -255,8 +256,8 @@ async function main() {
 
   console.log(`Position:   [${tickLower}, ${tickUpper}]  liquidity=${liquidity}`);
 
-  if (liquidity === 0n) {
-    console.log('Liquidity is 0 — position already closed. Nothing to do.');
+  if (liquidity === 0n && !mintOnly) {
+    console.log('Liquidity is 0 — position already closed. Use --mint-only to skip to swap+mint.');
     process.exit(0);
   }
 
@@ -270,16 +271,18 @@ async function main() {
   const sqrtPriceX96  = slot0[0];
   const diemPerWeth   = Number(sqrtPriceX96 ** 2n * (10n ** 18n) / (2n ** 192n)) / 1e18;
 
-  // Position state relative to current tick
-  const belowRange = currentTick < tickLower;  // all WETH when withdrawn
-  const aboveRange = currentTick > tickUpper;  // all DIEM when withdrawn
+  // WETH/DIEM pool: token0=WETH, token1=DIEM.
+  // Below range (currentTick < tickLower): position held all token1 (DIEM).
+  // Above range (currentTick > tickUpper): position held all token0 (WETH).
+  const belowRange = currentTick < tickLower;  // all DIEM when withdrawn
+  const aboveRange = currentTick > tickUpper;  // all WETH when withdrawn
   const inRange    = !belowRange && !aboveRange;
 
   console.log(`Current tick: ${currentTick}  DIEM/WETH: ${diemPerWeth.toFixed(6)}`);
-  console.log(`Position status: ${belowRange ? 'BELOW RANGE (all WETH)' : aboveRange ? 'ABOVE RANGE (all DIEM)' : 'IN RANGE'}`);
+  console.log(`Position status: ${belowRange ? 'BELOW RANGE (all DIEM)' : aboveRange ? 'ABOVE RANGE (all WETH)' : 'IN RANGE'}`);
   console.log(`FeeLocker:    ${formatUnits(claimable, 18)} DIEM claimable\n`);
 
-  if (inRange) {
+  if (inRange && !mintOnly) {
     console.log('Position is in range — no reposition needed. Run lp-monitor to re-evaluate.');
     process.exit(0);
   }
@@ -289,12 +292,14 @@ async function main() {
   console.log(`New range:    [${newTickLower}, ${newTickUpper}]\n`);
 
   if (dryRun) {
-    console.log(`[dry-run] Would close tokenId ${tokenId} (liquidity ${liquidity})`);
-    console.log(`[dry-run] Would claim ${formatUnits(claimable, 18)} DIEM from FeeLocker`);
+    if (!mintOnly) {
+      console.log(`[dry-run] Would close tokenId ${tokenId} (liquidity ${liquidity})`);
+      console.log(`[dry-run] Would claim ${formatUnits(claimable, 18)} DIEM from FeeLocker`);
+    }
     if (belowRange) {
-      console.log(`[dry-run] Below range → collect WETH, swap WETH→DIEM, mint [${newTickLower}, ${newTickUpper}]`);
+      console.log(`[dry-run] Below range → collected DIEM, swap 50% DIEM→WETH, mint [${newTickLower}, ${newTickUpper}]`);
     } else {
-      console.log(`[dry-run] Above range → collect DIEM, swap some DIEM→WETH, mint [${newTickLower}, ${newTickUpper}]`);
+      console.log(`[dry-run] Above range → collected WETH, swap 50% WETH→DIEM, mint [${newTickLower}, ${newTickUpper}]`);
     }
     return;
   }
@@ -304,12 +309,18 @@ async function main() {
     const hash = await txSender({ to, data });
     console.log(`[${label}] hash: ${hash}`);
     const receipt = await client.waitForTransactionReceipt({ hash });
+    if (receipt.status === 'reverted') throw new Error(`[${label}] tx reverted: ${hash}`);
     console.log(`[${label}] confirmed (block ${receipt.blockNumber})`);
     return receipt;
   };
 
+  if (mintOnly) {
+    console.log('--mint-only: skipping close + claim, going straight to swap + mint');
+  }
+
   // ── 1. Close out-of-range position ────────────────────────────────
 
+  if (!mintOnly) {
   console.log(`Step 1: close position ${tokenId}`);
 
   await send('decreaseLiquidity', ADDRESSES.NFPM_V3, encodeFunctionData({
@@ -333,6 +344,7 @@ async function main() {
   } else {
     console.log('\nStep 2: FeeLocker empty, skipping');
   }
+  } // end !mintOnly block
 
   // ── 3. Read balances post-withdrawal, compute swap ─────────────────
 
@@ -344,38 +356,46 @@ async function main() {
   console.log(`\nStep 3: balances — WETH: ${formatUnits(wethBal, 18)}  DIEM: ${formatUnits(diemBal, 18)}`);
 
   // Determine swap direction and amount.
-  // Target: ~50/50 value split for the new position (simple heuristic; Uniswap refunds excess).
-  // Below range: have WETH, need DIEM → swap 50% of WETH → DIEM
-  // Above range: have DIEM, need WETH → swap 50% of DIEM → WETH
+  // In WETH/DIEM pool: token0=WETH, token1=DIEM.
+  // Below range (currentTick < tickLower): position held all token1 (DIEM) → have DIEM, need WETH → swap DIEM→WETH
+  // Above range (currentTick > tickUpper): position held all token0 (WETH) → have WETH, need DIEM → swap WETH→DIEM
   let swapAmountIn: bigint;
   let tokenIn: Address;
   let tokenOut: Address;
   let approxOut: bigint;
 
+  const POOL_FEE_BPS = BigInt(ETH_DIEM_V3.FEE) / 100n;  // 10000 fee = 100 bps = 1%
+
   if (belowRange) {
-    swapAmountIn = wethBal / 2n;
-    tokenIn      = ADDRESSES.WETH;
-    tokenOut     = ADDRESSES.DIEM;
-    approxOut    = BigInt(Math.floor(Number(swapAmountIn) * diemPerWeth));
-    console.log(`        swap ${formatUnits(swapAmountIn, 18)} WETH → DIEM (50% of WETH balance)`);
-  } else {
-    // above range: have DIEM, need WETH
+    // Below range → all DIEM was returned → swap 50% DIEM → WETH
     swapAmountIn = diemBal / 2n;
     tokenIn      = ADDRESSES.DIEM;
     tokenOut     = ADDRESSES.WETH;
-    approxOut    = BigInt(Math.floor(Number(swapAmountIn) / diemPerWeth));
+    // Reduce approxOut by pool fee before slippage
+    approxOut    = BigInt(Math.floor(Number(swapAmountIn) / diemPerWeth)) * (10000n - POOL_FEE_BPS) / 10000n;
     console.log(`        swap ${formatUnits(swapAmountIn, 18)} DIEM → WETH (50% of DIEM balance)`);
+  } else {
+    // Above range → all WETH was returned → swap 50% WETH → DIEM
+    swapAmountIn = wethBal / 2n;
+    tokenIn      = ADDRESSES.WETH;
+    tokenOut     = ADDRESSES.DIEM;
+    // Reduce approxOut by pool fee before slippage
+    approxOut    = BigInt(Math.floor(Number(swapAmountIn) * diemPerWeth)) * (10000n - POOL_FEE_BPS) / 10000n;
+    console.log(`        swap ${formatUnits(swapAmountIn, 18)} WETH → DIEM (50% of WETH balance)`);
   }
 
-  const amountOutMin = approxOut * (100n - SLIPPAGE) / 100n;
+  if (swapAmountIn === 0n) {
+    console.log('        swap amount is 0 — skipping swap, will mint single-sided');
+  } else {
+    const amountOutMin = approxOut * (100n - SLIPPAGE) / 100n;
 
-  // Approve tokenIn to SwapRouter
-  await send(`approve-${belowRange ? 'weth' : 'diem'}-router`, belowRange ? ADDRESSES.WETH : ADDRESSES.DIEM, encodeFunctionData({
-    abi: ERC20_ABI, functionName: 'approve',
-    args: [ADDRESSES.SWAP_ROUTER_V3, swapAmountIn],
-  }));
+    // Approve tokenIn to SwapRouter
+    await send(`approve-${belowRange ? 'diem' : 'weth'}-router`, belowRange ? ADDRESSES.DIEM : ADDRESSES.WETH, encodeFunctionData({
+      abi: ERC20_ABI, functionName: 'approve',
+      args: [ADDRESSES.SWAP_ROUTER_V3, swapAmountIn],
+    }));
 
-  await send('exactInputSingle', ADDRESSES.SWAP_ROUTER_V3, encodeFunctionData({
+    await send('exactInputSingle', ADDRESSES.SWAP_ROUTER_V3, encodeFunctionData({
     abi: SWAP_ROUTER_ABI, functionName: 'exactInputSingle',
     args: [{
       tokenIn,
@@ -387,6 +407,7 @@ async function main() {
       sqrtPriceLimitX96: 0n,
     }],
   }));
+  } // end swap block
 
   // ── 4. Mint new in-range position ─────────────────────────────────
 
@@ -418,8 +439,8 @@ async function main() {
       tickUpper:      newTickUpper,
       amount0Desired: wethForMint,
       amount1Desired: diemForMint,
-      amount0Min:     wethForMint * (100n - SLIPPAGE) / 100n,
-      amount1Min:     diemForMint * (100n - SLIPPAGE) / 100n,
+      amount0Min:     0n,
+      amount1Min:     0n,
       recipient:      agentAddress,
       deadline:       tsDeadline(),
     }],
