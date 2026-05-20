@@ -1,1 +1,1 @@
-tick: nothing to claim/LP | maintenance inference ran (sVVV=0 below threshold) | Dependabot: 0 open PRs
+tick: FAILED — missing env: DIEM_TOKEN_ADDRESS, VVV_STAKING_ADDRESS, RPC_URL, AGENT_PRIVATE_KEY/PRIVY_* | Dependabot: 0 open PRs
