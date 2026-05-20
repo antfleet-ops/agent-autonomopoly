@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: all positions in range | tokenId=5153290 range=[800,2800] tick=1553 | 6 burned, 1 active | DIEM=1.1575 ETH=0.007947
+AUTONOMOPOLY LP: all positions in range | tick=1133 | tokenId 5153290 [800,2800] active | FeeLocker 0.4971 DIEM claimable
