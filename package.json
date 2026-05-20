@@ -12,7 +12,7 @@
     "build": "tsc -p .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "harness:tick": "node --import tsx harness/index.ts",
+    "harness:tick": "node --import tsx harness/run-tick-with-env.ts",
     "lint:identity": "node --import tsx scripts/lint-identity.ts",
     "prepare": "husky || true"
   },

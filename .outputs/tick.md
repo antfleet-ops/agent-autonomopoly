@@ -1,1 +1,1 @@
-tick: claimed 1.157 DIEM, wallet DIEM=0 below LP threshold — maintenance inference ran | Dependabot: 0 open PRs
+tick: claimed 1.1575 DIEM, LP'd 1.1575 DIEM | ticks=[1000,1400] currentTick=1553 | Dependabot: 0 open PRs

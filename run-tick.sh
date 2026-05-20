@@ -1,0 +1,4 @@
+#!/bin/bash
+export DIEM_TOKEN_ADDRESS=0xF4d97F2da56e8c3098f3a8D538DB630A2606a024
+export VVV_STAKING_ADDRESS=0x321b7ff75154472B18EDb199033fF4D116F340Ff
+node --import tsx harness/tick.ts "$@"
