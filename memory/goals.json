@@ -9,7 +9,7 @@
       "target": 100,
       "unit": "DIEM",
       "current": 12.75,
-      "currentNote": "12.75 DIEM cumulative claimed. Wallet: ~1.16 DIEM (last on-chain 05-20). Active LP pos #5153290 range=[800,2800] IN_RANGE tick=1133 liq=160949757784828251054. FeeLocker: 0.9561 DIEM claimable (below 1.0 threshold). ETH: 0.007944. Checked 2026-05-21 via log reconstruction.",
+      "currentNote": "12.75 DIEM cumulative claimed. Wallet: 1.1651 DIEM + WETH: 2.7928. Active LP pos #5153290 range=[800,2800] IN_RANGE tick=1133 liq=160949757784828251054. FeeLocker: 0.2350 DIEM claimable (below 1.0 threshold at time of latest read; concurrent tick reported 0.9561). sVVV: 4.5397 (Venice active). ETH: 0.007941. Checked 2026-05-21.",
       "updatedAt": "2026-05-21T00:00:00Z"
     },
     {
