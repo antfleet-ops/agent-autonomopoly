@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: all positions in range | tick=1133 | tokenId 5153290 [800,2800] active | FeeLocker 0.4971 DIEM claimable
+AUTONOMOPOLY LP: tokenId 5157087 OUT OF RANGE [600,1000] tick=2457 — needs reposition. tokenId 5153290 IN RANGE [800,2800] ✓ | ETH=0.0079 WETH=2.79 DIEM=1.17 | NO CREDS to reposition
