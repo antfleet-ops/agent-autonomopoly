@@ -1,1 +1,1 @@
-🔴 FAILED: tick (5 consec, API degradation, last ok 14:06), lp-monitor (5 consec, API degradation, chronic 39%, last ok 14:03), heartbeat (2 consec, last ok 14:04) — all 22:55 UTC batch 2026-05-20 / 🟡 STALLED: PR #8 now >25h open (fix/reposition-range-comment-and-ordering)
+🔴 DEGRADED · tick(8cf,53%), lp-monitor(10cf,31%CHRONIC), heartbeat(6cf,43%CHRONIC) — all zero-token Venice failures from 23:45 batch (>21h since last success). P1: PR#8 stalled 43h. P3: claim-diem 25h overdue (2.1× interval).
