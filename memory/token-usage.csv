@@ -21,4 +21,4 @@ date,skill,model,input_tokens,output_tokens,cache_read,cache_creation
 2026-05-21,lp-monitor,claude-sonnet-4-6,60640,2471,446707,0
 2026-05-22,lp-monitor,claude-sonnet-4-6,75310,44060,934660,0
 2026-05-22,on-chain-monitor,claude-sonnet-4-6,88078,44836,848487,0
-2026-05-22,tick,claude-sonnet-4-6,29005,1639,535983,0
+2026-05-22,heartbeat,claude-sonnet-4-6,77403,7514,297145,0
