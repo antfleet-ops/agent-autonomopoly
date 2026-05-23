@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: all positions in range | tick=1642 | 1 active pos tokenId=5153290 range=[800,2800] | ETH=0.007959 WETH=0.936 | FeeLocker=0 DIEM
+AUTONOMOPOLY LP: all positions in range | tick=2485 | tokenId=5153290 range=[800,2800] active | FeeLocker=0 DIEM claimable
