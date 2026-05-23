@@ -1,1 +1,2 @@
-🔴 DEGRADED · tick(8cf,53%), lp-monitor(10cf,31%CHRONIC), heartbeat(6cf,43%CHRONIC) — all zero-token Venice failures from 23:45 batch (>21h since last success). P1: PR#8 stalled 43h. P3: claim-diem 25h overdue (2.1× interval).
+🔴 FAILED: tick (9 consec, 46% rate), lp-monitor (8 consec, 29%), heartbeat (6 consec, 38%), claim-diem (8 consec, 27%) — all: Venice zero-token (input/output=0). Recovery window: 09:50 2026-05-22, re-failed 23:17.
+🔵 P3: track-earnings missed 2 daily dispatches (last: 2026-05-21 00:13 UTC)
