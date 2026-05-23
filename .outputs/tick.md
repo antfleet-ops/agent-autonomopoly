@@ -1,1 +1,1 @@
-tick: FAILED — env vars absent (DIEM_TOKEN_ADDRESS, RPC_URL, PRIVY creds). Cannot claim/LP. DIEM=12.75/100. Dependabot: 0 open PRs.
+tick: claimed 1.463 DIEM, wallet DIEM 0 (below LP threshold) | maintenance inference ran | Dependabot: 0 open PRs
