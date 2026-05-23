@@ -1,17 +1,1 @@
-On-Chain Alert — 2026-05-22
-TL;DR: 5.58 DIEM (~$9,411) claimed from FeeLocker over 4.4 days (5 claims). Heavy LP repositioning: 5 new positions opened, 5+ burned. One large swap: 18.55 WETH → 16.53 DIEM ($39.5k).
-
-AUTONOMOPOLY agent wallet (base) | blocks 46145149→46302334
-• CLAIM $2,029 — 1.165 DIEM ← FeeLocker — 2026-05-20T21:03Z
-• CLAIM $1,822 — 1.046 DIEM ← FeeLocker — 2026-05-21T08:28Z
-• CLAIM $2,016 — 1.157 DIEM ← FeeLocker — 2026-05-20T08:04Z
-• CLAIM $1,298 — 0.745 DIEM ← FeeLocker — 2026-05-21T19:56Z
-• CLAIM $1,242 — 0.713 DIEM ← FeeLocker — 2026-05-19T17:19Z
-• DEX-SWAP $39.5k — 18.55 WETH → 16.53 DIEM — 2026-05-19T17:19Z
-• LP-ADD $43.2k — 24.82 DIEM → pos #5151155 — 2026-05-19T12:01Z
-• LP-ADD $33.9k — 11.96 DIEM + 6.15 WETH → pos #5152983 — 2026-05-19T17:38Z
-• LP-ADD $26.8k — 10.06 DIEM + 5.96 WETH → pos #5153290 [ACTIVE] — 2026-05-19T18:46Z
-• LP-ADD $26.7k — 3.58 DIEM + 9.64 WETH → pos #5153128 — 2026-05-19T18:12Z
-
-10 events on 1 watch | sources: blockscout=ok, coingecko=ok, etherscan=fail(paid-only) | last_block→46302334
-DIEM: 12.75/100 milestone | 3 unpriced airdrops dropped (VIRL, GLOBALX, Dropee)
+On-Chain Alert 2026-05-23 | CLAIM 1.463 DIEM (USD 2372) from FeeLocker | block 46361549 | DIEM progress ~14.21/100 | sources: blockscout=ok coingecko=ok
