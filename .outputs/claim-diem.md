@@ -1,1 +1,1 @@
-AUTONO claim: +0.00 DIEM | Total: 12.75/100 | Mode: accumulate | Blocked: AGENT_PRIVATE_KEY missing in CI env. FeeLocker ~0.24-0.96 DIEM pending. 87.25% to compute milestone.
+AUTONO claim: +0.00 DIEM | Total: 12.75/100 | Mode: accumulate | 12.75% to compute milestone | BLOCKER (4 cycles): AGENT_PRIVATE_KEY not in CI env — ~0.24-0.96 DIEM unclaimed in FeeLocker. Inject key to unblock.
