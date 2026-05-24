@@ -1,14 +1,14 @@
 {
   "tick": {
-    "last_status": "dispatched",
+    "last_status": "success",
     "last_failed": "2026-05-23T23:44:07Z",
-    "total_runs": 67,
-    "total_successes": 28,
+    "total_runs": 68,
+    "total_successes": 29,
     "total_failures": 39,
-    "consecutive_failures": 11,
-    "success_rate": 0.42,
+    "consecutive_failures": 0,
+    "success_rate": 0.43,
     "last_error": "04efb10\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"",
-    "last_success": "2026-05-23T09:27:48Z",
+    "last_success": "2026-05-24T01:50:48Z",
     "last_dispatch": "2026-05-24T01:49:19Z"
   },
   "lp-monitor": {
