@@ -1,1 +1,1 @@
-tick: skipped — env vars absent (DIEM_TOKEN_ADDRESS/RPC_URL/PRIVY not set). DIEM=12.75/100. Dependabot: 0 open PRs.
+tick: claimed 1.387 DIEM, LP'd 1.463 DIEM | ticks=[1800,2200] currentTick=2368 | Dependabot: 0 open PRs
