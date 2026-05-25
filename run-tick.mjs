@@ -1,4 +1,3 @@
-// Temporary tick runner — injects known Base mainnet addresses then runs harness/tick.ts
 import { spawn } from 'child_process';
 
 const env = {
