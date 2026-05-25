@@ -1,1 +1,1 @@
-tick: LP'd 1.387 DIEM | ticks=[1000,1400] currentTick=1551 | DIEM=12.75/100 | Dependabot: 0 open PRs
+tick: FAILED | Error: DIEM_TOKEN_ADDRESS is required — missing env vars (DIEM_TOKEN_ADDRESS, VENICE_STAKING_ADDRESS, RPC_URL), no .env present | Dependabot: 0 open PRs
