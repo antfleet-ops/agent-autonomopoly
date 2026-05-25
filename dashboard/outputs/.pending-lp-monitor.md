@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: repositioned 5181183→5187280 + 5181928→5187284 | range [1200,3200] | tick 2312→2362 | 1.1764 DIEM claimed from FeeLocker
+AUTONOMOPOLY LP: all positions in range | tick=2794 | 3 active (5153290 [800-2800], 5187280 [1200-3200], 5187284 [1200-3200]) | FeeLocker=0.0766 DIEM claimable | WETH=1.3913
