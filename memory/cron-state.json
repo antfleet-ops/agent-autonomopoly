@@ -1,6 +1,6 @@
 {
   "tick": {
-    "last_status": "failed",
+    "last_status": "dispatched",
     "last_failed": "2026-05-24T23:44:57Z",
     "total_runs": 82,
     "total_successes": 32,
@@ -9,10 +9,10 @@
     "success_rate": 0.39,
     "last_error": "abc95ae\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"",
     "last_success": "2026-05-24T10:22:39Z",
-    "last_dispatch": "2026-05-24T23:44:25Z"
+    "last_dispatch": "2026-05-25T01:55:22Z"
   },
   "lp-monitor": {
-    "last_status": "failed",
+    "last_status": "dispatched",
     "last_failed": "2026-05-24T23:44:51Z",
     "total_runs": 81,
     "total_successes": 19,
@@ -20,11 +20,11 @@
     "consecutive_failures": 15,
     "success_rate": 0.23,
     "last_error": "59e1f37\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"",
-    "last_dispatch": "2026-05-24T23:44:25Z",
+    "last_dispatch": "2026-05-25T01:55:22Z",
     "last_success": "2026-05-24T08:37:59Z"
   },
   "heartbeat": {
-    "last_status": "failed",
+    "last_status": "dispatched",
     "last_failed": "2026-05-24T23:44:45Z",
     "total_runs": 53,
     "total_successes": 14,
@@ -32,7 +32,7 @@
     "consecutive_failures": 10,
     "success_rate": 0.26,
     "last_error": "723425d\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"",
-    "last_dispatch": "2026-05-24T23:44:25Z",
+    "last_dispatch": "2026-05-25T01:55:22Z",
     "last_success": "2026-05-24T08:38:44Z"
   },
   "on-chain-monitor": {
@@ -46,8 +46,8 @@
     "success_rate": 1
   },
   "claim-diem": {
-    "last_dispatch": "2026-05-24T23:44:25Z",
-    "last_status": "failed",
+    "last_dispatch": "2026-05-25T01:55:22Z",
+    "last_status": "dispatched",
     "last_success": "2026-05-24T01:51:42Z",
     "total_runs": 37,
     "total_successes": 5,
