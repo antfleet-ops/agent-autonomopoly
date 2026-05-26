@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: all positions in range | tick=2794 | 3 active (5153290 [800-2800], 5187280 [1200-3200], 5187284 [1200-3200]) | FeeLocker=0.0766 DIEM claimable | WETH=1.3913
+AUTONOMOPOLY LP: repositioned tokenId 5153290 → 5190707 | range [2000,4000] | tick 3159 | 0.5835 DIEM claimed from FeeLocker
