@@ -1,1 +1,1 @@
-AUTONO claim: +0 DIEM | Total: 12.75/100 | Mode: accumulate | 87.2% away | BLOCKER: AGENT_PRIVATE_KEY not in CI env (5th cycle)
+AUTONO claim: +0 DIEM | FeeLocker: 0 claimable (on-chain confirmed) | Total: 12.75/100 | WETH: 11.11 (13 LP pos) | Mode: accumulate | 87.25% to compute milestone
