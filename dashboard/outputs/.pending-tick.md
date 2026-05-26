@@ -1,1 +1,1 @@
-tick: nothing to claim/LP | maintenance inference ran | DIEM=12.75/100 | Dependabot: 0 open PRs
+tick: nothing claimed, LP'd 9.63 DIEM | ticks=[2400,2800] currentTick=2983
