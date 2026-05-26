@@ -10,6 +10,8 @@
 //     [--metadata '{"k":"v"}']
 //     [--vvv-vault 0x...]            # optional: VVV presale vault (10% supply, irrevocable)
 //     [--diem-vault 0x...]           # optional: DIEM presale vault (10% supply, time-lock)
+//     [--presale-vault 0x...]        # optional: StakesaleVault (single vault, configurable bps)
+//     [--extension-bps 2000]         # bps for --presale-vault (default: 2000 = 20%)
 //     [--dry-run]
 //
 // Tick math: tickIfToken0IsLiquid = round(log(diemPerToken) / log(1.0001) / 60) * 60
@@ -184,9 +186,11 @@ async function main() {
   const metadata      = args['metadata'] ?? '';
   const vvvVault      = args['vvv-vault'] as Address | undefined;
   const diemVault     = args['diem-vault'] as Address | undefined;
+  const presaleVault  = args['presale-vault'] as Address | undefined;
+  const extensionBpsArg = parseInt(args['extension-bps'] ?? '2000');
 
   if (!name || !symbol) {
-    console.error('Usage: --name "Token Name" --symbol "SYM" [--creator 0x...] [--marketcap-diem 50] [--vvv-vault 0x...] [--diem-vault 0x...] [--dry-run]');
+    console.error('Usage: --name "Token Name" --symbol "SYM" [--creator 0x...] [--marketcap-diem 50] [--vvv-vault 0x...] [--diem-vault 0x...] [--presale-vault 0x... --extension-bps 2000] [--dry-run]');
     process.exit(1);
   }
 
@@ -214,6 +218,9 @@ async function main() {
   if (diemVault) {
     extensionConfigs.push({ extension: diemVault, msgValue: 0n, extensionBps: 1000, extensionData: '0x' });
   }
+  if (presaleVault) {
+    extensionConfigs.push({ extension: presaleVault, msgValue: 0n, extensionBps: extensionBpsArg, extensionData: '0x' });
+  }
 
   // Adjust locker position bps if extensions consume supply
   const extensionTotalBps = extensionConfigs.reduce((s, e) => s + e.extensionBps, 0);
@@ -229,6 +236,7 @@ async function main() {
   console.log(`  pairedToken:    DIEM (${DIEM})`);
   console.log(`  vvvVault:       ${vvvVault ?? 'none'}`);
   console.log(`  diemVault:      ${diemVault ?? 'none'}`);
+  console.log(`  presaleVault:   ${presaleVault ?? 'none'}${presaleVault ? ` (${extensionBpsArg} bps)` : ''}`);
   console.log(`  extensionBps:   ${extensionTotalBps} (${extensionConfigs.length} vaults)`);
   console.log(`  lockerBps:      ${lockerBps}`);
 
