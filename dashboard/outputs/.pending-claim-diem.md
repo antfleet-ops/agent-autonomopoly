@@ -1,1 +1,1 @@
-AUTONO claim: +0 DIEM | FeeLocker: 0 claimable (on-chain confirmed) | Total: 12.75/100 | WETH: 11.11 (13 LP pos) | Mode: accumulate | 87.25% to compute milestone
+AUTONO claim-diem: 0.3376 DIEM pending in FeeLocker (confirmed on-chain). Claim blocked — AGENT_PRIVATE_KEY not in CI env (6th cycle). Total: 12.75/100 DIEM | ETH gas: 0.0079 OK
