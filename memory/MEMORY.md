@@ -9,13 +9,14 @@ Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
 Mode: **accumulate** — running on Venice (sDIEM restored), compounding LP
 sDIEM staked on Venice: **9.44** (~9 days compute runway at $1/DIEM/day)
+DIEM cumulative claimed: **12.75 / 100** (12.75% to build-mode unlock)
 DIEM in wallet: ~0 (staked)
 FeeLocker claimable: ~0 (claimed today)
 
-Active LP positions (both REPOSITION_NEAR_UPPER — act this tick):
-- **#5187280** [1200,3200] — 193 ticks to upper boundary. LP value ~$3,569
-- **#5187284** [1200,3200] — 193 ticks to upper boundary. LP value ~$1,831
-- Position #5190707 [2000,4000] closed 2026-05-26, DIEM staked
+Active LP positions (repositioned 2026-05-26, both safe):
+- **#5196524** [1800,3800] — minted 2026-05-26T23:09Z, replaces #5187280
+- **#5196526** [2000,4000] — minted 2026-05-26T23:09Z, replaces #5187284
+- #5190707 [2000,4000] — closed 2026-05-26, DIEM staked as sDIEM
 
 ## On Every Tick — Dune First
 

@@ -67,6 +67,18 @@ Validates `identity/`, `SECTION_5.md`, and `ARCHITECTURE_v2.md` on every commit.
 3. **Broken internal links** — `[[path/to/page]]` links must resolve to an existing file.
 4. **Quote cap** — any blockquote block must be ≤ 25 words.
 
+### `platform/venice-auth.ts`
+
+Derives the agent's Venice API key by signing a challenge with the agent wallet (proves sVVV staking ownership). Resolution order: `VENICE_API_KEY` env → wallet challenge bootstrap (2 HTTP calls + 1 Privy sign). `withVeniceKey(signer, fn)` wraps any Venice-dependent operation and retries once with a fresh key on 401.
+
+### `scripts/analyze-lp.ts`
+
+Runs each tick to evaluate LP performance. Executes Dune Q7582914 (master portfolio — pre-computed `fee_apr_pct`, `il_pct`, `net_pnl_usd`, `recommended_action` per position), sends metrics to Venice AI for positioning recommendations, writes `memory/lp-analysis-YYYY-MM-DD.md`, and updates Dune strategy log Q7582817.
+
+### `scripts/reposition.ts`
+
+Closes an out-of-range (or near-boundary) LP position, optionally claims FeeLocker fees, swaps 50% of returned tokens to rebalance, and mints a new in-range position centered on the current tick (±5 spacings). Records new tokenId in `memory/lp-positions.jsonl`. Use `--force` to reposition an in-range position.
+
 ### `identity/`
 
 Six files in genesis/mutable pairs: `SOUL.genesis.md` + `SOUL.md`, `STYLE.genesis.md` + `STYLE.md`, `influences.md`. Templates ship with `.template` extension; the deploy-time substitution replaces them with the real files. `SCHEMA.md` is genesis-locked and defines all rules the lint enforces. `identity/index.ts` exports the module. `examples/` holds calibration corpus (good/bad outputs; `promoted/` fills as the agent runs).
@@ -83,10 +95,10 @@ The three load-bearing conclusions — read `ARCHITECTURE_v2.md` for the full ra
 
 ## Active plans
 
-- `MVP_PLAN.md` — 13 sessions to ship the v0 funding loop end-to-end. Sessions 1–4 (identity bundle, lint tests, allowlist, wallet) are complete. Session 5 next: tool-routing sidecar.
-- `PLAN.md` — full 28-ticket dispatch plan covering all Linear issues.
+- `MVP_PLAN.md` — 13 sessions to ship the v0 funding loop end-to-end. Sessions 1–4 (identity bundle, lint tests, allowlist, wallet) complete. Session 5: tool-routing sidecar (next).
+- `PLAN.md` — full 28-ticket dispatch plan; superseded in detail by MVP_PLAN.md but retained for Linear ticket context.
 
-When resuming: read this file → `ARCHITECTURE_v2.md` → `SECTION_5.md` → `MVP_PLAN.md`.
+When resuming: read this file → `ARCHITECTURE_v2.md` → `SECTION_5.md` → `MVP_PLAN.md` → `memory/MEMORY.md`.
 
 ## Planned infrastructure (post-v2)
 

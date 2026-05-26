@@ -53,18 +53,18 @@ For each active position (`is_active=true`):
 
 ### 1. REPOSITION_OOR
 Position is out of range — earning zero fees. Act immediately.
-- Run `scripts/close-and-add.ts --token-id <id> --target-tick <cur_tick> --range-width <original_width>`
-- Range width = `tick_hi - tick_lo` from the data. Center new range on `cur_tick`, snapped to nearest 200.
+- Run `scripts/reposition.ts --token-id <id>`
+- Script auto-detects direction (above/below range), closes position, swaps 50% to rebalance, mints new range centered on current tick (±5 spacings = 2000 ticks wide), records in `memory/lp-positions.jsonl`.
 
 ### 2. REPOSITION_NEAR_UPPER / REPOSITION_NEAR_LOWER
 Position is in range but within 600 ticks (3 spacings) of a boundary — will go OOR soon.
 - Query Venice: "Current tick is {cur_tick}. Position {token_id} range [{tick_lo},{tick_hi}]. Signal: {recommended_action}. Should I reposition now or wait? Consider: fee_apr={fee_apr_pct}%, il_pct={il_pct}%, net_pnl={net_pnl_usd} USD."
-- If Venice says reposition: execute close-and-add centered 200 ticks from cur_tick in the direction of more room.
+- If Venice says reposition: run `scripts/reposition.ts --token-id <id> --force`
 - If Venice says wait: log reasoning, re-check next tick.
 
 ### 3. COLLECT_FEES
 7+ days since last collect AND fees > 0.
-- Run `scripts/collect-lp-fees.ts --token-id <id> --skip-swap`
+- Run `scripts/claim.ts` to pull FeeLocker DIEM to wallet
 - After collect: if wallet DIEM > 1, run `scripts/stake-diem.ts --target 10` to restore sDIEM credits.
 
 ### 4. HOLD
@@ -99,15 +99,13 @@ At current LP scale (~$35k deployed), target fee income covers ~5-10 sDIEM per w
 
 ## Active Positions as of 2026-05-26
 
-| Token ID | Range | Status | Signal |
-|----------|-------|--------|--------|
-| #5187280 | [1200,3200] | in_range | REPOSITION_NEAR_UPPER (193 ticks to boundary) |
-| #5187284 | [1200,3200] | in_range | REPOSITION_NEAR_UPPER (193 ticks to boundary) |
+| Token ID | Range | Status | Note |
+|----------|-------|--------|------|
+| #5196524 | [1800,3800] | in_range | Minted 2026-05-26T23:09Z, replaces #5187280 |
+| #5196526 | [2000,4000] | in_range | Minted 2026-05-26T23:09Z, replaces #5187284 |
 
-Position #5190707 [2000,4000] was fully closed 2026-05-26 — DIEM staked as sDIEM (9.44 DIEM).
-
-**Immediate action required:** Both #5187280 and #5187284 are within 193 ticks of their upper
-boundary at current tick 3007. Reposition on next tick.
+#5190707 [2000,4000] closed 2026-05-26 — DIEM staked as sDIEM (9.44 DIEM).
+#5187280 and #5187284 closed 2026-05-26 — repositioned to wider ranges above.
 
 ## Logging (required every tick)
 

@@ -35,7 +35,7 @@ First deployed instance of the [deploy-autonomous](https://github.com/Liquid-Pro
 **Wallet:** `0x8767Df39eCeeaeB11554642237aC4E08660aB6A3`  
 **Template:** `github.com/Liquid-Protocol-Ops/deploy-autonomous`  
 **Deployed:** 2026-05-14  
-**Status:** Accumulate mode — LP reinvestment live
+**Status:** Accumulate mode — 12.75 / 100 DIEM toward build-mode unlock
 
 ## How it works
 
@@ -67,13 +67,14 @@ Mode is not a preference. Declaring build mode before the yield justifies it is 
 
 **Target pool:** ETH/DIEM Uniswap v3 1%, Base mainnet  
 **Pool address:** `0x80d995189ecc593672aD4703b250a5e82672EB1D`  
-**APR:** 655.91% ($56.6K TVL as of 2026-05-14)
+**Tick spacing:** 200 (1% fee tier)
 
-**Position type:** Single-sided DIEM, minted below current tick  
-- `tickUpper` = largest spacing multiple strictly below currentTick (tick spacing = 200)
-- `tickLower` = tickUpper - N x 200 (short = 2 spacings, medium = 5)
-- No WETH required — DIEM only
-- New `mint` per reinvestment cycle; tokenId stored in `memory/` for fee collection
+**Position type:** Two-sided WETH/DIEM, wide ranges (±5 spacings = 2000 ticks)  
+- New positions centered on current tick, snapped to nearest 200
+- Repositions via `scripts/reposition.ts` — closes OOR position, swaps 50% to rebalance, mints new range
+- Reposition trigger: within 3 spacings (600 ticks) of any boundary
+- Position history tracked in `memory/lp-positions.jsonl`
+- Performance data from Dune Q7582914 (master portfolio, refreshed each tick)
 
 ## Identity (genesis-locked)
 
@@ -91,9 +92,10 @@ Lineage: Aaron J Mars `soul.md` pattern, adapted with genesis-lock and drift-thr
 
 | Item | Value |
 |------|-------|
-| DIEM balance | ~4.6 DIEM |
-| FeeLocker position | AUTONOMOPOLY/DIEM pool |
-| Venice budget | accumulate mode (0 Opus spend) |
+| DIEM claimed (cumulative) | 12.75 / 100 DIEM |
+| sDIEM staked (Venice) | 9.44 DIEM (~9 days compute) |
+| Active LP positions | #5196524 [1800,3800], #5196526 [2000,4000] |
+| Venice budget | accumulate mode (llama only; Opus unlocks at 100 DIEM) |
 | Target LP | ETH/DIEM v3 1% (`0x80d995...EB1D`) |
 
 ## Commands
@@ -107,6 +109,6 @@ npm run harness:tick     # one tick locally (needs .env)
 
 ## What's next
 
-- Mode determination — daily fee rate from FeeLocker event history vs threshold (replace AGENT_MODE env var)
-- Track LP position tokenId in `memory/` after first mint; use `increaseLiquidity` on subsequent claims
-- Venice key flow — fix `/api_keys/generate_web3_key` endpoint, wire sVVV gate properly
+- Reach 100 DIEM cumulative claimed → unlock build mode (sustained Opus inference)
+- Build agent launchpad — webapp where anyone can launch a Liquid Protocol agent token (blocked on milestone above)
+- Tool-routing sidecar — defines which on-chain actions the agent can take autonomously per tick vs. operator-approved
