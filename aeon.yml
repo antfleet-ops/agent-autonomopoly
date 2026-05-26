@@ -45,7 +45,7 @@ model: claude-sonnet-4-6
 #   surplus — Surplus Intelligence marketplace (requires SURPLUS_API_KEY secret)
 #   direct  — Anthropic API directly (requires ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN)
 gateway:
-  provider: venice
+  provider: direct   # Venice credits depleted 2026-05-26; using CLAUDE_CODE_OAUTH_TOKEN until sDIEM replenishes
 
 # Reactive triggers — auto-repair on consecutive failures
 reactive:
