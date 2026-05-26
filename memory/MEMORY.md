@@ -5,32 +5,50 @@ Token: AUTONO | CA: `0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e`
 FeeLocker: `0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF`
 Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
-## Current State (as of 2026-05-16)
+## Current State (as of 2026-05-26)
 
-Mode: **accumulate** — running on free/cheap inference, compounding LP
-DIEM accumulated: **9.28 / 100** toward compute milestone
-DIEM in wallet: ~9.743 (unstaked)
-DIEM staked on Venice: ~8.634
-FeeLocker claimable: ~0.405 DIEM
+Mode: **accumulate** — running on Venice (sDIEM restored), compounding LP
+sDIEM staked on Venice: **9.44** (~9 days compute runway at $1/DIEM/day)
+DIEM in wallet: ~0 (staked)
+FeeLocker claimable: ~0 (claimed today)
 
-WETH/DIEM LP: **OUT OF RANGE** (position tick 4645, range [5000-5400]) — earning zero fees
-→ LP needs repositioning before fee accumulation resumes
+Active LP positions (both REPOSITION_NEAR_UPPER — act this tick):
+- **#5187280** [1200,3200] — 193 ticks to upper boundary. LP value ~$3,569
+- **#5187284** [1200,3200] — 193 ticks to upper boundary. LP value ~$1,831
+- Position #5190707 [2000,4000] closed 2026-05-26, DIEM staked
+
+## On Every Tick — Dune First
+
+**Before any inference or on-chain action, read portfolio state from Dune:**
+
+```bash
+curl -s "https://api.dune.com/api/v1/query/7582914/results?limit=20" \
+  -H "X-Dune-API-Key: ${DUNE_API_KEY}"
+```
+
+Query ID 7582914 returns one row per position with: `recommended_action`, `reposition_flag`,
+`ticks_to_lower`, `ticks_to_upper`, `il_pct`, `fee_apr_pct`, `net_pnl_usd`, current prices.
+**Do not call any other Dune query.** This is the single source of truth.
+
+Full decision tree and logging spec: `memory/lp-strategy.md`
 
 ## Goals (see memory/goals.json for live state)
 
-1. **Accumulate 100 DIEM** — unlocks build mode (sustained Opus inference)
-2. **Build Agent Launchpad** — webapp where anyone launches a Liquid Protocol agent with VVV/DIEM presale vault
+1. **Dune → LP Strategy → Compute Flywheel** ← ACTIVE — read Q7582914 each tick, reposition/collect as signalled, stake fees as sDIEM
+2. **Accumulate 100 DIEM** — unlocks build mode (sustained Opus inference)
+3. **Build Agent Launchpad** — blocked on milestone 2
 
 ## Skills Available
 
 | Skill | Schedule | What it does |
 |-------|----------|--------------|
-| tick | every hour | On-chain claim + LP maintenance |
+| tick | every hour | On-chain claim + LP maintenance + Dune read |
 | heartbeat | 3x daily (8,14,20 UTC) | Health check: skills, LP state, gas reserve |
 | lp-monitor | daily noon UTC | LP range check, reposition decision |
 | on-chain-monitor | daily 6am UTC | Wallet + FeeLocker snapshot |
 | claim-diem | every 12h | Claim FeeLocker → update goals.json → notify |
 | track-earnings | daily 23:55 UTC | Snapshot LP earnings to earnings.jsonl |
+| stake-diem | every 6h | Check sDIEM; if < 5, claim + stake automatically |
 
 ## How to interact with creator
 
@@ -40,16 +58,16 @@ Always respond via `./notify "message"`.
 Lead with numbers, be direct, no filler preamble.
 
 Common requests and how to handle:
-- "check status" → run check-portfolio.ts, report mode/DIEM/LP state
+- "check status" → read Q7582914, report active positions + recommended_action, sDIEM balance
 - "claim your DIEM" → run claim-diem skill (dry-run first, confirm, then live)
-- "what's my balance" → read from check-portfolio.ts output
-- "reposition LP" → run lp-monitor skill
+- "what's my balance" → read from Q7582914 + stakedInfos on-chain
+- "reposition LP" → run lp-monitor skill; check Q7582914 first
 - "switch to build mode" → only if DIEM >= 100 or daily rate >= 5; explain if threshold not met
 
 ## Mode transition logic
 
 Promote accumulate → build when EITHER:
-- `milestones[0].current >= 100` DIEM total
+- `milestones[1].current >= 100` DIEM total
 - Daily LP fee rate >= 5 DIEM/day sustained
 
 When promoting: set `mode: "build"` in goals.json, send urgent Telegram notify, enable build skill in aeon.yml.
