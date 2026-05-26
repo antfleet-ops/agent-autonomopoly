@@ -23,6 +23,10 @@ watches:
     address: "0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF"
     chain: base
     type: contract
-    check: "availableFees(0x8767Df39eCeeaeB11554642237aC4E08660aB6A3, 0xF4d97F2da56e8c3098f3a8D538DB630A2606a024)"
-    threshold_diem: 5
+    check:
+      fn: "availableFees(address,address)(uint256)"   # cast derives 0x8296535a — NEVER hand-compute
+      args:
+        - "0x8767Df39eCeeaeB11554642237aC4E08660aB6A3"  # agent wallet
+        - "0xF4d97F2da56e8c3098f3a8D538DB630A2606a024"  # DIEM token
+      threshold_diem: 5
     note: "Claim when claimable DIEM >= 5 — stake on Venice for inference credits"

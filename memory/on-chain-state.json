@@ -1,62 +1,26 @@
 {
   "AUTONOMOPOLY agent wallet": {
-    "last_block": 46451126,
-    "last_run": "2026-05-25T06:09:00Z",
-    "alerted_tx": [
-      "0x096475d457786c4310ce946a7c8902d8321e068deb61fabff225e773c27c3e4a",
-      "0x3519568099ad7ec7a95ed68150e87307f242bf3c0c1e74564863ba761b91c880",
-      "0x60fa48586eaf48f2ec348594433e19d7d22d24a8c5080d60b961fea6946f16a0",
-      "0xca8f2acdbee811f41982d4badbce784b0b5effef3790a71207a3540b98953556",
-      "0x4cbc4b30ed8c0f68c4a8fb706a81fd68008c63a4c46a4a33b5976b81f48c814a",
-      "0xf278e948c64477513f6495e34c5e8242346c46ba37aa1d5a37580a19a49b14cf",
-      "0x3c6724d2a94fed5448aef9fc6db8807105a087b9f919dca25478a1e485debfd4",
-      "0xfa3581ab8cc22a45d7c84a7a2f9e363aca43733a2ba441e000e3c9879894dfc7",
-      "0x40cb0d5ae18af44c0c5ceccccecbcfd735969b8405980ef62c870fe91ca11c30",
-      "0x0be7412b0d1f30ac5a3723bbaa576de19efa6c1ee6241d4f80c66484380e9181",
-      "0xfa4073ba436c90832c6b6587751ae487dbdbdb8c84e6c03914d24e6a40af047b",
-      "0x0e59a2327a12bce2961b9c6b3df21e22e56b19b38aa1c0f4af3678349dda7c38",
-      "0x548c3669744144c887098f5ff42332bfb2295565f5c33bb926156d56d2c8c679",
-      "0xece1afaa0f22d834eaa2361095935e09a4585b4d50b6e4851fa50815125e8f55",
-      "0xb148f3b970e96430c3e3b2dcf63986c1fca995df3f1e7f7e85679113075d3c28",
-      "0x3aaea94d884ebec72671dd8d37142a2f3293398ee06b5c88a26d7527228b502d",
-      "0x7a57af1cee781d62a9dd3faeb3cac60c0262fd2394537974ad0fcd062a5bb2b7",
-      "0xdea1d8494a42691e694566b3a250ea96aee667e77459ff2eba21bfbe7c96961f",
-      "0x382ee7ec3acca4c3507e252d2f7f3b080e027637d9cdf337e97217f5fd56111d",
-      "0xcbef98cbc719697fefa71adf83b7c0d20e12828ad181fa4344cfb3ff31d31e1f",
-      "0x5a1b5ed55efa7f816d02a1bf4eae2d36b122f7d156ffb54bdb5273b0d8b17374",
-      "0x9f3f2c152628ca4b7c982c262517fe35b794d19910d57ffd0627f937eab8e99b",
-      "0xc4cb56714c83afa36d94542e96d4f118bcf6bf6fec1950b98ad8333c7d81dc4a",
-      "0xdb56c2efe01f747c7f0e8bbe3adec151708c453a60eef03bd73684d5cf1d8a0a",
-      "0x767dcb900d70c7f01a61dbdaafa8dfada51665cba72001e14a900e9c8941bb1c",
-      "0x320a164db97b156f187c8e8d897ad896c9e10db937dc7c15366bfe373b830d45",
-      "0xa769e6c6d3fb7a07cc6f68800651af70440bce368ecc1594b730a8fb2fc2489f",
-      "0x5f778a3c9104dcc292929f6a40aee258ced262ce10dcc4b991efc79c0fa3b401",
-      "0xa77dadbebfc11b9eded25ba4ccf4aee5c4bd60095860bf480c5f27de1b75bc66",
-      "0xd41e57966a3a4f2e04be856523f1b834353849ce3e430e1a18b589e2af1563f3",
-      "0x5c70464544dd8914cfdf4d6d215bc80f4cb88957dff65a268e25b9b23ea1bd8f",
-      "0xd33390e87f96d7e2ba4237afdb827fdad42978d0db3851ed35cbcbac1180e833"
-    ],
-    "median_usd_30d": 1621
+    "last_block": 46145149,
+    "last_run": "2026-05-18T07:08:28Z",
+    "alerted_tx": ["0xd33390e87f96d7e2ba4237afdb827fdad42978d0db3851ed35cbcbac1180e833"],
+    "median_usd_30d": null
   },
   "ETH/DIEM Uniswap v3 1% pool": {
-    "last_block": 46451126,
-    "last_run": "2026-05-25T06:09:00Z",
+    "last_block": 46145149,
+    "last_run": "2026-05-18T07:08:28Z",
     "alerted_tx": [],
-    "median_usd_30d": 138,
-    "note": "Contract logs not fetched independently — no Alchemy/Etherscan key available for Base. Pool activity visible via wallet token-transfers."
+    "median_usd_30d": 138
   },
   "AUTONO token contract": {
-    "last_block": 46451126,
-    "last_run": "2026-05-25T06:09:00Z",
+    "last_block": 46145149,
+    "last_run": "2026-05-18T07:08:28Z",
     "alerted_tx": [],
-    "median_usd_30d": null,
-    "note": "Skipped — no Alchemy/Etherscan key available. Source: blockscout wallet token-transfers only."
+    "median_usd_30d": null
   },
   "AUTONO FeeLocker DIEM claimable": {
-    "last_block": 46451126,
-    "last_run": "2026-05-25T06:09:00Z",
-    "alerted_tx": [],
-    "median_usd_30d": null,
-    "note": "availableFees call reverted — contract may not be deployed or selector mismatch. FeeLocker claims visible via wallet token-transfers: 2 claims 2026-05-24 (1.387 DIEM, $2,254 + 1.463 DIEM via restake cycle)."
+    "last_block": 46145149,
+    "last_run": "2026-05-18T07:08:28Z",
+    "last_value": "0",
+    "last_alerted_value": "0"
   }
 }

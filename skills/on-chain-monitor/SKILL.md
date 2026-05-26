@@ -28,6 +28,16 @@ watches:
     type: contract
     event_topics:            # optional — only alert on these topic0 hashes
       - "0xddf252ad..."      # ERC20 Transfer
+  - label: My FeeLocker balance
+    address: "0xF7d3BE3..."
+    chain: base
+    type: contract
+    check:
+      fn: "availableFees(address,address)(uint256)"  # full sig WITH return type — cast reads this
+      args:                                           # NEVER hand-write the 4-byte selector
+        - "0xAgentWallet..."
+        - "0xDiemToken..."
+      threshold_diem: 5      # alert when claimable wei > 5 × 1e18
 ```
 
 Optional `memory/known-addresses.yml` — counterparty label dictionary used to humanize alerts. Lowercase keys, free-text values:
@@ -50,6 +60,12 @@ labels:
     "last_run": "2026-04-20T12:00:00Z",
     "alerted_tx": ["0xabc...", "0xdef..."],
     "median_usd_30d": 8500
+  },
+  "My FeeLocker balance": {
+    "last_block": 19345678,
+    "last_run": "2026-04-20T12:00:00Z",
+    "last_value": "1760804950210169625",
+    "last_alerted_value": "0"
   }
 }
 ```
@@ -57,6 +73,8 @@ labels:
 - `last_block` — start block for the next run's fetch. Initialise to `current_block − 2400` (≈ 8h ETH) on first run.
 - `alerted_tx` — tx hashes alerted in last 7 days, capped at 200. Used for cross-run dedup.
 - `median_usd_30d` — rolling median USD size of transfers at this watch; powers the `WHALE-TRANSFER` tag.
+- `last_value` — (check: watches only) raw wei string returned by the view call on the last successful run. Used for level-crossing logic — do NOT alert if the value hasn't crossed the threshold since `last_alerted_value`.
+- `last_alerted_value` — (check: watches only) value at the time the last notification was sent. Reset to `last_value` after each alert; initialise to `"0"`. Together with `last_value`, this lets the agent know whether the balance crossed the threshold since it last told the operator.
 
 Write the file via `mv` from a tempfile so a mid-run failure cannot corrupt state.
 
@@ -137,6 +155,68 @@ Drop an event if any of:
 - `value_usd < $0.10` (hard dust floor — prevents airdrop / phishing spam)
 - `tx_hash` already present in this watch's `alerted_tx` (cross-run dedup)
 - `category == "log"` and watch has `event_topics:` and the topic0 is not in the list
+
+### 4b. View-function reads (`check:` watches)
+
+**Rule: NEVER hand-compute a 4-byte selector.** The keccak256 of a function signature must be derived by a tool. Hand-recalled selectors are wrong — `0xe7acab24` looks like `availableFees` to a language model but is actually Seaport's `fulfillAdvancedOrder`; `0x16f32c8f` is another known collision class. Always derive at runtime.
+
+For each watch with a `check:` block, run a view call using **cast** (preferred) or a raw `eth_call` (fallback):
+
+**Path A — cast** (preferred; derives selector from signature via keccak256):
+
+Chain → RPC: `base=https://mainnet.base.org`, `ethereum=https://eth.llamarpc.com`, `arbitrum=https://arb1.public.blastapi.io`, `optimism=https://mainnet.optimism.io`, `polygon=https://polygon-rpc.com`.
+
+```bash
+# fn is the full signature WITH return type in the last parens — cast uses it for decoding
+# args are space-separated positional values
+cast call ${watch.address} \
+  "${check.fn}" \
+  ${check.args.join(' ')} \
+  --rpc-url ${RPC_URL}
+```
+
+Example (canonical FeeLocker read):
+```bash
+cast call 0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF \
+  "availableFees(address,address)(uint256)" \
+  0x8767Df39eCeeaeB11554642237aC4E08660aB6A3 \
+  0xF4d97F2da56e8c3098f3a8D538DB630A2606a024 \
+  --rpc-url https://mainnet.base.org
+# returns: 1760804950210169625  (≈ 1.76 DIEM)
+# canonical selector: 0x8296535a  (derived by cast from the signature above)
+```
+
+**Path B — eth_call via curl** (fallback when cast is unavailable):
+
+```bash
+# Define the contract address FIRST — ${ADDRESS} must be set before the curl command
+ADDRESS="<watch.address>"   # e.g. 0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF
+# Encode calldata: cast abi-encode the selector + args, or use a known-correct hex
+# NEVER use a manually recalled 4-byte selector — use `cast sig "<fn>(argTypes)"` to derive it
+SELECTOR=$(cast sig "${check.fn_sig_only}")   # fn_sig_only = signature without return type
+ENCODED_ARGS=$(cast abi-encode "fn(${arg_types})" ${check.args.join(' ')})
+CALLDATA="${SELECTOR}${ENCODED_ARGS#0x}"
+
+curl -m 10 -s -X POST "${RPC_URL}" \
+  -H "Content-Type: application/json" \
+  -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_call\",\"params\":[{\"to\":\"${ADDRESS}\",\"data\":\"${CALLDATA}\"},\"latest\"]}"
+```
+
+**Level-crossing logic** (prevents re-alerting on every tick):
+
+1. Read `last_value` and `last_alerted_value` from state (default `"0"` if absent).
+2. Interpret the result as a `uint256` wei string.
+3. Compute `threshold_wei = threshold_diem × 10^18` (or the configured unit multiplier).
+4. Alert if **all** of:
+   - `current_value_wei ≥ threshold_wei`
+   - `current_value_wei > last_alerted_value` (crossed threshold since last alert — prevents spam)
+5. After alerting: `last_alerted_value ← current_value_wei`.
+6. Always: `last_value ← current_value_wei` (written every run regardless of alert).
+
+Log the read result every run — this makes the log useful for diagnosing silent failures:
+```
+- Watch: AUTONO FeeLocker DIEM claimable (base) | check: availableFees(...) | value: 1.7608 DIEM | threshold: 5 DIEM | no-alert (below threshold)
+```
 
 ### 5. Categorize surviving events
 
