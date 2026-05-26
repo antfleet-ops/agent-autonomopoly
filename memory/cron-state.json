@@ -1,14 +1,14 @@
 {
   "tick": {
-    "last_status": "failed",
+    "last_status": "success",
     "last_failed": "2026-05-26T22:57:43Z",
-    "total_runs": 101,
-    "total_successes": 41,
+    "total_runs": 102,
+    "total_successes": 42,
     "total_failures": 60,
-    "consecutive_failures": 4,
+    "consecutive_failures": 0,
     "success_rate": 0.41,
     "last_error": "sVVV staked: {svvv_balance:.6f}\\\")\\nprint(f\\\"  LP action: {'YES' if (claimable >= 0.1 or diem_balance >= 0.1) else 'NO - below threshold'}\\\")\\nEOF\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01471Hv56",
-    "last_success": "2026-05-26T16:36:12Z",
+    "last_success": "2026-05-26T23:05:10Z",
     "last_dispatch": "2026-05-26T22:37:24Z"
   },
   "lp-monitor": {
