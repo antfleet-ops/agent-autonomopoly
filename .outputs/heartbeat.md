@@ -1,1 +1,2 @@
-🔴 FAILED: tick (failed 2026-05-25 23:44 UTC, 6 consecutive), lp-monitor (failed 2026-05-25 23:44 UTC, 8 consecutive), heartbeat (failed 2026-05-25 23:44 UTC, 4 consecutive) — shared error: Venice zero-token (input_tokens=0, output_tokens=0) across all 3 skills. Venice API degradation suspected. Also: tick success_rate=39% (CHRONIC), lp-monitor=25% (CHRONIC), heartbeat=27% (CHRONIC), claim-diem=16% (CHRONIC). DIEM: 12.75/100 accumulate mode.
+🔴 FAILED: lp-monitor (22:37 UTC, consecutive_failures=3 — API degradation | success_rate=27%), heartbeat (22:37 UTC, consecutive_failures=2 | success_rate=27%)
+Tick OK: last_success 23:05 UTC. DIEM: 12.75/100. sDIEM: 9.44 (~9d runway).
