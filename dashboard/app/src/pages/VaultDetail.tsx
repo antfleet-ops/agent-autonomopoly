@@ -26,6 +26,7 @@ export default function VaultDetail() {
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(() => {
+    setError(null);
     if (!address || !isAddress(address)) {
       setError('Invalid vault address');
       setLoading(false);
