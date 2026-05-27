@@ -74,7 +74,7 @@ Mode is not a preference. Declaring build mode before the yield justifies it is 
 - Repositions via `scripts/reposition.ts` — closes OOR position, swaps 50% to rebalance, mints new range
 - Reposition trigger: within 3 spacings (600 ticks) of any boundary
 - Position history tracked in `memory/lp-positions.jsonl`
-- Performance data from Dune Q7582914 (master portfolio, refreshed each tick)
+- Performance data from Dune Q7591697 (v3 incremental master portfolio, ~2.5 credits/run)
 
 ## Identity (genesis-locked)
 
