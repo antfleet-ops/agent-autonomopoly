@@ -69,6 +69,10 @@ type PositionBenchmark = {
   diemPerWethNow:  number;
   diemUsdNow:      number;
 
+  // Actual deposited amounts (from IncreaseLiquidity events)
+  wethDeposited:   number;
+  diemDeposited:   number;
+
   // LP position value today
   curWeth:         number;     // from on-chain LP math (active) or 0 (closed)
   curDiem:         number;
@@ -411,6 +415,8 @@ async function benchmarkPosition(
     mintedAt:         rec.mintedAt,
     range:            `[${rec.tickLower},${rec.tickUpper}]`,
     active,
+    wethDeposited:    wethDep,
+    diemDeposited:    diemDep,
     ethUsdAtMint,     diemPerWethAtMint, diemUsdAtMint, costBasisUsd,
     ethUsdNow,        diemPerWethNow,    diemUsdNow,
     curWeth, curDiem, uncollectedWeth, uncollectedDiem, feesWeth, feesDiem,
@@ -442,7 +448,7 @@ function renderTable(results: PositionBenchmark[]): string {
     lines.push('**Cost basis at mint:**');
     lines.push(`| | WETH | DIEM | ETH/USD | DIEM/USD |`);
     lines.push(`|---|---|---|---|---|`);
-    lines.push(`| Deposited | ${tok(r.curWeth)} WETH | ${tok(r.curDiem)} DIEM | — | — |`);
+    lines.push(`| Deposited | ${tok(r.wethDeposited)} WETH | ${tok(r.diemDeposited)} DIEM | — | — |`);
     lines.push(`| Mint prices | — | — | ${usd(r.ethUsdAtMint)} | ${usd(r.diemUsdAtMint)} |`);
     lines.push(`| **Cost basis** | | | **${usd(r.costBasisUsd)}** | |`);
     lines.push('');
