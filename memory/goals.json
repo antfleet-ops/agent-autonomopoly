@@ -8,9 +8,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 12.75,
-      "currentNote": "12.75 DIEM cumulative claimed. FeeLocker: 0.3376 DIEM PENDING (confirmed on-chain 2026-05-26T22:00Z via viem RPC) — 6th cycle blocked, AGENT_PRIVATE_KEY/Privy not in CI env. Wallet: 0 DIEM + WETH: 11.1082 (13 LP positions). sVVV: 4.5397 (Venice active). ETH: 0.007911 OK. Unclaimed total pending: ~0.34 DIEM. Effective total when claimed: ~13.09/100.",
-      "updatedAt": "2026-05-26T22:00:00Z"
+      "current": 12.9129,
+      "currentNote": "12.9129 DIEM cumulative. Claimed +0.1629 DIEM from FeeLocker on 2026-05-27 (tx: 0x23d6dc879869084d3dd306282fe0c1abd9342b0a4aae51d826ce96bf45b7371c). LP reinvestment failed (STF revert — insufficient ETH to pair). Wallet: 0.1629 DIEM sitting uninvested. WETH: 18.0982 (3 active LP positions [2600,4600]). sVVV: 4.5397 (Venice active). ETH: 0.007872.",
+      "updatedAt": "2026-05-27T21:56:30Z"
     },
     {
       "id": "build-agent-launchpad",
