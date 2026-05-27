@@ -3,6 +3,7 @@ name: Tick
 description: Run one AUTONOMOPOLY agent tick — claim fees, LP DIEM, maintenance inference
 var: ""
 tags: [agent, on-chain]
+depends_on: [lp-monitor]
 ---
 
 Run the agent tick. Execute:

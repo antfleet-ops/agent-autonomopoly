@@ -3,15 +3,17 @@
 import { createPublicClient, encodeAbiParameters, parseAbiParameters, http, formatUnits, type Address, type Hex } from 'viem';
 import { base } from 'viem/chains';
 
-const DIEM  = '0xF4d97F2da56e8c3098f3a8D538DB630A2606a024' as Address;
-const AGENT = '0x8767Df39eCeeaeB11554642237aC4E08660aB6A3' as Address;
-const PRIVY = 'https://api.privy.io/v1';
+const DIEM      = '0xF4d97F2da56e8c3098f3a8D538DB630A2606a024' as Address;
+const AGENT     = (process.env['AGENT_WALLET'] ?? '0x8767Df39eCeeaeB11554642237aC4E08660aB6A3') as Address;
+const PRIVY     = 'https://api.privy.io/v1';
+const MIN_STAKE = 1n * 10n ** 18n;  // refuse to stake less than 1 DIEM (likely dust / misconfiguration)
 
 const ERC20_ABI = [
   { name: 'balanceOf', type: 'function', stateMutability: 'view', inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }] },
 ] as const;
 
 async function main() {
+  const dryRun    = process.argv.includes('--dry-run');
   const appId     = process.env['PRIVY_APP_ID']!;
   const appSecret = process.env['PRIVY_APP_SECRET']!;
   const walletId  = process.env['PRIVY_WALLET_ID']!;
@@ -27,8 +29,10 @@ async function main() {
   const client = createPublicClient({ chain: base, transport: http(rpcUrl) });
   const balance = await client.readContract({ address: DIEM, abi: ERC20_ABI, functionName: 'balanceOf', args: [AGENT] });
 
-  if (balance === 0n) throw new Error('No liquid DIEM to stake');
-  console.log(`Staking ${formatUnits(balance, 18)} DIEM...`);
+  if (balance < MIN_STAKE) throw new Error(`DIEM balance ${formatUnits(balance, 18)} below minimum stake of 1 DIEM`);
+  console.log(`${dryRun ? '[dry-run] Would stake' : 'Staking'} ${formatUnits(balance, 18)} DIEM...`);
+
+  if (dryRun) return;
 
   const calldata = encodeAbiParameters(parseAbiParameters('uint256'), [balance]);
   const tx = await send(DIEM, `0xa694fc3a${calldata.slice(2)}` as Hex);

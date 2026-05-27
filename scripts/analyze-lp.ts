@@ -95,7 +95,10 @@ async function updateStrategyLog(
   apiKey: string,
 ): Promise<void> {
   const netPnL = totalFees - totalIL;
-  const notes  = analysis.slice(0, 600).replace(/\n+/g, ' ').replace(/'/g, "''");
+  const notes  = analysis.slice(0, 600)
+    .replace(/[^\w\s.,;:!?%$()@#\-+=/]/g, ' ')   // allowlist safe chars; strip ) -- etc.
+    .replace(/\s+/g, ' ').trim()
+    .replace(/'/g, "''");
 
   const sql = `-- Agent LP Strategy Log
 -- Updated by analyze-lp.ts each tick via Dune REST API PATCH

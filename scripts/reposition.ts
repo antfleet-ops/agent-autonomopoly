@@ -175,11 +175,12 @@ async function readBalance(client: AppClient, token: Address, who: Address): Pro
   return client.readContract({ address: token, abi: ERC20_ABI, functionName: 'balanceOf', args: [who] });
 }
 
-function parseTokenId(logs: readonly { topics: readonly string[] }[]): bigint | null {
+function parseTokenId(logs: readonly { address: string; topics: readonly string[] }[]): bigint | null {
   const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
   const ZERO_PADDED    = '0x0000000000000000000000000000000000000000000000000000000000000000';
   for (const log of logs) {
     if (
+      log.address.toLowerCase() === ADDRESSES.NFPM_V3.toLowerCase() &&
       log.topics[0]?.toLowerCase() === TRANSFER_TOPIC &&
       log.topics[1]?.toLowerCase() === ZERO_PADDED &&
       log.topics[3]
@@ -398,9 +399,19 @@ async function main() {
   if (!mintOnly) {
   console.log(`Step 1: close position ${tokenId}`);
 
+  const decSimResult = await client.simulateContract({
+    address: ADDRESSES.NFPM_V3, abi: NFPM_DECREASE_ABI, functionName: 'decreaseLiquidity',
+    args: [{ tokenId, liquidity, amount0Min: 0n, amount1Min: 0n, deadline: tsDeadline() }],
+    account: agentAddress,
+  });
+  const [decExp0, decExp1] = decSimResult.result;
+  const dec0Min = decExp0 * (100n - SLIPPAGE) / 100n;
+  const dec1Min = decExp1 * (100n - SLIPPAGE) / 100n;
+  console.log(`        simulate → exp0=${formatUnits(decExp0, 18)} exp1=${formatUnits(decExp1, 18)}`);
+
   await send('decreaseLiquidity', ADDRESSES.NFPM_V3, encodeFunctionData({
     abi: NFPM_DECREASE_ABI, functionName: 'decreaseLiquidity',
-    args: [{ tokenId, liquidity, amount0Min: 0n, amount1Min: 0n, deadline: tsDeadline() }],
+    args: [{ tokenId, liquidity, amount0Min: dec0Min, amount1Min: dec1Min, deadline: tsDeadline() }],
   }));
 
   const collectReceipt = await send('collect', ADDRESSES.NFPM_V3, encodeFunctionData({
@@ -447,16 +458,16 @@ async function main() {
     swapAmountIn = wethBal / 2n;
     tokenIn      = ADDRESSES.WETH;
     tokenOut     = ADDRESSES.DIEM;
-    // Reduce approxOut by pool fee before slippage
-    approxOut    = BigInt(Math.floor(Number(swapAmountIn) * diemPerWeth)) * (10000n - POOL_FEE_BPS) / 10000n;
+    // DIEM per WETH = sqrtPriceX96² / 2¹⁹² (pure bigint, no float precision loss)
+    approxOut    = swapAmountIn * sqrtPriceX96 * sqrtPriceX96 / (2n ** 192n) * (10000n - POOL_FEE_BPS) / 10000n;
     console.log(`        swap ${formatUnits(swapAmountIn, 18)} WETH → DIEM (50% of WETH balance)`);
   } else {
     // Above range → all DIEM was returned (token1) → swap 50% DIEM → WETH
     swapAmountIn = diemBal / 2n;
     tokenIn      = ADDRESSES.DIEM;
     tokenOut     = ADDRESSES.WETH;
-    // Reduce approxOut by pool fee before slippage
-    approxOut    = BigInt(Math.floor(Number(swapAmountIn) / diemPerWeth)) * (10000n - POOL_FEE_BPS) / 10000n;
+    // WETH per DIEM = 2¹⁹² / sqrtPriceX96² (pure bigint, no float precision loss)
+    approxOut    = swapAmountIn * (2n ** 192n) / (sqrtPriceX96 * sqrtPriceX96) * (10000n - POOL_FEE_BPS) / 10000n;
     console.log(`        swap ${formatUnits(swapAmountIn, 18)} DIEM → WETH (50% of DIEM balance)`);
   }
 
@@ -485,6 +496,10 @@ async function main() {
       console.log(`        QuoterV2 quote: ${formatUnits(quotedOut, 18)} ${belowRange ? 'DIEM' : 'WETH'}`);
     } catch (e) {
       console.warn(`        QuoterV2 failed, using linear estimate: ${e}`);
+    }
+    if (quotedOut === 0n) {
+      console.error('        swap quote is 0 — pool likely empty or price extreme. Aborting.');
+      process.exit(1);
     }
     const amountOutMin = quotedOut * (100n - SLIPPAGE) / 100n;
 
@@ -535,8 +550,9 @@ async function main() {
     args: [ADDRESSES.NFPM_V3, 2n ** 256n - 1n],
   }), true);
 
-  const mintReceipt = await send('mint', ADDRESSES.NFPM_V3, encodeFunctionData({
-    abi: NFPM_MINT_ABI, functionName: 'mint',
+  // Simulate after approvals are confirmed so NFPM can read them; get actual deposit amounts.
+  const mintSimResult = await client.simulateContract({
+    address: ADDRESSES.NFPM_V3, abi: NFPM_MINT_ABI, functionName: 'mint',
     args: [{
       token0:         ADDRESSES.WETH,
       token1:         ADDRESSES.DIEM,
@@ -547,6 +563,28 @@ async function main() {
       amount1Desired: diemForMint,
       amount0Min:     0n,
       amount1Min:     0n,
+      recipient:      agentAddress,
+      deadline:       tsDeadline(),
+    }],
+    account: agentAddress,
+  });
+  const [, , mintExp0, mintExp1] = mintSimResult.result;
+  const mint0Min = mintExp0 * (100n - SLIPPAGE) / 100n;
+  const mint1Min = mintExp1 * (100n - SLIPPAGE) / 100n;
+  console.log(`        simulate mint → exp0=${formatUnits(mintExp0, 18)} exp1=${formatUnits(mintExp1, 18)}`);
+
+  const mintReceipt = await send('mint', ADDRESSES.NFPM_V3, encodeFunctionData({
+    abi: NFPM_MINT_ABI, functionName: 'mint',
+    args: [{
+      token0:         ADDRESSES.WETH,
+      token1:         ADDRESSES.DIEM,
+      fee:            ETH_DIEM_V3.FEE,
+      tickLower:      newTickLower,
+      tickUpper:      newTickUpper,
+      amount0Desired: wethForMint,
+      amount1Desired: diemForMint,
+      amount0Min:     mint0Min,
+      amount1Min:     mint1Min,
       recipient:      agentAddress,
       deadline:       tsDeadline(),
     }],
