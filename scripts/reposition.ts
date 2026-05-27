@@ -223,6 +223,20 @@ function parseTransferred(
   return total;
 }
 
+// mintedAt for a tokenId from lp-positions.jsonl, or null if not found.
+function mintedAtFor(tokenId: bigint): Date | null {
+  const path = 'memory/lp-positions.jsonl';
+  if (!existsSync(path)) return null;
+  const lines = readFileSync(path, 'utf8').trim().split('\n').filter(Boolean);
+  for (let i = lines.length - 1; i >= 0; i--) {
+    try {
+      const rec = JSON.parse(lines[i]!) as { tokenId: string; mintedAt?: string };
+      if (BigInt(rec.tokenId) === tokenId && rec.mintedAt) return new Date(rec.mintedAt);
+    } catch { /* skip */ }
+  }
+  return null;
+}
+
 // Last tokenId in lp-positions.jsonl that isn't the one we're closing.
 function latestOtherPosition(closingId: bigint): bigint | null {
   const path = 'memory/lp-positions.jsonl';
@@ -242,10 +256,11 @@ function latestOtherPosition(closingId: bigint): bigint | null {
 
 async function main() {
   const argv     = process.argv.slice(2);
-  const dryRun    = argv.includes('--dry-run');
-  const mintOnly  = argv.includes('--mint-only');
-  const skipSwap  = argv.includes('--skip-swap');  // use current wallet balances, skip swap
-  const force     = argv.includes('--force');       // reposition even when in range
+  const dryRun          = argv.includes('--dry-run');
+  const mintOnly        = argv.includes('--mint-only');
+  const skipSwap        = argv.includes('--skip-swap');        // use current wallet balances, skip swap
+  const force           = argv.includes('--force');            // reposition even when in range
+  const minAgeOverride  = argv.includes('--min-age-override'); // bypass 72h minimum hold gate
   const rpcUrl   = process.env['RPC_URL'] ?? 'https://mainnet.base.org';
 
   // Uniswap v3 requires token0 < token1 by address. Every downstream decision
@@ -339,12 +354,34 @@ async function main() {
     process.exit(0);
   }
   if (inRange && force) {
-    console.log('--force: repositioning in-range position to widen range.');
+    // 72h minimum hold gate — prevents churning newly opened positions before they earn fees.
+    if (!minAgeOverride) {
+      const mintedAt = mintedAtFor(tokenId);
+      if (mintedAt) {
+        const ageHours = (Date.now() - mintedAt.getTime()) / 3_600_000;
+        if (ageHours < 72) {
+          console.log(`Position is only ${ageHours.toFixed(1)}h old (< 72h minimum). Skipping force-reposition.`);
+          console.log('Use --min-age-override to bypass this gate explicitly.');
+          process.exit(0);
+        }
+        console.log(`--force: position is ${ageHours.toFixed(1)}h old (≥ 72h). Repositioning in-range position.`);
+      } else {
+        console.log('--force: mintedAt not found in lp-positions.jsonl — proceeding without age check.');
+      }
+    } else {
+      console.log('--force --min-age-override: bypassing minimum hold gate.');
+    }
   }
 
   // New tick range bracketing current tick
   const [newTickLower, newTickUpper] = computeNewRange(currentTick, ETH_DIEM_V3.TICK_SPACING);
   console.log(`New range:    [${newTickLower}, ${newTickUpper}]\n`);
+
+  // Guard: the new range must contain the current tick or the mint will be single-sided.
+  if (newTickLower >= currentTick || newTickUpper <= currentTick) {
+    console.error(`OOR guard: new range [${newTickLower},${newTickUpper}] does not contain tick ${currentTick}. Aborting.`);
+    process.exit(1);
+  }
 
   if (dryRun) {
     if (!mintOnly) {
@@ -605,8 +642,8 @@ async function main() {
       tickLower:         newTickLower,
       tickUpper:         newTickUpper,
       currentTickAtMint: currentTick,
-      wethDeposited:     wethForMint.toString(),
-      diemDeposited:     diemForMint.toString(),
+      wethDeposited:     formatUnits(mintExp0, 18),
+      diemDeposited:     formatUnits(mintExp1, 18),
       nfpm:              ADDRESSES.NFPM_V3,
       replacedTokenId:   tokenId.toString(),
     });

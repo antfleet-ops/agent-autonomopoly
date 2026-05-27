@@ -44,7 +44,7 @@ The result contains one row per position. Key fields per row:
 | `fee_apr_pct` | annualised fee APR (0 until first collect) |
 | `net_pnl_usd` | fees earned minus IL in USD |
 | `recommended_action` | pre-computed signal (see below) |
-| `reposition_flag` | true when within 3 tick spacings of boundary |
+| `reposition_flag` | true when within 2 tick spacings of boundary |
 | `eth_usd` / `diem_usd` | current prices |
 
 ## Decision Tree (execute in order)
@@ -57,10 +57,12 @@ Position is out of range — earning zero fees. Act immediately.
 - Script auto-detects direction (above/below range), closes position, swaps 50% to rebalance, mints new range centered on current tick (±5 spacings = 2000 ticks wide), records in `memory/lp-positions.jsonl`.
 
 ### 2. REPOSITION_NEAR_UPPER / REPOSITION_NEAR_LOWER
-Position is in range but within 600 ticks (3 spacings) of a boundary — will go OOR soon.
-- Query Venice: "Current tick is {cur_tick}. Position {token_id} range [{tick_lo},{tick_hi}]. Signal: {recommended_action}. Should I reposition now or wait? Consider: fee_apr={fee_apr_pct}%, il_pct={il_pct}%, net_pnl={net_pnl_usd} USD."
-- If Venice says reposition: run `scripts/reposition.ts --token-id <id> --force`
+Position is in range but within 400 ticks (2 spacings) of a boundary — will go OOR soon.
+- Query Venice: "Current tick is {cur_tick}. Position {token_id} range [{tick_lo},{tick_hi}]. Signal: {recommended_action}. Should I reposition now or wait? Consider: fee_apr={fee_apr_pct}%, il_pct={il_pct}%, net_pnl={net_pnl_usd} USD, days_held={days_held}."
+- If Venice says reposition AND position is ≥ 72h old: run `scripts/reposition.ts --token-id <id> --force`
+- If Venice says reposition AND position is < 72h old: log reasoning, skip — let it earn fees.
 - If Venice says wait: log reasoning, re-check next tick.
+- **NEVER pass `--force` to a position that is < 72 hours old.** New positions need time to accumulate fees.
 
 ### 3. COLLECT_FEES
 7+ days since last collect AND fees > 0.

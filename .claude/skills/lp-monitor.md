@@ -19,24 +19,25 @@ node --env-file=.env --import tsx scripts/check-portfolio.ts
 
 | Condition | Flag | Action |
 |-----------|------|--------|
-| Position OUT OF RANGE | ⚠ warn | Consider repositioning via `lp-remove` + `lp-add` |
-| Tick within 50 ticks of bound | ⚠ warn | Monitor more frequently |
+| Position OUT OF RANGE | ⚠ warn | Reposition immediately — OOR earns zero fees |
+| Tick within 400 ticks (2 spacings) of bound | ⚠ warn | Near-boundary — consider reposition if position ≥ 72h old |
 | FeeLocker ≥ 0.1 DIEM | ✓ info | Ready for `claim-diem` |
 | tokensOwed1 > 0 | ✓ info | Fees in NFPM, collect via reposition |
 | ETH < 0.003 | ⚠ warn | Top up before any live transactions |
 
-## Position: tokenId 5119885
+## Repositioning rules
 
-Current range: [5000, 5400] on ETH/DIEM v3 1% pool.
-Status as of 2026-05-16: IN RANGE at tick ~5354.
-
-## Repositioning scripts
-
+**OOR positions:** reposition immediately, no minimum age.
 ```bash
-# Full reposition (remove + add at new range)
-node --env-file=.env --import tsx scripts/reposition.ts             # dry-run
-node --env-file=.env --import tsx scripts/reposition.ts --live      # execute
+node --env-file=.env --import tsx scripts/reposition.ts --token-id <id> --live
 ```
+
+**Near-boundary in-range positions (within 400 ticks):** only reposition if position is ≥ 72 hours old AND Venice recommends it. The script enforces this gate automatically when `--force` is passed.
+```bash
+node --env-file=.env --import tsx scripts/reposition.ts --token-id <id> --force --live
+```
+
+**NEVER pass `--force` to a position younger than 72 hours.** Fee income requires time in range — churning new positions erases earnings before they accumulate. The script will refuse and exit 0 if the gate is not met.
 
 ## Aeon schedule
 

@@ -32,7 +32,7 @@ const DUNE_API           = 'https://api.dune.com/api/v1';
 const LP_GOALS = {
   primary:    'Accumulate WETH and DIEM via LP fee income from the WETH/DIEM 1% pool',
   rule:       'Fee APR must exceed IL rate for LP to outperform simply holding',
-  reposition: 'Reposition when within 3 tick spacings (600 ticks) of a range boundary',
+  reposition: 'Reposition when within 2 tick spacings (400 ticks) of a range boundary',
   compound:   'Compound fee income into new LP positions or hold as WETH/DIEM treasury',
 };
 
