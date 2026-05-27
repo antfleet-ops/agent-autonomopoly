@@ -25,12 +25,12 @@ if (existsSync(jsonlPath)) {
     .filter(Boolean);
 
   entries = raw.map(line => {
-    const r = JSON.parse(line) as Record<string, string>;
+    const r = JSON.parse(line) as Record<string, unknown>;
     return {
-      vaultAddress: r['vaultAddress'] ?? '',
-      deployedAt:   r['timestamp']    ?? '',
-      agentWallet:  r['agentWallet'],
-      contract:     r['contract'],
+      vaultAddress: typeof r['vaultAddress'] === 'string' ? r['vaultAddress'] : '',
+      deployedAt:   typeof r['timestamp']    === 'string' ? r['timestamp']    : '',
+      ...(typeof r['agentWallet'] === 'string' && { agentWallet: r['agentWallet'] }),
+      ...(typeof r['contract']    === 'string' && { contract:    r['contract'] }),
     };
   }).filter(e => e.vaultAddress.startsWith('0x'));
 }
