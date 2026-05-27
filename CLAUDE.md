@@ -83,7 +83,7 @@ Derives the agent's Venice API key by signing a challenge with the agent wallet 
 
 ### `scripts/analyze-lp.ts`
 
-Runs each tick to evaluate LP performance. Executes Dune Q7591697 (v3 incremental master portfolio — pre-computed `fee_apr_pct`, `il_pct`, `net_pnl_usd`, `recommended_action` per position; ~2.5 credits/run after Run 1), sends metrics to Venice AI for positioning recommendations, writes `memory/lp-analysis-YYYY-MM-DD.md`, and updates Dune strategy log Q7582817. (Q7582914 v2 is retained as reference; Q7591697 is canonical.)
+Runs each tick to evaluate LP performance. Executes Dune Q7591697 (v3 incremental master portfolio — pre-computed `fee_apr_pct`, `il_pct`, `net_pnl_usd`, `recommended_action` per position; ~2.5 credits/run after Run 1), sends metrics to Venice AI for positioning recommendations, writes `memory/lp-analysis-YYYY-MM-DD.md`, and updates Dune strategy log Q7582817.
 
 ### `scripts/reposition.ts`
 

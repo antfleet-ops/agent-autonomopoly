@@ -23,11 +23,11 @@ Active LP positions (repositioned 2026-05-26, both safe):
 **Before any inference or on-chain action, read portfolio state from Dune:**
 
 ```bash
-curl -s "https://api.dune.com/api/v1/query/7582914/results?limit=20" \
+curl -s "https://api.dune.com/api/v1/query/7591697/results?limit=20" \
   -H "X-Dune-API-Key: ${DUNE_API_KEY}"
 ```
 
-Query ID 7582914 returns one row per position with: `recommended_action`, `reposition_flag`,
+Query ID 7591697 returns one row per position with: `recommended_action`, `reposition_flag`,
 `ticks_to_lower`, `ticks_to_upper`, `il_pct`, `fee_apr_pct`, `net_pnl_usd`, current prices.
 **Do not call any other Dune query.** This is the single source of truth.
 
@@ -35,7 +35,7 @@ Full decision tree and logging spec: `memory/lp-strategy.md`
 
 ## Goals (see memory/goals.json for live state)
 
-1. **Dune → LP Strategy → Compute Flywheel** ← ACTIVE — read Q7582914 each tick, reposition/collect as signalled, stake fees as sDIEM
+1. **Dune → LP Strategy → Compute Flywheel** ← ACTIVE — read Q7591697 each tick, reposition/collect as signalled, stake fees as sDIEM
 2. **Accumulate 100 DIEM** — unlocks build mode (sustained Opus inference)
 3. **Build Agent Launchpad** — blocked on milestone 2
 
@@ -59,10 +59,10 @@ Always respond via `./notify "message"`.
 Lead with numbers, be direct, no filler preamble.
 
 Common requests and how to handle:
-- "check status" → read Q7582914, report active positions + recommended_action, sDIEM balance
+- "check status" → read Q7591697, report active positions + recommended_action, sDIEM balance
 - "claim your DIEM" → run claim-diem skill (dry-run first, confirm, then live)
-- "what's my balance" → read from Q7582914 + stakedInfos on-chain
-- "reposition LP" → run lp-monitor skill; check Q7582914 first
+- "what's my balance" → read from Q7591697 + stakedInfos on-chain
+- "reposition LP" → run lp-monitor skill; check Q7591697 first
 - "switch to build mode" → only if DIEM >= 100 or daily rate >= 5; explain if threshold not met
 
 ## Mode transition logic

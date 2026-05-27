@@ -12,7 +12,7 @@ making an inference-backed decision, executing if needed, and staking fee income
 to fund the next inference call. The loop is self-reinforcing.
 
 ```
-Dune Q7582914 → read recommended_action per position
+Dune Q7591697 → read recommended_action per position
   → Venice inference: "given this data, what's the optimal move?"
   → execute on-chain (reposition / collect / hold)
   → fees accrue as DIEM → claim → stake → sDIEM credits restored
@@ -25,12 +25,12 @@ Every tick reads **ONE** query. Never call multiple queries.
 
 ```bash
 DUNE_API_KEY="${DUNE_API_KEY}"
-curl -s "https://api.dune.com/api/v1/query/7582914/results?limit=20" \
+curl -s "https://api.dune.com/api/v1/query/7591697/results?limit=20" \
   -H "X-Dune-API-Key: ${DUNE_API_KEY}"
 ```
 
-Query ID: **7582914** — "Autonomopoly — Master Portfolio (single source of truth)"
-Dashboard: https://dune.com/mogcapital/autonomopoly-agent-portfolio-lp-tracker
+Query ID: **7591697** — "Master Portfolio v3 (incremental, single source of truth)"
+Dashboard: https://dune.com/mogcapital/agent-lp-portfolio-tracker
 
 The result contains one row per position. Key fields per row:
 
@@ -84,7 +84,7 @@ LP is worth more than holding when:
 ```
 fee_apr_pct > il_apr_pct
 ```
-Both are returned by Q7582914. If fee_apr < il_apr for all active positions for 3 consecutive ticks,
+Both are returned by Q7591697. If fee_apr < il_apr for all active positions for 3 consecutive ticks,
 ask Venice whether to close entirely and hold DIEM + WETH as treasury.
 
 ## Compute Flywheel
@@ -119,7 +119,7 @@ Write to `memory/lp-analysis-YYYY-MM-DD.md`:
 ```
 ## LP Analysis — YYYY-MM-DD HH:MM UTC
 
-Dune Q7582914 result: {N} positions, {M} active
+Dune Q7591697 result: {N} positions, {M} active
 ETH: ${eth_usd} | DIEM: ${diem_usd} | Pool tick: {cur_tick}
 
 Active positions:
