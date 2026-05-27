@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: all positions in range | tick=3445 | FeeLocker=0.1651 DIEM claimable | ETH=0.007889 gas OK | positions: 5196524[1800-3800] 5196526[2000-4000] 5196942[2200-4200] all IN RANGE | DIEM=12.75/100 accumulate mode
+AUTONOMOPOLY LP: all positions in range | tick=3709 | positions=[5199715,5199718,5199719] range=[2600,4600] | FeeLocker=0.0378 DIEM claimable | WETH=18.0982 | ETH=0.007872
