@@ -37,7 +37,7 @@ watches:
       args:                                           # NEVER hand-write the 4-byte selector
         - "0xAgentWallet..."
         - "0xDiemToken..."
-      threshold_diem: 5      # alert when claimable wei > 5 × 1e18
+      threshold_diem: 0.5    # alert when claimable wei > 0.5 × 1e18
 ```
 
 Optional `memory/known-addresses.yml` — counterparty label dictionary used to humanize alerts. Lowercase keys, free-text values:
@@ -215,7 +215,7 @@ curl -m 10 -s -X POST "${RPC_URL}" \
 
 Log the read result every run — this makes the log useful for diagnosing silent failures:
 ```
-- Watch: AUTONO FeeLocker DIEM claimable (base) | check: availableFees(...) | value: 1.7608 DIEM | threshold: 5 DIEM | no-alert (below threshold)
+- Watch: AUTONO FeeLocker DIEM claimable (base) | check: availableFees(...) | value: 1.7608 DIEM | threshold: 0.5 DIEM | alert (above threshold)
 ```
 
 ### 5. Categorize surviving events

@@ -33,14 +33,17 @@ cast call 0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF \
 
 ## Claim
 
+Use the claim script (goes through Privy server wallet — no private key required):
+
 ```bash
-cast send 0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF \
-  "claim(address,address)" \
-  0x8767Df39eCeeaeB11554642237aC4E08660aB6A3 \
-  0xF4d97F2da56e8c3098f3a8D538DB630A2606a024 \
-  --private-key $AGENT_PRIVATE_KEY \
-  --rpc-url https://mainnet.base.org
+# Dry-run first
+node --import tsx scripts/claim-and-allocate.ts
+
+# Execute
+node --import tsx scripts/claim-and-allocate.ts --live
 ```
+
+Requires env vars: `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, `PRIVY_WALLET_ID`, `AGENT_WALLET`, `RPC_URL`.
 
 ## Verify receipt
 

@@ -28,9 +28,12 @@ node --env-file=.env --import tsx harness/tick.ts
 |-----|---------|
 | `AGENT_WALLET` | Agent wallet address |
 | `RPC_URL` | Base mainnet RPC |
-| `PRIVY_APP_ID` / `PRIVY_APP_SECRET` / `PRIVY_WALLET_ID` | Signing (preferred) |
-| `AGENT_PRIVATE_KEY` | Signing fallback (dev only) |
+| `PRIVY_APP_ID` | Privy application ID |
+| `PRIVY_APP_SECRET` | Privy app secret — authenticates to Privy API (Basic auth). Store in GitHub Actions secrets, never in `.env`. |
+| `PRIVY_WALLET_ID` | ID of the agent's Privy server wallet |
 | `AGENT_MODE` | `accumulate` (default) or `build` |
+
+**Wallet model:** The agent never holds a private key. All signing goes through Privy's server wallet API (`/wallets/{id}/rpc`). `AGENT_PRIVATE_KEY` is removed from production — it was a test-only fallback and must not be set in GitHub Actions secrets.
 
 ## Aeon schedule
 

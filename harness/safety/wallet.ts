@@ -1,11 +1,22 @@
 // Agent wallet substrate.
 //
-// Two implementations of the same Signer + TxSender interfaces:
-//   v0a: loadSignerFromEnv / makeTxSenderFromEnv  — bare AGENT_PRIVATE_KEY in .env
-//   v0b: loadSignerFromPrivy / makeTxSenderFromPrivy — Privy server wallet (primary for v0)
-//   v1:  TEE-backed equivalents (Phala / Marlin Oyster / AWS Nitro) — post-MVP
+// PRODUCTION substrate: Privy server wallet (v0b below).
+//   The agent never stores or handles a private key. Privy holds the key in their
+//   secure infrastructure; we authenticate to their API with PRIVY_APP_SECRET
+//   (Basic auth: base64(PRIVY_APP_ID:PRIVY_APP_SECRET)).
 //
-// Callers never change when the substrate swaps.
+//   Required GitHub Actions secrets:
+//     PRIVY_APP_ID     — Privy application ID
+//     PRIVY_APP_SECRET — Privy application secret (the credential; keep in secrets, never .env)
+//     PRIVY_WALLET_ID  — ID of the agent's server wallet
+//
+// TEST-ONLY substrate: env-key (v0a below).
+//   loadSignerFromEnv / makeTxSenderFromEnv read AGENT_PRIVATE_KEY from the environment.
+//   NEVER set AGENT_PRIVATE_KEY in production or GitHub Actions secrets.
+//   Use only in local unit tests with a throwaway dev key.
+//
+// v1: TEE-backed equivalents (Phala / Marlin Oyster / AWS Nitro) — post-MVP.
+//     Same interfaces; no call-site changes when substrate swaps.
 //
 // Design constraints (per ARCHITECTURE_v2.md §2.1):
 //   - No key material crosses the module boundary.
@@ -24,7 +35,7 @@ export type Signer = Pick<LocalAccount, 'address' | 'signMessage' | 'signTypedDa
 // Returns the transaction hash.
 export type TxSender = (params: { to: Address; data: Hex }) => Promise<Hex>;
 
-// ── v0a: env-key substrate ───────────────────────────────────────────
+// ── v0a: env-key substrate (TEST ONLY — never use in production) ─────
 
 const AGENT_PRIVATE_KEY = 'AGENT_PRIVATE_KEY';
 

@@ -50,13 +50,23 @@ Everything else — `harness/`, `scripts/`, `identity/SCHEMA.md`, `identity/*.ge
 
 Two implementations of the same `Signer` + `TxSender` interfaces:
 
-- **`loadSignerFromEnv` / `makeTxSenderFromEnv`** — bare `AGENT_PRIVATE_KEY` env var (fallback/testing only)
-- **`loadSignerFromPrivy` / `makeTxSenderFromPrivy`** — Privy server wallet via REST API (primary for v0); requires `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, `PRIVY_WALLET_ID`
+- **`loadSignerFromPrivy` / `makeTxSenderFromPrivy`** — **production substrate**. Privy server wallet via REST API. The agent never stores or handles a private key — Privy holds it. We authenticate with Basic auth (`base64(PRIVY_APP_ID:PRIVY_APP_SECRET)`). Requires three GitHub Actions secrets: `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, `PRIVY_WALLET_ID`.
+- **`loadSignerFromEnv` / `makeTxSenderFromEnv`** — **test-only**. Reads `AGENT_PRIVATE_KEY` from env. Never set this secret in GitHub Actions. Use only in local unit tests with throwaway dev keys.
 - **TEE variants** — post-MVP; same interfaces, no call-site changes
 
 `Signer` exposes only `address`, `signMessage`, `signTypedData` (structural subset of viem `LocalAccount`). `TxSender` is `(params: { to, data }) => Promise<Hex>` — abstracts the signing substrate for on-chain writes.
 
 Note: Privy **embedded** wallets (rejected in early arch docs) require a human session; Privy **server** wallets are fully headless.
+
+### Wallet management — production rules
+
+| Rule | Detail |
+|------|--------|
+| No private key in secrets | `AGENT_PRIVATE_KEY` must NOT be set in GitHub Actions or `.env` |
+| Privy credential = `PRIVY_APP_SECRET` | This is the sensitive credential (Basic auth token). Treat like a password. |
+| Signing flow | Script → `makeTxSenderFromPrivy` → POST `/wallets/{id}/rpc` → Privy signs → tx hash |
+| Wallet address | `0x8767Df39eCeeaeB11554642237aC4E08660aB6A3` (Base mainnet) |
+| Recovery | Privy dashboard; agent wallet is Privy-managed, not operator-held |
 
 ### `scripts/lint-identity.ts`
 
@@ -73,7 +83,7 @@ Derives the agent's Venice API key by signing a challenge with the agent wallet 
 
 ### `scripts/analyze-lp.ts`
 
-Runs each tick to evaluate LP performance. Executes Dune Q7582914 (master portfolio — pre-computed `fee_apr_pct`, `il_pct`, `net_pnl_usd`, `recommended_action` per position), sends metrics to Venice AI for positioning recommendations, writes `memory/lp-analysis-YYYY-MM-DD.md`, and updates Dune strategy log Q7582817.
+Runs each tick to evaluate LP performance. Executes Dune Q7591697 (v3 incremental master portfolio — pre-computed `fee_apr_pct`, `il_pct`, `net_pnl_usd`, `recommended_action` per position; ~2.5 credits/run after Run 1), sends metrics to Venice AI for positioning recommendations, writes `memory/lp-analysis-YYYY-MM-DD.md`, and updates Dune strategy log Q7582817. (Q7582914 v2 is retained as reference; Q7591697 is canonical.)
 
 ### `scripts/reposition.ts`
 

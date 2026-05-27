@@ -42,7 +42,7 @@ node --import tsx scripts/check-portfolio.ts
 Update `memory/goals.json` → `milestones[0].current` with the new total DIEM (wallet + staked).
 Update `milestones[0].updatedAt` with current ISO timestamp.
 
-Check if `current >= target` (100 DIEM) or daily rate >= 5 DIEM/day:
+Check if `current >= target` (100 DIEM) or daily rate >= 0.5 DIEM/day:
 - If yes: set `mode: "build"` in goals.json, send urgent notify
 - If no: stay in accumulate mode
 
