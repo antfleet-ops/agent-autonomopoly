@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { encodeFunctionData, parseUnits, formatUnits, type Address } from 'viem';
+import { usePrivy } from '@privy-io/react-auth';
 import type { ConnectedWallet } from '@privy-io/react-auth';
 import { sendAndWait } from '../lib/wallet';
 import { VAULT_WRITE_ABI, ERC20_ABI } from '../lib/contracts';
@@ -12,6 +13,7 @@ interface ActionPanelProps {
 }
 
 export default function ActionPanel({ vault, wallet, onDone }: ActionPanelProps) {
+  const { login } = usePrivy();
   const [amount, setAmount] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +90,14 @@ export default function ActionPanel({ vault, wallet, onDone }: ActionPanelProps)
   }
 
   if (!wallet) {
-    return <p className="text-gray-400 text-sm">Connect wallet to interact.</p>;
+    return (
+      <button
+        onClick={login}
+        className="w-full bg-gray-700 hover:bg-gray-600 text-white text-sm py-2 px-4 rounded font-mono"
+      >
+        [ CONNECT WALLET ]
+      </button>
+    );
   }
 
   const amountWei = amount ? parseUnits(amount, 18) : 0n;

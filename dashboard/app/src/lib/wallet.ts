@@ -21,6 +21,7 @@ export async function sendAndWait(
   data: `0x${string}`,
   onStatus: (msg: string) => void,
 ): Promise<`0x${string}`> {
+  await wallet.switchChain(8453);
   const wc = await makeWalletClient(wallet);
   const hash = await wc.sendTransaction({
     account: wallet.address as `0x${string}`,
