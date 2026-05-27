@@ -23,7 +23,7 @@ If no queue entry, use defaults: `creator = AGENT`, `marketcapVvv = 50`.
 ## Execution
 
 ```bash
-node --env-file=.env --import tsx scripts/launch-vvv-token.ts \
+node --import tsx scripts/launch-vvv-token.ts \
   --name "<name>" \
   --symbol "<symbol>" \
   --creator "<creator>" \
@@ -32,7 +32,7 @@ node --env-file=.env --import tsx scripts/launch-vvv-token.ts \
 
 Add `--dry-run` first to verify parameters:
 ```bash
-node --env-file=.env --import tsx scripts/launch-vvv-token.ts --name "..." --symbol "..." --dry-run
+node --import tsx scripts/launch-vvv-token.ts --name "..." --symbol "..." --dry-run
 ```
 
 ## Tick math reference

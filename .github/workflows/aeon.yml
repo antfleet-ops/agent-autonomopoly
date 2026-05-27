@@ -115,6 +115,11 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '22'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.work.outputs.mode != ''
+        run: npm ci --ignore-scripts
 
       - name: Install Claude Code
         if: steps.work.outputs.mode != ''
@@ -216,6 +221,8 @@ jobs:
           PRIVY_APP_SECRET: ${{ secrets.PRIVY_APP_SECRET }}
           PRIVY_WALLET_ID: ${{ secrets.PRIVY_WALLET_ID }}
           AGENT_PRIVATE_KEY: ${{ secrets.AGENT_PRIVATE_KEY }}
+          AGENT_WALLET: '0x8767Df39eCeeaeB11554642237aC4E08660aB6A3'
+          DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
           JSONRENDER_ENABLED: ${{ vars.JSONRENDER_ENABLED || 'true' }}
           SKILL_VAR: ${{ inputs.var }}
         run: |
@@ -239,8 +246,22 @@ jobs:
           # --- AI Gateway routing ---
           GATEWAY=$(grep -A1 '^gateway:' aeon.yml | grep 'provider:' | sed 's/.*provider: *//' | tr -d ' "'"'" || echo "direct")
           GATEWAY="${GATEWAY:-direct}"
-          echo "Gateway: $GATEWAY"
+          FALLBACK=$(grep -A3 '^gateway:' aeon.yml | grep 'fallback:' | sed 's/.*fallback: *//' | tr -d ' "'"'" || echo "direct")
+          FALLBACK="${FALLBACK:-direct}"
 
+          # Automatic fallback: if primary provider's key is absent, use fallback silently
+          if [ "$GATEWAY" = "venice" ] && [ -z "${VENICE_API_KEY:-}" ]; then
+            echo "::notice::Venice key not set — falling back to ${FALLBACK}"
+            GATEWAY="$FALLBACK"
+          elif [ "$GATEWAY" = "bankr" ] && [ -z "${BANKR_LLM_KEY:-}" ]; then
+            echo "::notice::Bankr key not set — falling back to ${FALLBACK}"
+            GATEWAY="$FALLBACK"
+          elif [ "$GATEWAY" = "surplus" ] && [ -z "${SURPLUS_API_KEY:-}" ]; then
+            echo "::notice::Surplus key not set — falling back to ${FALLBACK}"
+            GATEWAY="$FALLBACK"
+          fi
+
+          echo "Gateway: $GATEWAY"
           echo "GATEWAY=$GATEWAY" >> "$GITHUB_OUTPUT"
 
           if [ "$GATEWAY" = "bankr" ]; then

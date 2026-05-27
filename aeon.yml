@@ -44,8 +44,12 @@ model: claude-sonnet-4-6
 #   venice  — staked DIEM pays for inference (default; requires VENICE_API_KEY secret)
 #   surplus — Surplus Intelligence marketplace (requires SURPLUS_API_KEY secret)
 #   direct  — Anthropic API directly (requires ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN)
+#
+# fallback — used automatically when primary provider's key is absent or depleted.
+# Set to "direct" to fall back to CLAUDE_CODE_OAUTH_TOKEN without manual aeon.yml edits.
 gateway:
-  provider: direct   # Venice credits depleted 2026-05-26; using CLAUDE_CODE_OAUTH_TOKEN until sDIEM replenishes
+  provider: venice    # primary: sDIEM-gated inference
+  fallback: direct    # automatic fallback: CLAUDE_CODE_OAUTH_TOKEN when Venice key absent
 
 # Reactive triggers — auto-repair on consecutive failures
 reactive:

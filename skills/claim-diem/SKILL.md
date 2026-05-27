@@ -12,7 +12,7 @@ Runs every 12h. Claims accumulated DIEM from the FeeLocker and updates the agent
 
 1. **Dry-run first — check what's claimable**
 ```bash
-node --env-file=.env --import tsx scripts/check-portfolio.ts
+node --import tsx scripts/check-portfolio.ts
 ```
 
 Read the output. Note:
@@ -24,19 +24,19 @@ If `feeLockerBalance` < 0.1 DIEM: nothing to claim. Log "nothing to claim" and e
 
 2. **Claim if above threshold**
 ```bash
-node --env-file=.env --import tsx scripts/claim-and-allocate.ts --dry-run
+node --import tsx scripts/claim-and-allocate.ts --dry-run
 ```
 
 Review the output. Confirm amounts are correct. Then run live:
 ```bash
-node --env-file=.env --import tsx scripts/claim-and-allocate.ts --live
+node --import tsx scripts/claim-and-allocate.ts --live
 ```
 
 3. **Update goals.json with new DIEM total**
 
 After a successful claim, read the new wallet balance and update:
 ```bash
-node --env-file=.env --import tsx scripts/check-portfolio.ts
+node --import tsx scripts/check-portfolio.ts
 ```
 
 Update `memory/goals.json` → `milestones[0].current` with the new total DIEM (wallet + staked).

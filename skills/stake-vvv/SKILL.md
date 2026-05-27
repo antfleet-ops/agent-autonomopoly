@@ -30,7 +30,7 @@ cast call $VVV_STAKING "balanceOf(address)(uint256)" $AGENT --rpc-url https://ma
 Only run if VVV balance > 0:
 
 ```bash
-node --env-file=.env --import tsx scripts/stake-vvv.ts
+node --import tsx scripts/stake-vvv.ts
 ```
 
 The script:

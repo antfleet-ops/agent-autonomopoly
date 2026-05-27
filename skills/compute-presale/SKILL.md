@@ -54,7 +54,7 @@ Defaults if no queue entry: `depositWindowDays=7`, `diemTarget=100`, `protocolFe
 
 ### Step 1 — Deploy the presale vault
 ```bash
-node --env-file=.env --import tsx scripts/deploy-compute-presale.ts \
+node --import tsx scripts/deploy-compute-presale.ts \
   --deposit-window-hours 24 \
   --diem-target 100 \
   --protocol-fee-bps 200 \
@@ -66,7 +66,7 @@ Note the `vaultAddress` from output.
 
 ### Step 2 — Launch token with vault as extension
 ```bash
-node --env-file=.env --import tsx scripts/launch-diem-token.ts \
+node --import tsx scripts/launch-diem-token.ts \
   --name "<name>" \
   --symbol "<symbol>" \
   --creator "<creator>" \
@@ -100,7 +100,7 @@ After `depositDeadline` passes, depositors call `claimTokens()` and anyone can c
 
 Once DIEM lands in agent wallet:
 ```bash
-node --env-file=.env --import tsx scripts/stake-diem.ts
+node --import tsx scripts/stake-diem.ts
 ```
 (Delegates to `stake-diem` skill — calls `DIEM.stake(amount)` directly, no ERC-20 approve needed)
 

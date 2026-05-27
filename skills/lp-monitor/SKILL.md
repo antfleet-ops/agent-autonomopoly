@@ -12,7 +12,7 @@ Agent wallet: `0x8767Df39eCeeaeB11554642237aC4E08660aB6A3`
 ## Step 1 — Read all positions
 
 ```bash
-node --env-file=.env --import tsx scripts/check-portfolio.ts
+node --import tsx scripts/check-portfolio.ts
 ```
 
 This reads all NFPM tokenIds owned by the agent, the current pool tick, FeeLocker balance, and wallet balances. Record every tokenId and whether each is in-range or out-of-range.
@@ -34,13 +34,13 @@ lp-monitor: all positions in range | tick=C | FeeLocker=X DIEM
 For each out-of-range tokenId, run a dry-run first:
 
 ```bash
-node --env-file=.env --import tsx scripts/reposition.ts --token-id <tokenId> --dry-run
+node --import tsx scripts/reposition.ts --token-id <tokenId> --dry-run
 ```
 
 Review the dry-run output. If amounts are reasonable and the new range brackets the current tick, run live:
 
 ```bash
-node --env-file=.env --import tsx scripts/reposition.ts --token-id <tokenId>
+node --import tsx scripts/reposition.ts --token-id <tokenId>
 ```
 
 The script:
