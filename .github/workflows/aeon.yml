@@ -244,9 +244,9 @@ jobs:
           echo "SKILL_MODEL=$MODEL" >> "$GITHUB_OUTPUT"
 
           # --- AI Gateway routing ---
-          GATEWAY=$(grep -A1 '^gateway:' aeon.yml | grep 'provider:' | sed 's/.*provider: *//' | tr -d ' "'"'" || echo "direct")
+          GATEWAY=$(grep -A1 '^gateway:' aeon.yml | grep 'provider:' | sed 's/.*provider: *//; s/#.*//' | tr -d ' "'"'" || echo "direct")
           GATEWAY="${GATEWAY:-direct}"
-          FALLBACK=$(grep -A3 '^gateway:' aeon.yml | grep 'fallback:' | sed 's/.*fallback: *//' | tr -d ' "'"'" || echo "direct")
+          FALLBACK=$(grep -A3 '^gateway:' aeon.yml | grep 'fallback:' | sed 's/.*fallback: *//; s/#.*//' | tr -d ' "'"'" || echo "direct")
           FALLBACK="${FALLBACK:-direct}"
 
           # Automatic fallback: if primary provider's key is absent, use fallback silently
