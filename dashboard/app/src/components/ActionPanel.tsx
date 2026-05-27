@@ -1,0 +1,179 @@
+import { useState } from 'react';
+import { encodeFunctionData, parseUnits, formatUnits, type Address } from 'viem';
+import type { ConnectedWallet } from '@privy-io/react-auth';
+import { sendAndWait } from '../lib/wallet';
+import { VAULT_WRITE_ABI, ERC20_ABI } from '../lib/contracts';
+import type { VaultState } from '../types';
+
+interface ActionPanelProps {
+  vault: VaultState;
+  wallet: ConnectedWallet | null;
+  onDone: () => void; // caller refreshes vault state after tx
+}
+
+export default function ActionPanel({ vault, wallet, onDone }: ActionPanelProps) {
+  const [amount, setAmount] = useState('');
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const now = BigInt(Math.floor(Date.now() / 1000));
+  const windowOpen = vault.initialized && now < vault.depositDeadline;
+  const windowClosed = vault.initialized && now >= vault.depositDeadline;
+  const lockExpired = vault.lockDuration > 0n && now >= vault.lockExpiry;
+
+  const isVvvMode = vault.lockDuration === 0n;
+
+  const canDeposit = windowOpen;
+  const canClaim = windowClosed && vault.myDeposited !== undefined && vault.myDeposited > 0n && !vault.myClaimed;
+  const canFinalize = isVvvMode && windowClosed;
+  const canWithdraw = !isVvvMode && lockExpired && vault.myDeposited !== undefined && vault.myDeposited > 0n && !vault.myWithdrawn;
+
+  async function run(buildData: () => `0x${string}`, to: Address, label: string) {
+    if (!wallet) return;
+    setError(null);
+    setStatus(`${label}…`);
+    try {
+      const data = buildData();
+      await sendAndWait(wallet, to, data, setStatus);
+      setStatus(`${label} confirmed`);
+      onDone();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setStatus(null);
+    }
+  }
+
+  async function handleApprove() {
+    const amountWei = parseUnits(amount || '0', 18);
+    if (amountWei === 0n) return;
+    await run(
+      () => encodeFunctionData({ abi: ERC20_ABI, functionName: 'approve', args: [vault.address, amountWei] }),
+      vault.depositToken,
+      'Approve',
+    );
+  }
+
+  async function handleDeposit() {
+    const amountWei = parseUnits(amount || '0', 18);
+    if (amountWei === 0n) return;
+    await run(
+      () => encodeFunctionData({ abi: VAULT_WRITE_ABI, functionName: 'deposit', args: [amountWei] }),
+      vault.address,
+      'Deposit',
+    );
+  }
+
+  async function handleClaim() {
+    await run(
+      () => encodeFunctionData({ abi: VAULT_WRITE_ABI, functionName: 'claimTokens', args: [] }),
+      vault.address,
+      'Claim tokens',
+    );
+  }
+
+  async function handleFinalize() {
+    await run(
+      () => encodeFunctionData({ abi: VAULT_WRITE_ABI, functionName: 'finalizeVVV', args: [] }),
+      vault.address,
+      'Finalize VVV',
+    );
+  }
+
+  async function handleWithdraw() {
+    await run(
+      () => encodeFunctionData({ abi: VAULT_WRITE_ABI, functionName: 'withdrawDepositToken', args: [] }),
+      vault.address,
+      'Withdraw',
+    );
+  }
+
+  if (!wallet) {
+    return <p className="text-gray-400 text-sm">Connect wallet to interact.</p>;
+  }
+
+  const amountWei = amount ? parseUnits(amount, 18) : 0n;
+  const needsApproval = canDeposit && amountWei > 0n && (vault.myAllowance ?? 0n) < amountWei;
+
+  return (
+    <div className="space-y-3">
+      {canDeposit && (
+        <div className="space-y-2">
+          <label className="text-xs text-gray-400">
+            Deposit amount ({vault.depositTokenSymbol})
+            {vault.myBalance !== undefined && (
+              <span className="ml-2 text-gray-500">
+                Balance: {formatUnits(vault.myBalance, 18)}
+              </span>
+            )}
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+            placeholder="0.0"
+            className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-gray-400"
+          />
+          <div className="flex gap-2">
+            {needsApproval && (
+              <button
+                onClick={handleApprove}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-sm py-2 px-4 rounded font-mono"
+              >
+                [ APPROVE ]
+              </button>
+            )}
+            <button
+              onClick={handleDeposit}
+              disabled={needsApproval || amountWei === 0n}
+              className="flex-1 bg-blue-700 hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-600 text-white text-sm py-2 px-4 rounded font-mono"
+            >
+              [ DEPOSIT ]
+            </button>
+          </div>
+        </div>
+      )}
+
+      {canClaim && (
+        <button
+          onClick={handleClaim}
+          className="w-full bg-green-700 hover:bg-green-600 text-white text-sm py-2 px-4 rounded font-mono"
+        >
+          [ CLAIM TOKENS ]
+          {vault.myShare !== undefined && vault.myShare > 0n && (
+            <span className="ml-2 text-green-300 text-xs">
+              ({formatUnits(vault.myShare, 18)})
+            </span>
+          )}
+        </button>
+      )}
+
+      {canFinalize && (
+        <button
+          onClick={handleFinalize}
+          className="w-full bg-yellow-700 hover:bg-yellow-600 text-white text-sm py-2 px-4 rounded font-mono"
+        >
+          [ FINALIZE VVV → AGENT ]
+        </button>
+      )}
+
+      {canWithdraw && (
+        <button
+          onClick={handleWithdraw}
+          className="w-full bg-purple-700 hover:bg-purple-600 text-white text-sm py-2 px-4 rounded font-mono"
+        >
+          [ WITHDRAW {vault.depositTokenSymbol} ]
+          {vault.myDeposited !== undefined && (
+            <span className="ml-2 text-purple-300 text-xs">
+              ({formatUnits(vault.myDeposited, 18)})
+            </span>
+          )}
+        </button>
+      )}
+
+      {status && <p className="text-xs text-blue-300 font-mono">{status}</p>}
+      {error && <p className="text-xs text-red-400 font-mono">{error}</p>}
+    </div>
+  );
+}
