@@ -1,1 +1,1 @@
-tick: nothing to claim/LP | maintenance inference ran
+tick: FATAL — DIEM_TOKEN_ADDRESS env var not set; tick aborted before any on-chain action. Error: DIEM_TOKEN_ADDRESS is required (harness/providers/venice.ts:107). FeeLocker=0.1651 DIEM claimable but unclaimed. 3 LP positions IN RANGE (tick=3445). sVVV=4.5397. Dependabot: 0 open PRs. Fix: set DIEM_TOKEN_ADDRESS in CI secrets.
