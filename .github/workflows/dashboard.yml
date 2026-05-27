@@ -1,0 +1,52 @@
+name: Presale Dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dashboard/**'
+      - 'memory/presales.jsonl'
+      - 'scripts/export-presales.ts'
+      - '.github/workflows/dashboard.yml'
+
+concurrency:
+  group: dashboard-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install root deps (for tsx + export script)
+        run: npm ci
+
+      - name: Export presales.json
+        run: node --import tsx scripts/export-presales.ts
+
+      - name: Install dashboard deps
+        working-directory: dashboard/app
+        run: npm ci
+
+      - name: Build dashboard
+        working-directory: dashboard/app
+        run: npm run build
+        env:
+          VITE_PRIVY_APP_ID: ${{ secrets.DASHBOARD_PRIVY_APP_ID }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dashboard/app/dist
+          destination_dir: presales
