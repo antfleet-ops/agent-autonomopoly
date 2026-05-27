@@ -115,6 +115,11 @@ const DECREASE_EVENT = parseAbiItem(
   'event DecreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1)'
 );
 
+// Emitted by NFPM on every addLiquidity/mint — the authoritative deposited amounts.
+const INCREASE_EVENT = parseAbiItem(
+  'event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1)'
+);
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function fromWei(wei: string | bigint): number {
@@ -266,6 +271,27 @@ async function decreaseTotals(
   return { weth, diem };
 }
 
+/** Actual WETH+DIEM deposited for a tokenId — from IncreaseLiquidity events (authoritative). */
+async function mintedAmounts(
+  tokenId: bigint,
+  client: ReturnType<typeof createPublicClient>,
+): Promise<{ weth: number; diem: number }> {
+  const logs = await client.getLogs({
+    address: ADDRESSES.NFPM_V3,
+    event:   INCREASE_EVENT,
+    args:    { tokenId },
+    fromBlock: FROM_BLOCK,
+    toBlock:   'latest',
+  });
+  let weth = 0;
+  let diem = 0;
+  for (const log of logs) {
+    weth += fromWei(log.args.amount0 ?? 0n);
+    diem += fromWei(log.args.amount1 ?? 0n);
+  }
+  return { weth, diem };
+}
+
 // ── Main per-position analysis ────────────────────────────────────────────────
 
 async function benchmarkPosition(
@@ -280,8 +306,11 @@ async function benchmarkPosition(
   const today    = new Date().toISOString().slice(0, 10);
   const daysOpen = Math.max(1, (Date.now() / 1000 - mintTs) / 86400);
 
-  const wethDep = fromWei(rec.wethDeposited);
-  const diemDep = fromWei(rec.diemDeposited);
+  // Use on-chain IncreaseLiquidity for actual deposited amounts (lp-positions.jsonl
+  // records desired amounts, which may exceed what Uniswap V3 actually accepts).
+  const minted  = await mintedAmounts(tokenId, client);
+  const wethDep = minted.weth || fromWei(rec.wethDeposited ?? '0');
+  const diemDep = minted.diem || fromWei(rec.diemDeposited ?? '0');
 
   // ── 1. Historical prices at mint ─────────────────────────────────────────
 
@@ -413,7 +442,7 @@ function renderTable(results: PositionBenchmark[]): string {
     lines.push('**Cost basis at mint:**');
     lines.push(`| | WETH | DIEM | ETH/USD | DIEM/USD |`);
     lines.push(`|---|---|---|---|---|`);
-    lines.push(`| Deposited | ${tok(fromWei(r.curWeth.toString()))} | — | — | — |`); // placeholder
+    lines.push(`| Deposited | ${tok(r.curWeth)} WETH | ${tok(r.curDiem)} DIEM | — | — |`);
     lines.push(`| Mint prices | — | — | ${usd(r.ethUsdAtMint)} | ${usd(r.diemUsdAtMint)} |`);
     lines.push(`| **Cost basis** | | | **${usd(r.costBasisUsd)}** | |`);
     lines.push('');
