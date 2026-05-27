@@ -97,15 +97,20 @@ After any position that generates DIEM fees:
 **Target compute reserve:** always maintain ≥ 10 sDIEM (10 days runway).
 At current LP scale (~$35k deployed), target fee income covers ~5-10 sDIEM per week.
 
-## Active Positions as of 2026-05-26
+## Active Positions as of 2026-05-27
 
 | Token ID | Range | Status | Note |
 |----------|-------|--------|------|
-| #5196524 | [1800,3800] | in_range | Minted 2026-05-26T23:09Z, replaces #5187280 |
-| #5196526 | [2000,4000] | in_range | Minted 2026-05-26T23:09Z, replaces #5187284 |
+| #5199715 | [2600,4600] | in_range | Minted 2026-05-27T16:54Z, replaces #5196524 (was 136 ticks from upper) |
+| #5199718 | [2600,4600] | in_range | Minted 2026-05-27T16:54Z, replaces #5196526 |
+| #5199719 | [2600,4600] | in_range | Minted 2026-05-27T16:55Z, replaces #5196942 |
 
+All three repositioned at tick ~3700 → [2600,4600], 865 ticks to upper bound.
+#5196524, #5196526, #5196942 closed 2026-05-27 — all near upper boundary REPOSITION signal.
+
+Prior closed history:
 #5190707 [2000,4000] closed 2026-05-26 — DIEM staked as sDIEM (9.44 DIEM).
-#5187280 and #5187284 closed 2026-05-26 — repositioned to wider ranges above.
+#5187280 and #5187284 closed 2026-05-26 — repositioned to wider ranges.
 
 ## Logging (required every tick)
 

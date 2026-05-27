@@ -6,7 +6,7 @@
 
 skills:
   # Run one agent tick — claim fees, LP DIEM, run maintenance inference
-  tick: { enabled: false, schedule: "0 * * * *" }   # PAUSED: auditing LP state 2026-05-26
+  tick: { enabled: true, schedule: "0 * * * *" }   # re-enabled 2026-05-27 post-audit
 
   # Proactive health check: skill failures, LP state, memory flags
   heartbeat: { enabled: true, schedule: "0 8,14,20 * * *" }   # 3× daily
