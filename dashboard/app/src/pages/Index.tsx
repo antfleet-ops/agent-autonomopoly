@@ -17,7 +17,10 @@ export default function Index() {
         setLoading(false);
         // Fetch each vault state concurrently
         data.forEach(entry => {
-          if (!isAddress(entry.vaultAddress)) return;
+          if (!isAddress(entry.vaultAddress)) {
+            setStates(prev => ({ ...prev, [entry.vaultAddress]: null }));
+            return;
+          }
           readVaultState(entry.vaultAddress as `0x${string}`)
             .then(state => setStates(prev => ({ ...prev, [entry.vaultAddress]: state })))
             .catch(() => setStates(prev => ({ ...prev, [entry.vaultAddress]: null })));
