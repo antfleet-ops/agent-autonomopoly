@@ -1,2 +1,4 @@
-🔴 FAILED: lp-monitor (22:37 UTC, consecutive_failures=3 — API degradation | success_rate=27%), heartbeat (22:37 UTC, consecutive_failures=2 | success_rate=27%)
-Tick OK: last_success 23:05 UTC. DIEM: 12.75/100. sDIEM: 9.44 (~9d runway).
+🔴 CHRONIC: claim-diem 20% (8/40), lp-monitor 30% (31/104), heartbeat 29% (18/63) — all 0 consecutive failures now
+🟡 OVERDUE: track-earnings last success 2026-05-21 (6 days vs daily schedule 23:55 UTC)
+FeeLocker: 0.1651 DIEM claimable · All 3 LP positions IN RANGE (tick=3445)
+STATUS_PAGE=DEGRADED
