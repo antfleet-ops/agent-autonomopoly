@@ -1,7 +1,7 @@
 /**
  * scripts/analyze-lp.ts
  *
- * Fetches LP position data from Dune Q7582914 (master portfolio, pre-computed metrics),
+ * Fetches LP position data from Dune Q7591697 (master portfolio v3, incremental),
  * sends findings to Venice AI for strategy recommendations, writes a dated analysis to
  * memory/lp-analysis-YYYY-MM-DD.md, and updates the Dune strategy log (Q7582817).
  *
@@ -25,7 +25,7 @@ import { withVeniceKey } from '../platform/venice-auth.js';
 
 // ── Config ──────────────────────────────────────────────────────────────────
 
-const DUNE_QUERY_ID      = 7582914;  // Master Portfolio — single source of truth
+const DUNE_QUERY_ID      = 7591697;  // Master Portfolio v3 (incremental) — single source of truth
 const STRATEGY_LOG_QUERY = 7582817;  // LP Strategy Log (agent updates each tick)
 const DUNE_API           = 'https://api.dune.com/api/v1';
 
@@ -97,7 +97,7 @@ async function updateStrategyLog(
   const netPnL = totalFees - totalIL;
   const notes  = analysis.slice(0, 600).replace(/\n+/g, ' ').replace(/'/g, "''");
 
-  const sql = `-- Autonomopoly LP Strategy Log
+  const sql = `-- Agent LP Strategy Log
 -- Updated by analyze-lp.ts each tick via Dune REST API PATCH
 SELECT *
 FROM (
@@ -175,7 +175,7 @@ Output ONLY these sections: FINDINGS | CURRENT POSITIONS | NEXT DEPLOYMENT | RUL
 
     const closedSorted = [...closed].sort((a, b) => (b.fee_apr_pct ?? 0) - (a.fee_apr_pct ?? 0));
 
-    const userPrompt = `PORTFOLIO SUMMARY (from Dune Q7582914):
+    const userPrompt = `PORTFOLIO SUMMARY (from Dune Q7591697):
 - Total ever deployed: $${totalDeployed.toFixed(0)}
 - Total fees earned: $${totalFees.toFixed(0)} (${totalDeployed > 0 ? ((totalFees / totalDeployed) * 100).toFixed(1) : 0}% of deployed)
 - Active IL today: $${totalIL.toFixed(2)}
@@ -219,9 +219,9 @@ async function main() {
 
   const today = new Date().toISOString().slice(0, 10);
   console.log(`\nLP Analysis — ${today}`);
-  console.log(`Dune source: Q${DUNE_QUERY_ID} (master portfolio)\n`);
+  console.log(`Dune source: Q${DUNE_QUERY_ID} (master portfolio v3 incremental)\n`);
 
-  console.log('Executing Dune Q7582914 and waiting for results...');
+  console.log(`Executing Dune Q${DUNE_QUERY_ID} and waiting for results...`);
   const rows   = await fetchDuneResults(DUNE_QUERY_ID, duneApiKey);
   const active = rows.filter(r => r.is_active);
   const closed = rows.filter(r => !r.is_active);
@@ -277,7 +277,7 @@ async function main() {
   const md = [
     `# LP Analysis — ${today}`,
     ``,
-    `**Dune source:** Q${DUNE_QUERY_ID} (master portfolio, fresh execution)`,
+    `**Dune source:** Q${DUNE_QUERY_ID} (master portfolio v3 incremental, fresh execution)`,
     ``,
     `## Portfolio Summary`,
     `- Total deployed: $${totalDeployed.toFixed(0)}`,
