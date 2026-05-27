@@ -1,0 +1,93 @@
+name: Chain Runner
+run-name: "chain: ${{ inputs.chain }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: 'Chain name (must match a key under chains: in aeon.yml)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+  actions: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  NODE_OPTIONS: '--no-deprecation'
+
+concurrency:
+  group: chain-${{ inputs.chain }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GH_GLOBAL || secrets.GITHUB_TOKEN }}
+
+      - name: Parse chain and dispatch skills
+        env:
+          GH_TOKEN: ${{ secrets.GH_GLOBAL || secrets.GITHUB_TOKEN }}
+          _CHAIN_INPUT: ${{ inputs.chain }}
+        run: |
+          CHAIN="$_CHAIN_INPUT"
+          echo "Running chain: $CHAIN"
+
+          # --- Parse chains section from aeon.yml ---
+          # Reads the same format as messages.yml chain parser:
+          #   chains:
+          #     <name>:
+          #       schedule: "..."
+          #       steps:
+          #         - skill: <name>
+          #         - parallel: [skill1, skill2]
+          declare -A CHAIN_SKILLS
+          IN_CHAINS=false
+          CURRENT_CHAIN=""
+          while IFS= read -r line; do
+            if [[ "$line" =~ ^chains: ]]; then
+              IN_CHAINS=true
+              continue
+            fi
+            $IN_CHAINS && [[ "$line" =~ ^[a-z] ]] && IN_CHAINS=false
+            $IN_CHAINS || continue
+
+            if [[ "$line" =~ ^\ \ ([a-zA-Z0-9_-]+): ]]; then
+              CURRENT_CHAIN="${BASH_REMATCH[1]}"
+              continue
+            fi
+            [ -z "$CURRENT_CHAIN" ] || [ "$CURRENT_CHAIN" != "$CHAIN" ] && continue
+            if [[ "$line" =~ parallel:\ *\[([^\]]+)\] ]]; then
+              CHAIN_SKILLS["$CURRENT_CHAIN"]+="$(echo "${BASH_REMATCH[1]}" | tr -d ' '),"
+            elif [[ "$line" =~ skill:\ *([a-zA-Z0-9_-]+) ]]; then
+              CHAIN_SKILLS["$CURRENT_CHAIN"]+="${BASH_REMATCH[1]},"
+            fi
+          done < aeon.yml
+
+          SKILLS="${CHAIN_SKILLS[$CHAIN]:-}"
+          if [ -z "$SKILLS" ]; then
+            echo "::error::Chain '$CHAIN' not found in aeon.yml or has no skills"
+            exit 1
+          fi
+
+          echo "Skills in chain '$CHAIN': $SKILLS"
+
+          # --- Dispatch each skill sequentially ---
+          IFS=',' read -ra SKILL_LIST <<< "$SKILLS"
+          for SKILL in "${SKILL_LIST[@]}"; do
+            [ -z "$SKILL" ] && continue
+            echo "Dispatching skill: $SKILL"
+            gh workflow run aeon.yml -f skill="$SKILL"
+            sleep 2
+          done
+
+          echo "Chain '$CHAIN' dispatched successfully"
