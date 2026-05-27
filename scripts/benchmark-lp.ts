@@ -557,7 +557,7 @@ async function main() {
 
   console.log(`  ${records.length} positions found`);
 
-  const client = createPublicClient({ chain: base, transport: http(rpcUrl) });
+  const client = createPublicClient({ chain: base, transport: http(rpcUrl) }) as ReturnType<typeof createPublicClient>;
 
   // Current pool state (shared across all positions)
   const currentSlot0 = await client.readContract({
