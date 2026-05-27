@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: all positions in range | tick=3942 | FeeLocker=0.0399 DIEM claimable
+AUTONOMOPOLY LP: all positions in range | tick=3929 | FeeLocker=0.0465 DIEM claimable
