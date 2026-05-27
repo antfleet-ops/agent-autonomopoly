@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: tokenId 5196500 OUT OF RANGE | range [2400,2800] | tick≈3257 (above upper bound) | position is all DIEM | 3 positions in range (5190707 [2000,4000], 5196524 [1800,3800], 5196526 [2000,4000]) | FeeLocker 0.6666 DIEM claimable | reposition BLOCKED — no .env credentials in this environment | ETH 0.0079 / WETH 0.9350 / DIEM 1.4631
+AUTONOMOPOLY LP: repositioned tokenId 5196500 → 5196942 | range [2200,4200] | tick 3298 | 9.628 DIEM collected | collect retry required (transient Privy lag)
