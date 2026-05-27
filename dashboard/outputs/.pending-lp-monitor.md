@@ -1,1 +1,1 @@
-AUTONOMOPOLY LP: repositioned tokenId 5196500 → 5196942 | range [2200,4200] | tick 3298 | 9.628 DIEM collected | collect retry required (transient Privy lag)
+AUTONOMOPOLY LP: all positions in range | tick=3359 | 5196524[1800,3800] 5196526[2000,4000] 5196942[2200,4200] | FeeLocker=0.1354 DIEM claimable
