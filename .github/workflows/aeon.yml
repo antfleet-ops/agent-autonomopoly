@@ -302,6 +302,7 @@ jobs:
             sleep 3
             export ANTHROPIC_BASE_URL="http://localhost:3456"
             export ANTHROPIC_API_KEY="sk-venice-proxy"  # ccr accepts any key; real auth is VENICE_API_KEY in config.json
+            SAVED_OAUTH_TOKEN="${CLAUDE_CODE_OAUTH_TOKEN:-}"
             unset CLAUDE_CODE_OAUTH_TOKEN
             echo "::notice::Routing through Venice (http://localhost:3456, model: $MODEL)"
           elif [ "$GATEWAY" = "surplus" ]; then
@@ -533,6 +534,28 @@ jobs:
           CACHE_READ=$(echo "$CLAUDE_OUTPUT" | jq '.usage.cache_read_input_tokens // 0')
           CACHE_CREATION=$(echo "$CLAUDE_OUTPUT" | jq '.usage.cache_creation_input_tokens // 0')
           TOTAL_TOKENS=$((INPUT_TOKENS + OUTPUT_TOKENS))
+
+          # Zero-token fallback: if Venice CCR failed silently, retry with direct Anthropic auth
+          if [ "$INPUT_TOKENS" -eq 0 ] && [ "$GATEWAY" = "venice" ] && [ -n "${SAVED_OAUTH_TOKEN:-}" ]; then
+            echo "::warning::Venice returned 0 tokens — CCR failed; retrying with CLAUDE_CODE_OAUTH_TOKEN (direct)"
+            unset ANTHROPIC_BASE_URL ANTHROPIC_API_KEY
+            export CLAUDE_CODE_OAUTH_TOKEN="$SAVED_OAUTH_TOKEN"
+            if ! CLAUDE_OUTPUT=$(echo "$PROMPT" | claude -p - \
+              --model "$MODEL" --allowedTools "$ALLOWED" \
+              --output-format json 2>&1); then
+              echo "::error::Direct fallback also failed. Output: $CLAUDE_OUTPUT"
+              echo "$CLAUDE_OUTPUT" | tail -c 500 | tr '\n' ' ' | cut -c1-200 > /tmp/skill-error.txt
+              exit 1
+            fi
+            RESULT_TEXT=$(echo "$CLAUDE_OUTPUT" | jq -r '.result // empty')
+            echo "$RESULT_TEXT"
+            echo "$RESULT_TEXT" > /tmp/skill-result.txt
+            INPUT_TOKENS=$(echo "$CLAUDE_OUTPUT" | jq '.usage.input_tokens // 0')
+            OUTPUT_TOKENS=$(echo "$CLAUDE_OUTPUT" | jq '.usage.output_tokens // 0')
+            CACHE_READ=$(echo "$CLAUDE_OUTPUT" | jq '.usage.cache_read_input_tokens // 0')
+            CACHE_CREATION=$(echo "$CLAUDE_OUTPUT" | jq '.usage.cache_creation_input_tokens // 0')
+            TOTAL_TOKENS=$((INPUT_TOKENS + OUTPUT_TOKENS))
+          fi
 
           echo "SKILL_INPUT_TOKENS=$INPUT_TOKENS" >> "$GITHUB_OUTPUT"
           echo "SKILL_OUTPUT_TOKENS=$OUTPUT_TOKENS" >> "$GITHUB_OUTPUT"
