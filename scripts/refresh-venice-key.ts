@@ -20,7 +20,7 @@
 
 import { spawnSync } from 'child_process';
 import { open } from 'fs/promises';
-import { loadSignerFromPrivy } from '../harness/safety/wallet.js';
+import { loadPrivyConfig, loadSignerFromPrivy } from '../harness/safety/wallet.js';
 
 const VENICE_API = 'https://api.venice.ai/api/v1';
 const BEARER_CACHE = 'memory/venice-bearer.json';
@@ -39,7 +39,7 @@ async function testKey(key: string): Promise<boolean> {
 }
 
 async function mintFreshKey(): Promise<string> {
-  const signer = await loadSignerFromPrivy();
+  const signer = await loadSignerFromPrivy(loadPrivyConfig());
 
   // Step 1 — get a short-lived challenge JWT from Venice
   const challengeRes = await fetch(`${VENICE_API}/api_keys/generate_web3_key`);
