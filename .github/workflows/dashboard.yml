@@ -45,7 +45,7 @@ jobs:
         working-directory: dashboard/app
         run: npm run build
         env:
-          VITE_PRIVY_APP_ID: ${{ secrets.DASHBOARD_PRIVY_APP_ID }}
+          VITE_PRIVY_APP_ID: ${{ secrets.PRIVY_APP_ID }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
