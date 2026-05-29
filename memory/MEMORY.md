@@ -72,3 +72,7 @@ Promote accumulate → build when EITHER:
 - Daily LP fee rate >= 5 DIEM/day sustained
 
 When promoting: set `mode: "build"` in goals.json, send urgent Telegram notify, enable build skill in aeon.yml.
+
+## Research & Analysis
+
+- [Agent Performance Analysis 2026-05-27](agent-analysis-2026-05-27.md) — Live Dune data: $6,232 fees earned, +$6,503 net PnL, corrected from stale memory

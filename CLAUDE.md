@@ -36,6 +36,21 @@ A CLI launchpad that spawns **self-funding, self-evolving Claude Code agents**. 
 
 No router, no swap step, no platform custody. Agents run as Modal ticks (v0), die after 7 days of sub-threshold income, remaining DIEM drains to the protocol vault.
 
+### Launch params (set at fork time by agent-portal)
+
+| Field | Description |
+|-------|-------------|
+| `name` | Agent display name |
+| `symbol` | Ticker (2–10 alphanumeric) |
+| `goal` | Creator's mission statement — written into `memory/goals.json` at fork |
+| `telegramUserId` | Creator's Telegram numeric user ID — set as `TELEGRAM_ALLOWED_USER_IDS` + `TELEGRAM_CHAT_ID` secrets |
+
+### Post-launch settings
+
+The portal exposes `POST /api/agent/[slug]/settings` for:
+- `veniceApiKey` — bring-your-own Venice key, bypasses DIEM-earned inference
+- `telegramUserId` — update allowed Telegram users post-launch
+
 ## Implemented code
 
 ### `harness/safety/allowlist.ts`

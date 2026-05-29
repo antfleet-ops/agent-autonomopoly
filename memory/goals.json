@@ -1,5 +1,6 @@
 {
   "mission": "Accelerate autopoietic, perpetual inference for tokenized agents on Liquid Protocol.",
+  "goal": "Accumulate 100 DIEM and activate build mode to develop the agent launchpad.",
   "milestones": [
     {
       "id": "accumulate-100-diem",
@@ -34,6 +35,7 @@
     "buildModeOnTotal": 100,
     "unit": "DIEM"
   },
+  "telegramUserId": "",
   "agentWallet": "0x8767Df39eCeeaeB11554642237aC4E08660aB6A3",
   "feeLockerAddress": "0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF",
   "diemAddress": "0xF4d97F2da56e8c3098f3a8D538DB630A2606a024"
