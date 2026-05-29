@@ -48,7 +48,7 @@ model: claude-sonnet-4-6
 # fallback — used automatically when primary provider's key is absent or depleted.
 # Set to "direct" to fall back to CLAUDE_CODE_OAUTH_TOKEN without manual aeon.yml edits.
 gateway:
-  provider: venice    # primary: sDIEM-gated inference
+  provider: direct    # Venice CCR failing (key likely expired) — using CLAUDE_CODE_OAUTH_TOKEN directly
   fallback: direct    # automatic fallback: CLAUDE_CODE_OAUTH_TOKEN when Venice key absent
 
 # Reactive triggers — auto-repair on consecutive failures
