@@ -19,7 +19,7 @@
  */
 
 import { spawnSync } from 'child_process';
-import { writeFile } from 'fs/promises';
+import { open } from 'fs/promises';
 import { loadSignerFromPrivy } from '../harness/safety/wallet.js';
 
 const VENICE_API = 'https://api.venice.ai/api/v1';
@@ -80,9 +80,10 @@ async function updateGithubSecret(key: string): Promise<void> {
     console.warn('[refresh-venice-key] GITHUB_REPOSITORY not set — skipping secret update');
     return;
   }
-  // Use spawnSync with an argument array — no shell involved, key is never interpolated
-  const result = spawnSync('gh', ['secret', 'set', 'VENICE_API_KEY', '--body', key, '--repo', repo], {
-    stdio: 'inherit',
+  // Pipe the key via stdin so it never appears in process args or ps output
+  const result = spawnSync('gh', ['secret', 'set', 'VENICE_API_KEY', '--body-file', '-', '--repo', repo], {
+    input: key,
+    stdio: ['pipe', 'inherit', 'inherit'],
   });
   if (result.status !== 0) {
     throw new Error(`gh secret set failed with exit code ${result.status}`);
@@ -112,8 +113,10 @@ async function main(): Promise<void> {
   // Update GitHub Actions secret so the next run has the new key
   await updateGithubSecret(freshKey);
 
-  // Update local bearer cache
-  await writeFile(BEARER_CACHE, JSON.stringify({ bearer: freshKey }, null, 2));
+  // Update local bearer cache — 0o600 so only the owner can read the key
+  const fh = await open(BEARER_CACHE, 'w', 0o600);
+  await fh.writeFile(JSON.stringify({ bearer: freshKey }, null, 2));
+  await fh.close();
 
   console.log('[refresh-venice-key] Done — fresh key written to GitHub secret and memory/venice-bearer.json');
 }
