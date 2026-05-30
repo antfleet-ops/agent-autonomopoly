@@ -513,13 +513,32 @@ jobs:
           Use this variable (override the default in the skill file):
           var=$VAR"
           fi
+          # Load agent identity as system prompt — prevents empty-system-block API errors from CCR/Venice
+          SYSTEM_PROMPT=$(cat identity/SOUL.md identity/STYLE.md 2>/dev/null)
+          SYSTEM_PROMPT="${SYSTEM_PROMPT:-You are AUTONOMOPOLY, an autonomous agent on Base mainnet.}"
+
           if ! CLAUDE_OUTPUT=$(echo "$PROMPT" | claude -p - \
+            --system "$SYSTEM_PROMPT" \
             --model "$MODEL" --allowedTools "$ALLOWED" \
             --output-format json 2>&1); then
-            echo "::error::Claude CLI failed. Output: $CLAUDE_OUTPUT"
-            # Save error signature for quality tracking (cron-state step reads this)
-            echo "$CLAUDE_OUTPUT" | tail -c 500 | tr '\n' ' ' | cut -c1-200 > /tmp/skill-error.txt
-            exit 1
+            # Hard failure — attempt direct fallback before giving up (catches 400s from gateway)
+            if [ "$GATEWAY" != "direct" ] && [ -n "${SAVED_OAUTH_TOKEN:-}" ]; then
+              echo "::warning::Gateway returned hard failure — retrying with direct Anthropic auth"
+              unset ANTHROPIC_BASE_URL ANTHROPIC_API_KEY
+              export CLAUDE_CODE_OAUTH_TOKEN="$SAVED_OAUTH_TOKEN"
+              if ! CLAUDE_OUTPUT=$(echo "$PROMPT" | claude -p - \
+                --system "$SYSTEM_PROMPT" \
+                --model "$MODEL" --allowedTools "$ALLOWED" \
+                --output-format json 2>&1); then
+                echo "::error::Direct fallback also failed. Output: $CLAUDE_OUTPUT"
+                echo "$CLAUDE_OUTPUT" | tail -c 500 | tr '\n' ' ' | cut -c1-200 > /tmp/skill-error.txt
+                exit 1
+              fi
+            else
+              echo "::error::Claude CLI failed. Output: $CLAUDE_OUTPUT"
+              echo "$CLAUDE_OUTPUT" | tail -c 500 | tr '\n' ' ' | cut -c1-200 > /tmp/skill-error.txt
+              exit 1
+            fi
           fi
 
           # Extract and print the text result so logs still show skill output
@@ -541,6 +560,7 @@ jobs:
             unset ANTHROPIC_BASE_URL ANTHROPIC_API_KEY
             export CLAUDE_CODE_OAUTH_TOKEN="$SAVED_OAUTH_TOKEN"
             if ! CLAUDE_OUTPUT=$(echo "$PROMPT" | claude -p - \
+              --system "$SYSTEM_PROMPT" \
               --model "$MODEL" --allowedTools "$ALLOWED" \
               --output-format json 2>&1); then
               echo "::error::Direct fallback also failed. Output: $CLAUDE_OUTPUT"
