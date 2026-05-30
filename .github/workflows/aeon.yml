@@ -518,7 +518,7 @@ jobs:
           SYSTEM_PROMPT="${SYSTEM_PROMPT:-You are AUTONOMOPOLY, an autonomous agent on Base mainnet.}"
 
           if ! CLAUDE_OUTPUT=$(echo "$PROMPT" | claude -p - \
-            --system "$SYSTEM_PROMPT" \
+            --system-prompt "$SYSTEM_PROMPT" \
             --model "$MODEL" --allowedTools "$ALLOWED" \
             --output-format json 2>&1); then
             # Hard failure — attempt direct fallback before giving up (catches 400s from gateway)
@@ -527,7 +527,7 @@ jobs:
               unset ANTHROPIC_BASE_URL ANTHROPIC_API_KEY
               export CLAUDE_CODE_OAUTH_TOKEN="$SAVED_OAUTH_TOKEN"
               if ! CLAUDE_OUTPUT=$(echo "$PROMPT" | claude -p - \
-                --system "$SYSTEM_PROMPT" \
+                --system-prompt "$SYSTEM_PROMPT" \
                 --model "$MODEL" --allowedTools "$ALLOWED" \
                 --output-format json 2>&1); then
                 echo "::error::Direct fallback also failed. Output: $CLAUDE_OUTPUT"
@@ -560,7 +560,7 @@ jobs:
             unset ANTHROPIC_BASE_URL ANTHROPIC_API_KEY
             export CLAUDE_CODE_OAUTH_TOKEN="$SAVED_OAUTH_TOKEN"
             if ! CLAUDE_OUTPUT=$(echo "$PROMPT" | claude -p - \
-              --system "$SYSTEM_PROMPT" \
+              --system-prompt "$SYSTEM_PROMPT" \
               --model "$MODEL" --allowedTools "$ALLOWED" \
               --output-format json 2>&1); then
               echo "::error::Direct fallback also failed. Output: $CLAUDE_OUTPUT"
