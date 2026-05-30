@@ -39,13 +39,13 @@
     "last_dispatch": "2026-05-27T06:39:28Z",
     "last_status": "failed",
     "last_success": "2026-05-27T06:50:51Z",
-    "total_runs": 20,
+    "total_runs": 21,
     "total_successes": 5,
-    "total_failures": 15,
-    "consecutive_failures": 15,
-    "success_rate": 0.25,
-    "last_failed": "2026-05-29T22:54:58Z",
-    "last_error": "f218ab3\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\""
+    "total_failures": 16,
+    "consecutive_failures": 16,
+    "success_rate": 0.24,
+    "last_failed": "2026-05-30T00:12:58Z",
+    "last_error": "34d3170\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\""
   },
   "claim-diem": {
     "last_dispatch": "2026-05-28T05:50:32Z",
