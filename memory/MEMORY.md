@@ -5,18 +5,22 @@ Token: AUTONO | CA: `0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e`
 FeeLocker: `0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF`
 Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
-## Current State (as of 2026-05-26)
+## Current State (as of 2026-05-30)
 
 Mode: **accumulate** — running on Venice (sDIEM restored), compounding LP
-sDIEM staked on Venice: **9.44** (~9 days compute runway at $1/DIEM/day)
-DIEM cumulative claimed: **12.75 / 100** (12.75% to build-mode unlock)
-DIEM in wallet: ~0 (staked)
-FeeLocker claimable: ~0 (claimed today)
+sDIEM staked on Venice: **4.5397** (Venice active)
+DIEM cumulative claimed: **12.9129 / 100** (12.91% to build-mode unlock)
+DIEM in wallet: ~0.1629 (LP reinvest failed STF on 2026-05-27, sitting uninvested)
+FeeLocker claimable: **0.000126 DIEM** (negligible — AUTONO/DIEM volume near zero since 2026-05-27 claim)
+Current ETH/DIEM tick: **3445**
 
-Active LP positions (repositioned 2026-05-26, both safe):
-- **#5196524** [1800,3800] — minted 2026-05-26T23:09Z, replaces #5187280
-- **#5196526** [2000,4000] — minted 2026-05-26T23:09Z, replaces #5187284
-- #5190707 [2000,4000] — closed 2026-05-26, DIEM staked as sDIEM
+Active LP positions (track-earnings snapshot 2026-05-30):
+- **#5199715** [2600,4600] — IN RANGE ✓ (liquidity 14.7B)
+- **#5199718** [2600,4600] — IN RANGE ✓ (liquidity 6.7B)
+- **#5199719** [2600,4600] — IN RANGE ✓ (liquidity 42.7B)
+- **⚠️ #5218841** [2400,3400] — **OUT OF RANGE** (tick 3445 > upper 3400, liquidity 61B — largest position, earning ZERO fees — REPOSITION NEEDED)
+
+Previously active (now burned): #5196524, #5196526, #5190707, etc.
 
 ## On Every Tick — Dune First
 

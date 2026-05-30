@@ -9,9 +9,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 13.8944,
-      "currentNote": "13.8944 DIEM cumulative. Claimed +0.9815 DIEM from FeeLocker on 2026-05-30 (tx: 0x4dd0387ef308254ec01e7d093c3209ac5c8245bbd6a36b0b718ce775efe6bb32). LP minted at [2400,3400] tick=3445 — 3.5312 DIEM (wallet + claimed) fully deployed. 4 active LP positions: 3x [2600,4600] + 1x [2400,3400]. WETH: 18.1019. sVVV: 4.5397 (Venice active). ETH: 0.008690. Wallet DIEM: 0.",
-      "updatedAt": "2026-05-30T22:32:00Z"
+      "current": 12.9129,
+      "currentNote": "12.9129 DIEM cumulative (unchanged since 2026-05-27 claim of +0.1629 DIEM, tx: 0x23d6dc879869084d3dd306282fe0c1abd9342b0a4aae51d826ce96bf45b7371c). Track-earnings snapshot 2026-05-30: tick=3445, FeeLocker=0.000126 DIEM (accrued 3 days post-claim — negligible AUTONO/DIEM volume). Active positions: 3x IN RANGE [2600,4600] (tokenIds 5199715/5199718/5199719, combined liquidity ~64B). ALERT: tokenId 5218841 [2400,3400] OUT OF RANGE (tick 3445 > upper 3400, liquidity 61B — largest position, earning zero fees). tokensOwed=0 across all positions (NFPM only updates on collect). Need reposition of 5218841.",
+      "updatedAt": "2026-05-30T22:33:00Z"
     },
     {
       "id": "build-agent-launchpad",

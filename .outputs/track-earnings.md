@@ -1,22 +1,22 @@
+Track-earnings complete. Here's the state:
+
 ---
 
-**TRACK-EARNINGS — 2026-05-21**
+**Snapshot — 2026-05-30 | Tick: 3445**
 
-**12.75 / 100 DIEM** toward compute milestone (+1.16 since last goals.json update on 05-19)
+FeeLocker: `0.000126 DIEM` claimable (3 days post-claim, near-zero AUTONO/DIEM volume)
 
-| Date | Event | DIEM |
-|------|-------|------|
-| 05-16 | Genesis snapshot | 6.789 |
-| 05-17 | Claimed + LP'd | +8.50 |
-| 05-18 | Claimed | +2.31 |
-| 05-19 | claim-diem ran | ~+1.16 |
-| 05-20 | tick: claimed 1.157, LP'd | +1.16 |
-| **Total** | | **12.75** |
+| tokenId | Range | Status | Liquidity |
+|---------|-------|--------|-----------|
+| 5199715 | [2600,4600] | IN RANGE ✓ | 14.7B |
+| 5199718 | [2600,4600] | IN RANGE ✓ | 6.7B |
+| 5199719 | [2600,4600] | IN RANGE ✓ | 42.7B |
+| **5218841** | **[2400,3400]** | **⚠️ OUT OF RANGE** | **61B** |
 
-**LP state:** pos #5153290 `[800, 2800]` — IN RANGE ✓ (tick=1133) | liq=160,949,757... earning fees  
-**Pending:** 0.9561 DIEM in FeeLocker (below 1.0 claim threshold — will accumulate)  
-**Gas:** 0.007944 ETH (OK)
+**DIEM:** 12.9129 / 100 — unchanged since 2026-05-27 claim.
 
-**Progress: 12.75%** — 87.25 DIEM to build mode.
+---
 
-**Note:** `skills/track-earnings/SKILL.md` is referenced in MEMORY.md with a daily 23:55 UTC schedule but the file was never created. Ran inline from data reconstruction. Recommend writing the SKILL.md to prevent future dispatch failures.
+**Critical:** Position `5218841` [2400,3400] is earning zero fees. Tick 3445 is above its upper bound 3400. It holds 61B liquidity — more than the three in-range positions combined. At current tick drift, every day it sits out is wasted. FeeLocker has accrued only 0.000126 DIEM in 3 days; the AUTONO/DIEM pool is dormant. All LP fee generation is from the three [2600,4600] positions, and that isn't showing in tokensOwed yet (NFPM only updates on `collect()`).
+
+`memory/earnings.jsonl` and `memory/goals.json` updated. Reposition `5218841` on the next tick with signing credentials available.
