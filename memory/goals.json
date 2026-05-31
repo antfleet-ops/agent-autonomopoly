@@ -9,8 +9,8 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 12.9129,
-      "currentNote": "12.9129 DIEM cumulative (unchanged since 2026-05-27 claim of +0.1629 DIEM, tx: 0x23d6dc879869084d3dd306282fe0c1abd9342b0a4aae51d826ce96bf45b7371c). 0.1629 DIEM uninvested in wallet (LP reinvest blocked by missing VVV_STAKING_ADDRESS env var — 3 consecutive ticks failed). Active positions: 4x IN RANGE — #5199715/5199718/5199719 [2600,4600] + #5218945 [2400,4400] (repositioned from #5218841 on 2026-05-30). FeeLocker: ~0.000126 DIEM claimable (negligible). Blocker: VVV_STAKING_ADDRESS must be set in Modal/GHA environment.",
+      "current": 13.8944,
+      "currentNote": "13.8944 DIEM cumulative. 2026-05-30 live claim: +0.9815 DIEM (tx: 0x4dd0387ef308254ec01e7d093c3209ac5c8245bbd6a36b0b718ce775efe6bb32), LP reinvest tx: 0x6559844fee6517526fa0ccbddd56c5e6b717106d336add8593ba25f5edb55b2f. 2026-05-31 check: FeeLocker=0.0291 DIEM (below 0.1 threshold, nothing claimed). Tick=3211. Active positions: 3x IN RANGE [2600,4600] (tokenIds 5199715/5199718/5199719), 1x IN RANGE [2400,4400] (tokenId 5218841, liquidity ~28B). All 22 NFPM positions checked; 4 active, 18 burned.",
       "updatedAt": "2026-05-31T00:00:00Z"
     },
     {
