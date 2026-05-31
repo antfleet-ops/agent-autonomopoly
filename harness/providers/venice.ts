@@ -101,11 +101,14 @@ export type VeniceConfig = {
 };
 
 export function loadConfig(): VeniceConfig {
-  const diemAddress = process.env['DIEM_TOKEN_ADDRESS'];
-  const stakingAddress = process.env['VVV_STAKING_ADDRESS'] ?? process.env['VENICE_STAKING_ADDRESS'];
+  // Addresses fall back to compile-time constants from platform/constants.ts.
+  // This removes the env-var hard requirement for values that are immutable on-chain.
+  const diemAddress = process.env['DIEM_TOKEN_ADDRESS'] ?? ADDRESSES.DIEM;
+  const stakingAddress =
+    process.env['VVV_STAKING_ADDRESS'] ??
+    process.env['VENICE_STAKING_ADDRESS'] ??
+    ADDRESSES.VVV_STAKING;
   const rpcUrl = process.env['RPC_URL'];
-  if (!diemAddress) throw new Error('DIEM_TOKEN_ADDRESS is required');
-  if (!stakingAddress) throw new Error('VENICE_STAKING_ADDRESS is required');
   if (!rpcUrl) throw new Error('RPC_URL is required');
   return {
     diemAddress: diemAddress as Address,
