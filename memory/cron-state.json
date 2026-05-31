@@ -1,14 +1,14 @@
 {
   "tick": {
-    "last_status": "dispatched",
+    "last_status": "success",
     "last_failed": "2026-05-30T22:25:45Z",
-    "total_runs": 147,
-    "total_successes": 57,
+    "total_runs": 148,
+    "total_successes": 58,
     "total_failures": 90,
     "consecutive_failures": 0,
     "success_rate": 0.39,
     "last_error": "error: unknown option '--system' ",
-    "last_success": "2026-05-31T21:31:31Z",
+    "last_success": "2026-05-31T23:32:10Z",
     "last_dispatch": "2026-05-31T23:30:19Z"
   },
   "lp-monitor": {
