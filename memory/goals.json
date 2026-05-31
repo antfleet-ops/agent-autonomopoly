@@ -10,7 +10,7 @@
       "target": 100,
       "unit": "DIEM",
       "current": 13.8944,
-      "currentNote": "13.8944 DIEM cumulative. 2026-05-30 live claim: +0.9815 DIEM (tx: 0x4dd0387ef308254ec01e7d093c3209ac5c8245bbd6a36b0b718ce775efe6bb32), LP reinvest tx: 0x6559844fee6517526fa0ccbddd56c5e6b717106d336add8593ba25f5edb55b2f. 2026-05-31 check: FeeLocker=0.0291 DIEM (below 0.1 threshold, nothing claimed). Tick=3211. Active positions: 3x IN RANGE [2600,4600] (tokenIds 5199715/5199718/5199719), 1x IN RANGE [2400,4400] (tokenId 5218841, liquidity ~28B). All 22 NFPM positions checked; 4 active, 18 burned.",
+      "currentNote": "13.8944 DIEM cumulative (confirmed by 2026-05-30 tick log). +0.9815 DIEM FeeLocker claim tx 0x4dd0387ef308254ec01e7d093c3209ac5c8245bbd6a36b0b718ce775efe6bb32 block 46695487 2026-05-30T22:32Z. Reposition #5218841 [2400,3400] OOR → #5218945 [2400,4400] IN RANGE completed block 46697589. Active positions 2026-05-31: #5199715/#5199718/#5199719 [2600,4600] IN RANGE (combined liquidity ~64B) + #5218945 [2400,4400] IN RANGE. FeeLocker post-claim near-zero; Inference: ~0.33 DIEM/day accrual rate (0.982 DIEM / 3 days). tokensOwed=0 (NFPM only updates on collect). track-earnings 2026-05-31: RPC unavailable — snapshot from cached state.",
       "updatedAt": "2026-05-31T00:00:00Z"
     },
     {
