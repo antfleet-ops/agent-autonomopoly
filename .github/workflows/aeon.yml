@@ -225,6 +225,7 @@ jobs:
           PRIVY_WALLET_ID: ${{ secrets.PRIVY_WALLET_ID }}
           AGENT_WALLET: '0x8767Df39eCeeaeB11554642237aC4E08660aB6A3'
           DIEM_TOKEN_ADDRESS: '0xF4d97F2da56e8c3098f3a8D538DB630A2606a024'
+          VVV_STAKING_ADDRESS: ${{ secrets.VVV_STAKING_ADDRESS }}
           DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
           SKILL_VAR: ${{ inputs.var }}
         run: |
