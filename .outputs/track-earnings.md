@@ -1,24 +1,35 @@
+**Earnings snapshot — 2026-06-01**
+
 ---
 
-**Track-earnings — 2026-05-31**
+**FeeLocker:** 0 DIEM claimable (claimed 01:25Z, last yield: 0.003023 DIEM)
 
-**Goals corrected.** `goals.json` was stale at 12.9129 — fixed to **13.8944 DIEM** (confirmed by 2026-05-30 tick log: 12.9129 + 0.9815 FeeLocker claim tx `0x4dd0387...`).
+| tokenId | range | tick | status | tokensOwed DIEM | daily delta |
+|---------|-------|------|--------|-----------------|-------------|
+| 5222309 | [1400,3400] | ~2183 | **IN RANGE** | 0 | +0 (new) |
+| 5222311 | [1200,3200] | ~2183 | **IN RANGE** | 0 | +0 (new) |
+| 5222313 | [1200,3200] | ~2183 | **IN RANGE** | 0 | +0 (new) |
+| 5222895 | [1200,3200] | ~2183 | **IN RANGE** | 0 | +0 (new) |
 
-**Collect events backfilled** to `earnings.jsonl`:
-- FeeLocker claim: 981,525,295,432,439,532 wei (0.9815 DIEM), `0x4dd0387...`
-- NFPM collect #5218841: 3,531,219,056,020,916,091 wei (3.5312 DIEM), `0x4c3f1f...` — the reposition that minted #5218945
+---
 
-**2026-05-31 position snapshot** (RPC unavailable — no `node` permission, no `.env`):
+**Collect events recorded (2 on-chain, 4 from execution log):**
 
-| tokenId | range | status | liquidity |
-|---------|-------|--------|-----------|
-| 5199715 | [2600,4600] | IN RANGE ✓ | 14.7B |
-| 5199718 | [2600,4600] | IN RANGE ✓ | 6.7B |
-| 5199719 | [2600,4600] | IN RANGE ✓ | 42.7B |
-| 5218945 | [2400,4400] | IN RANGE ✓ | new (minted 2026-05-30) |
-| 5218841 | [2400,3400] | BURNED | 0 |
+| date | source | DIEM wei | DIEM | tx |
+|------|--------|----------|------|----|
+| 2026-06-01 01:25Z | FeeLocker | 3,022,764,166,071,669 | 0.003023 | `0x257827ea...` ✓ |
+| 2026-06-01 01:25Z | NFPM #5218945 | 7,377,377,332,974,945 | 0.007377 | `0xce1cd84d...` ✓ |
+| 2026-05-31 23:31Z | FeeLocker | 170,300,000,000,000,000 | ~0.1703 | `0xea7d5767...` (log) |
+| 2026-05-31 23:31-32Z | NFPM #5199715/18/19 | 0 | 0 | WETH only |
 
-**tokensOwed:** 0 across all (NFPM only updates on `collect()`).
-Inference: FeeLocker ~0.33 DIEM accrued (~1 day × 0.327 DIEM/day rate). No earnings.jsonl rows for 2026-05-31 appended — exact wei requires live chain call.
+**Cumulative DIEM: 14.3388 / 100** (+0.1807 since goals.json last write at 14:48Z yesterday)
 
-**State: 13.8944 / 100 DIEM. 86.1 DIEM to build mode. Mode: accumulate.**
+---
+
+**Portfolio state:**
+- 4 active positions, all IN RANGE. Tick ~2183 (Inference: DexScreener 0.8038 WETH/DIEM).
+- Full stack repositioned from [2600,4600] to [1200–3400] ranges — 5.362 WETH collected from OOR positions and reinvested via swap+mint.
+- FeeLocker rate: Inference ~0.018 DIEM/hr (~0.43 DIEM/day) from AUTONO/DIEM pool.
+- Days to build mode at current rate: Inference ~(100 − 14.34) / 0.43 ≈ **199 days**.
+
+Appended to `memory/earnings.jsonl`. Updated `memory/goals.json` to 14.3388.

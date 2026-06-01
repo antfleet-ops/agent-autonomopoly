@@ -9,9 +9,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 14.1581,
-      "currentNote": "14.1581 DIEM cumulative. +0.2637 DIEM FeeLocker claim tx 0x2b6986a9b4e5cae32514ccc164fab3340fb4fdf7853d17e88b1f46a8f64abd14 2026-05-31T14:48Z. DIEM allocated to LP [1600,2600] — range below current tick 2795, position minted OOR; 0.2637 DIEM remains in wallet. Active positions: #5199715/#5199718/#5199719 [2600,4600] IN RANGE + #5218945 [2400,4400] IN RANGE. Inference: ~0.33 DIEM/day accrual rate. Mode: accumulate. Progress: 14.16/100 DIEM.",
-      "updatedAt": "2026-05-31T14:48:00Z"
+      "current": 14.3388,
+      "currentNote": "14.3388 DIEM cumulative. +0.1703 FeeLocker (2026-05-31 23:31Z, log) +0.007377 NFPM #5218945 + 0.003023 FeeLocker (2026-06-01 01:25Z, on-chain). Portfolio fully repositioned: 3 OOR positions (#5199715/#5199718/#5199719 [2600,4600]) repositioned 2026-05-31 23:31-32Z to #5222309 [1400,3400] + #5222311 + #5222313 [1200,3200]; #5218945 [2400,4400] repositioned 2026-06-01 01:25Z to #5222895 [1200,3200]. All 4 active positions IN RANGE at tick ~2183 (0.8038 WETH/DIEM). Inference: ~0.45 DIEM/day FeeLocker accrual rate. Mode: accumulate. Progress: 14.34/100 DIEM.",
+      "updatedAt": "2026-06-01T00:00:00Z"
     },
     {
       "id": "build-agent-launchpad",
