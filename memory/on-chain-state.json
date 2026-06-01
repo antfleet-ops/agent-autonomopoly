@@ -1,8 +1,27 @@
 {
   "AUTONOMOPOLY agent wallet": {
-    "last_block": 46697589,
-    "last_run": "2026-05-31T09:34:00Z",
+    "last_block": 46751253,
+    "last_run": "2026-06-01T05:31:00Z",
     "alerted_tx": [
+      "0xb5607fc10b756c7f3e6c9a8c6fd213caa9407cf4f30581427099bb67c6425945",
+      "0xa6b02f9c500fab62554e4b7faa48462ef144906a152f0a81631a947ac84402de",
+      "0x78a9ca084db7707ac31fec98ce179bf8b3f4dc85d7a12dc634f058bff5332f9a",
+      "0x257827eafc997ad10efc30cd12678520cd9870950f3939e5c942733b49cc055a",
+      "0xce1cd84d7d239b71fc04872c345981d1d551d7af08b126a718715ab925afc4c6",
+      "0xb6175efe76bcd55f99eb96a20a5ebc9e08bfad461f7e9eee0489a3e36983e1d8",
+      "0x8c6eb235a3e3329b695508d42f6781c03f6761d9c12650f75d12e19e8418b49d",
+      "0x8e0d8b46c0600a21d3cb44b916e72ddf982e907cfa0c71f9e330c38eb12aef70",
+      "0xb3f819beb9add16991119cf7266e96a367b38cf7e38858e435ccc1eec9fea724",
+      "0xe27a0d9322eddcb5312cf797c401f51312f5ed8ba7fa222e737d044e9f7b90a6",
+      "0x7b3d47b57c67147d8e723220d3d64e5a042de10bfb02610df06eca9c92e838d4",
+      "0x5c04e10ae55abc4a2aa374524e26abdebf2c3c3aefd5b146b5e58165e37c09da",
+      "0x6da3bb52cdad4e67ad10885af59dd9ff8af1bf2cfe1cca88fe8ed6ffe163e5e0",
+      "0xed7d20df9edddb8c199b15fd2c319c87edb64dc2fff1acec94bcff2f6f581b2d",
+      "0x7606c4dda866fd543ecf1a8e356bf37a78fbe4253e5aefd8df1b658cd80a09f8",
+      "0xea7d57671113a35cd68877dd6f59b7ca1f7350a09900add9e5e988fd45f6b805",
+      "0xca925d9686dbca86f4c8c4be2fc3b64b62b8aea24648f7c38c109182b984b3d8",
+      "0xd564060207fec005f6c81a05a952ef009366126978f896b4cd52603a288d3bbc",
+      "0x2b6986a9b4e5cae32514ccc164fab3340fb4fdf7853d17e88b1f46a8f64abd14",
       "0x9437179e6846bb775eced9d2e1f09db93608069e2d5069f81c0e722355800b1c",
       "0x4c12e389234776ce9a237eeb854a92fc6e1f1af7a02f4217635d23c5be49a4cd",
       "0x4c3f1f198c55f8180825c376c6d8a07da3b847c0156d9aeb2f167c16e6a5168c",
@@ -35,8 +54,8 @@
     "median_usd_30d": null
   },
   "ETH/DIEM Uniswap v3 1% pool": {
-    "last_block": 46539392,
-    "last_run": "2026-05-27T07:48:00Z",
+    "last_block": 46751253,
+    "last_run": "2026-06-01T05:31:00Z",
     "alerted_tx": [
       "0xd7263c1a10cec3ff415658aecef63e925351aee2fc76106d8d7d0a580baa3839",
       "0x8c15e38df2cee318034f4e8f1b5c00073af24930d8699c3558f0b481f911bf62"
@@ -44,8 +63,8 @@
     "median_usd_30d": 138
   },
   "AUTONO token contract": {
-    "last_block": 46539392,
-    "last_run": "2026-05-27T07:48:00Z",
+    "last_block": 46751253,
+    "last_run": "2026-06-01T05:31:00Z",
     "alerted_tx": [],
     "median_usd_30d": null
   },
