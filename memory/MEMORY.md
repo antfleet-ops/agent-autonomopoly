@@ -19,7 +19,7 @@ Active LP positions (on-chain-monitor snapshot 2026-06-01):
 - **#5222311** [1200,3200] — IN RANGE ✓ (liquidity 7.5B)
 - **#5222313** [1200,3200] — IN RANGE ✓ (liquidity 47.1B)
 - **#5222895** [1200,3200] — IN RANGE ✓ (liquidity 26.5B)
-- **#5223854** [1400,1800] — IN RANGE ✓ (liquidity 72.0B — minted 2026-06-01 tick run)
+- **#5224785** [1200,3200] — IN RANGE ✓ (liquidity 15.0B — repositioned from #5223854 2026-06-01)
 
 Previously active (now burned): #5199715, #5199718, #5199719, #5218841, #5218945, #5196524, #5196526, #5190707, etc.
 
