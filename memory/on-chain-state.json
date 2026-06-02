@@ -1,8 +1,14 @@
 {
   "AUTONOMOPOLY agent wallet": {
-    "last_block": 46751253,
-    "last_run": "2026-06-01T05:31:00Z",
+    "last_block": 46800173,
+    "last_run": "2026-06-02T08:45:00Z",
     "alerted_tx": [
+      "0xd008159f48a9d513aa44bc20f7c3717f234b2a433ebcd50f4202476ed023ceef",
+      "0x45790ce18e79ea6854fcfd67d07b6be23ff64eb616c3f2be28241e2672870636",
+      "0xca757fcd1ec27a4a61c2b5d4b066aa554d8bfabda65625aea683d63f780f8023",
+      "0x0bb511196d7cf9571f0a800a8eee5c79bc609f1c553ae134be7f6ef8c58aa03f",
+      "0x245262a0a31b54d843f92e11658e0489d36b99567a835007dc5309291ee84a3a",
+      "0x1ab13e8d5dd9127ce9382d1b8e14b629557706cad20a7a2866921c47d6de1d38",
       "0xb5607fc10b756c7f3e6c9a8c6fd213caa9407cf4f30581427099bb67c6425945",
       "0xa6b02f9c500fab62554e4b7faa48462ef144906a152f0a81631a947ac84402de",
       "0x78a9ca084db7707ac31fec98ce179bf8b3f4dc85d7a12dc634f058bff5332f9a",
@@ -51,11 +57,11 @@
       "0xd7263c1a10cec3ff415658aecef63e925351aee2fc76106d8d7d0a580baa3839",
       "0x8c15e38df2cee318034f4e8f1b5c00073af24930d8699c3558f0b481f911bf62"
     ],
-    "median_usd_30d": null
+    "median_usd_30d": 1704
   },
   "ETH/DIEM Uniswap v3 1% pool": {
-    "last_block": 46751253,
-    "last_run": "2026-06-01T05:31:00Z",
+    "last_block": 46800173,
+    "last_run": "2026-06-02T08:45:00Z",
     "alerted_tx": [
       "0xd7263c1a10cec3ff415658aecef63e925351aee2fc76106d8d7d0a580baa3839",
       "0x8c15e38df2cee318034f4e8f1b5c00073af24930d8699c3558f0b481f911bf62"
@@ -63,8 +69,8 @@
     "median_usd_30d": 138
   },
   "AUTONO token contract": {
-    "last_block": 46751253,
-    "last_run": "2026-06-01T05:31:00Z",
+    "last_block": 46800173,
+    "last_run": "2026-06-02T08:45:00Z",
     "alerted_tx": [],
     "median_usd_30d": null
   },
