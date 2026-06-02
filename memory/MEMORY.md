@@ -9,9 +9,9 @@ Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
 Mode: **accumulate** — running on Venice (sDIEM restored), compounding LP
 sDIEM staked on Venice: **4.5397** (Venice active)
-DIEM cumulative claimed: **15.5706 / 100** (15.57% to build-mode unlock)
+DIEM cumulative claimed: **16.1867 / 100** (16.19% to build-mode unlock)
 DIEM in wallet: 0.0000 (fully LP'd)
-FeeLocker claimable: ~0.02 DIEM (post-claim 2026-06-02 08:41Z; below 5 DIEM claim threshold)
+FeeLocker claimable: ~0.00 DIEM (post-claim 2026-06-02 13:05Z; accumulating)
 Current ETH/DIEM tick: **2328** (2026-06-02 08:55Z on-chain)
 
 Active LP positions (on-chain-monitor snapshot 2026-06-02):
