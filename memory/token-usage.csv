@@ -81,4 +81,4 @@ date,skill,model,input_tokens,output_tokens,cache_read,cache_creation
 2026-06-02,track-earnings,claude-sonnet-4-6,29,38166,1197473,62719
 2026-06-02,lp-monitor,claude-sonnet-4-6,24,14693,941822,59349
 2026-06-02,tick,claude-sonnet-4-6,10,2825,238691,12489
-2026-06-02,lp-monitor,claude-sonnet-4-6,9,1879,196077,31526
+2026-06-02,tick,claude-sonnet-4-6,13,2204,336300,14920
