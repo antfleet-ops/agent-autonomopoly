@@ -258,6 +258,7 @@ async function main() {
   const argv     = process.argv.slice(2);
   const dryRun          = argv.includes('--dry-run');
   const mintOnly        = argv.includes('--mint-only');
+  const skipDecrease    = argv.includes('--skip-decrease');    // skip decreaseLiquidity (already done); still collect + FeeLocker + swap + mint
   const skipSwap        = argv.includes('--skip-swap');        // use current wallet balances, skip swap
   const force           = argv.includes('--force');            // reposition even when in range
   const minAgeOverride  = argv.includes('--min-age-override'); // bypass 72h minimum hold gate
@@ -323,8 +324,8 @@ async function main() {
 
   console.log(`Position:   [${tickLower}, ${tickUpper}]  liquidity=${liquidity}`);
 
-  if (liquidity === 0n && !mintOnly) {
-    console.log('Liquidity is 0 — position already closed. Use --mint-only to skip to swap+mint.');
+  if (liquidity === 0n && !mintOnly && !skipDecrease) {
+    console.log('Liquidity is 0 — position already closed. Use --mint-only to skip to swap+mint, or --skip-decrease to collect owed tokens + FeeLocker + swap + mint.');
     process.exit(0);
   }
 
@@ -384,8 +385,11 @@ async function main() {
   }
 
   if (dryRun) {
-    if (!mintOnly) {
+    if (!mintOnly && !skipDecrease) {
       console.log(`[dry-run] Would close tokenId ${tokenId} (liquidity ${liquidity})`);
+    }
+    if (!mintOnly) {
+      if (skipDecrease) console.log(`[dry-run] --skip-decrease: would collect owed tokens from tokenId ${tokenId} (decreaseLiquidity already done)`);
       console.log(`[dry-run] Would claim ${formatUnits(claimable, 18)} DIEM from FeeLocker`);
     }
     if (belowRange) {
@@ -433,7 +437,7 @@ async function main() {
   let collectLogs: readonly { address: string; topics: readonly string[]; data: string }[] = [];
   let claimedDiem = 0n;
 
-  if (!mintOnly) {
+  if (!mintOnly && !skipDecrease) {
   console.log(`Step 1: close position ${tokenId}`);
 
   const decSimResult = await client.simulateContract({
@@ -450,6 +454,12 @@ async function main() {
     abi: NFPM_DECREASE_ABI, functionName: 'decreaseLiquidity',
     args: [{ tokenId, liquidity, amount0Min: dec0Min, amount1Min: dec1Min, deadline: tsDeadline() }],
   }));
+  } // end !mintOnly && !skipDecrease block
+
+  if (!mintOnly) {
+  if (skipDecrease) {
+    console.log(`Step 1: --skip-decrease: collecting owed tokens from position ${tokenId} (decreaseLiquidity already done)`);
+  }
 
   const collectReceipt = await send('collect', ADDRESSES.NFPM_V3, encodeFunctionData({
     abi: NFPM_COLLECT_ABI, functionName: 'collect',
