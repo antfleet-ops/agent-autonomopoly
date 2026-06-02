@@ -5,21 +5,22 @@ Token: AUTONO | CA: `0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e`
 FeeLocker: `0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF`
 Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
-## Current State (as of 2026-06-01)
+## Current State (as of 2026-06-02)
 
 Mode: **accumulate** — running on Venice (sDIEM restored), compounding LP
 sDIEM staked on Venice: **4.5397** (Venice active)
-DIEM cumulative claimed: **14.3388 / 100** (14.34% to build-mode unlock)
+DIEM cumulative claimed: **15.5706 / 100** (15.57% to build-mode unlock)
 DIEM in wallet: 0.0000 (fully LP'd)
-FeeLocker claimable: ~0.0991–0.1080 DIEM (last checked 2026-06-01 07:21Z; below 5 DIEM claim threshold)
-Current ETH/DIEM tick: **1688** (2026-06-01 07:36Z on-chain)
+FeeLocker claimable: ~0.02 DIEM (post-claim 2026-06-02 08:41Z; below 5 DIEM claim threshold)
+Current ETH/DIEM tick: **2328** (2026-06-02 08:55Z on-chain)
 
-Active LP positions (on-chain-monitor snapshot 2026-06-01):
+Active LP positions (on-chain-monitor snapshot 2026-06-02):
 - **#5222309** [1400,3400] — IN RANGE ✓ (liquidity 207B)
 - **#5222311** [1200,3200] — IN RANGE ✓ (liquidity 7.5B)
 - **#5222313** [1200,3200] — IN RANGE ✓ (liquidity 47.1B)
 - **#5222895** [1200,3200] — IN RANGE ✓ (liquidity 26.5B)
 - **#5224785** [1200,3200] — IN RANGE ✓ (liquidity 15.0B — repositioned from #5223854 2026-06-01)
+- **#5228803** [1200,3200] — IN RANGE ✓ (liquidity 11.1B — repositioned from #5228593 2026-06-02)
 
 Previously active (now burned): #5199715, #5199718, #5199719, #5218841, #5218945, #5196524, #5196526, #5190707, etc.
 
