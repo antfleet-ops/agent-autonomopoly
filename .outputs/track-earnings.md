@@ -1,35 +1,39 @@
-**Earnings snapshot — 2026-06-01**
+---
+
+**Earnings snapshot — 2026-06-02**
+
+Wallet: `0x8767Df39eCeeaeB11554642237aC4E08660aB6A3`
+Mode: accumulate
 
 ---
 
-**FeeLocker:** 0 DIEM claimable (claimed 01:25Z, last yield: 0.003023 DIEM)
+**Cumulative DIEM harvested: 15.5706 / 100**
+Progress: 15.6% (+1.23 DIEM since last snapshot)
 
-| tokenId | range | tick | status | tokensOwed DIEM | daily delta |
-|---------|-------|------|--------|-----------------|-------------|
-| 5222309 | [1400,3400] | ~2183 | **IN RANGE** | 0 | +0 (new) |
-| 5222311 | [1200,3200] | ~2183 | **IN RANGE** | 0 | +0 (new) |
-| 5222313 | [1200,3200] | ~2183 | **IN RANGE** | 0 | +0 (new) |
-| 5222895 | [1200,3200] | ~2183 | **IN RANGE** | 0 | +0 (new) |
+| Event | Date | Amount |
+|-------|------|--------|
+| FeeLocker claim | 2026-06-01 09:16Z | +0.14321 DIEM |
+| FeeLocker claim | 2026-06-02 01:23Z | +1.08857 DIEM → reinvested #5228593 |
 
----
-
-**Collect events recorded (2 on-chain, 4 from execution log):**
-
-| date | source | DIEM wei | DIEM | tx |
-|------|--------|----------|------|----|
-| 2026-06-01 01:25Z | FeeLocker | 3,022,764,166,071,669 | 0.003023 | `0x257827ea...` ✓ |
-| 2026-06-01 01:25Z | NFPM #5218945 | 7,377,377,332,974,945 | 0.007377 | `0xce1cd84d...` ✓ |
-| 2026-05-31 23:31Z | FeeLocker | 170,300,000,000,000,000 | ~0.1703 | `0xea7d5767...` (log) |
-| 2026-05-31 23:31-32Z | NFPM #5199715/18/19 | 0 | 0 | WETH only |
-
-**Cumulative DIEM: 14.3388 / 100** (+0.1807 since goals.json last write at 14:48Z yesterday)
+FeeLocker: 0 (claimed 01:23Z, rebuilding)
 
 ---
 
-**Portfolio state:**
-- 4 active positions, all IN RANGE. Tick ~2183 (Inference: DexScreener 0.8038 WETH/DIEM).
-- Full stack repositioned from [2600,4600] to [1200–3400] ranges — 5.362 WETH collected from OOR positions and reinvested via swap+mint.
-- FeeLocker rate: Inference ~0.018 DIEM/hr (~0.43 DIEM/day) from AUTONO/DIEM pool.
-- Days to build mode at current rate: Inference ~(100 − 14.34) / 0.43 ≈ **199 days**.
+**Active positions (6 total) at tick 2169 (0.8049 WETH/DIEM)**
 
-Appended to `memory/earnings.jsonl`. Updated `memory/goals.json` to 14.3388.
+| tokenId | range | status |
+|---------|-------|--------|
+| 5222309 | [1400,3400] | IN RANGE |
+| 5222311 | [1200,3200] | IN RANGE |
+| 5222313 | [1200,3200] | IN RANGE |
+| 5222895 | [1200,3200] | IN RANGE |
+| 5224785 | [1200,3200] | IN RANGE |
+| 5228593 | [1000,2000] | **OUT OF RANGE** — tickUpper 2000 < tick 2169 |
+
+---
+
+**Daily rate (Inference):** ~1.62 DIEM/day (1.0886 DIEM accrued in 16.12 hours, 09:16Z June 1 → 01:23Z June 2). 3.6× the prior 0.45 DIEM/day estimate — driven by 5 positions in range with larger LP principal.
+
+**Days to compute milestone:** (100 − 15.57) / 1.5 = **~56 days** (conservative) vs 190 days at old rate.
+
+**Action required:** Position #5228593 [1000,2000] is OUT OF RANGE. Its DIEM (1.0886) sits idle earning no fees. Reposition to a range covering tick 2169 (e.g., [1400,3400] or [1200,3200]) to put it back to work. Every day OOR at this size costs ~0.27 DIEM in missed fees.

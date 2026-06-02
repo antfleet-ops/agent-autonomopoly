@@ -9,9 +9,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 15.4274,
-      "currentNote": "15.4274 DIEM cumulative. +1.0886 FeeLocker claimed 2026-06-02T01:23Z (tx: 0xd008159f48a9d513aa44bc20f7c3717f234b2a433ebcd50f4202476ed023ceef), reinvested to LP #5224785 range [1000,2000] (tx: 0xca757fcd1ec27a4a61c2b5d4b066aa554d8bfabda65625aea683d63f780f8023). 5 active positions IN RANGE at tick ~2163: #5222309 [1400,3400], #5222311 [1200,3200], #5222313 [1200,3200], #5222895 [1200,3200], #5224785 [1200,3200] + new mint [1000,2000]. Inference: ~0.45 DIEM/day FeeLocker accrual rate. Mode: accumulate. Progress: 15.43/100 DIEM.",
-      "updatedAt": "2026-06-02T01:23:18Z"
+      "current": 15.5706,
+      "currentNote": "15.5706 DIEM cumulative (FeeLocker claims only). +0.14321 FeeLocker (2026-06-01 09:16Z, blockscout confirmed) +1.08857 FeeLocker (2026-06-02 01:23Z, blockscout confirmed, reinvested → #5228593 [1000,2000]). 6 active positions: #5222309 [1400,3400] + #5222311 + #5222313 + #5222895 + #5224785 (all [1200,3200]) + #5228593 [1000,2000]. 5 IN RANGE at tick 2169 (0.8049 WETH/DIEM). #5228593 OUT OF RANGE — tickUpper=2000 < currentTick=2169; needs reposition. Inference: daily FeeLocker rate 1.08857 DIEM in 16.12h = ~1.62 DIEM/day. Days to 100 DIEM at 1.5 DIEM/day: ~56. Mode: accumulate. Progress: 15.57/100 DIEM.",
+      "updatedAt": "2026-06-02T00:00:00Z"
     },
     {
       "id": "build-agent-launchpad",
