@@ -72,9 +72,9 @@ type EarningsSnapshot = {
   liquidity:   string;   // bigint as string
   tokensOwed0: string;   // WETH wei
   tokensOwed1: string;   // DIEM wei
-  feeLocker:   string;   // DIEM wei (Liquid Protocol pool fees)
-  // Computed
-  totalDiemWei:    string;
+  feeLocker:   string;   // DIEM wei (Liquid Protocol pool fees — wallet-wide, not per-position)
+  // Computed: per-position totals only (feeLocker excluded to avoid N-position double-count)
+  totalDiemWei:    string;   // = tokensOwed1 only
   deltaFromPrevWei: string;
   cumDiemCollectedWei: string;
 };
@@ -166,15 +166,17 @@ async function main() {
         address: ADDRESSES.ETH_DIEM_V3, abi: POOL_ABI, functionName: 'slot0',
       });
       currentTick = slot0[1];
-      inRange = currentTick > tickLower && currentTick < tickUpper;
+      inRange = currentTick >= tickLower && currentTick < tickUpper;
     }
 
     const tokenIdStr = tokenId.toString();
     const prev = latestSnapshot(existing, tokenIdStr);
     const cumCollected = totalCollected(existing, tokenIdStr);
 
-    // total DIEM-equivalent = tokensOwed1 + feeLocker
-    const totalDiemWei = tokensOwed1 + feeLockerWei;
+    // total DIEM-equivalent = tokensOwed1 only; feeLocker is wallet-wide and
+    // reported separately above — including it here would double-count when
+    // there are multiple positions.
+    const totalDiemWei = tokensOwed1;
     const prevTotal = prev ? BigInt(prev.totalDiemWei) : 0n;
     const delta = totalDiemWei - prevTotal;
 
