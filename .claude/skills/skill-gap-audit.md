@@ -5,7 +5,7 @@ description: Detect mismatches between aeon.yml scheduled skills, skills/ direct
 
 Cross-reference three sources of truth:
 
-1. **aeon.yml scheduled skills** — parse `aeon.yml` for all skill names under `jobs.run-skill.strategy.matrix.skill` (or equivalent). List them.
+1. **aeon.yml scheduled skills** — parse `aeon.yml` for entries under the top-level `skills:` dict. Each entry is a key (skill name) with an inline object containing `enabled: true/false`. List the enabled ones.
 
 2. **skills/ directories** — `ls skills/` to find all `skills/<name>/SKILL.md` files. List them.
 
