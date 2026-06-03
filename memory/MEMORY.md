@@ -5,23 +5,24 @@ Token: AUTONO | CA: `0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e`
 FeeLocker: `0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF`
 Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
-## Current State (as of 2026-06-03)
+## Current State (as of 2026-06-03T08:14Z on-chain-monitor)
 
 Mode: **accumulate** — running on Venice (sDIEM restored), compounding LP
 sDIEM staked on Venice: **4.5397** (Venice active)
-DIEM cumulative claimed: **17.0139 / 100** (17.01% to build-mode unlock)
-DIEM in wallet: 0.2637 (Blockscout 2026-06-03T00:28Z)
-FeeLocker claimable: ~0.161 DIEM (Inference: 3.04h at 0.0529 DIEM/h since claim block 46823099 ~21:25Z 2026-06-02; accumulating)
-Current ETH/DIEM tick: **~1233** (Inference: DIEM/WETH=0.8842 DexScreener 2026-06-03)
+DIEM cumulative claimed: **17.0139 / 100** (17.01% to build-mode unlock) — claim-diem ran 13:09Z, may be higher
+DIEM in wallet: 0.1622 (on-chain 2026-06-03T08:14Z — tick+claim-diem ran 13:07-13:09Z, balance likely updated)
+FeeLocker claimable: 0.0000 DIEM (on-chain 2026-06-03T08:14Z; claim-diem ran 13:09Z)
+Current ETH/DIEM tick: **~266** (on-chain 2026-06-03T08:14Z — major DIEM appreciation since 2026-06-02 evening)
 
-Active LP positions (track-earnings snapshot 2026-06-03):
-- **#5222311** [1200,3200] — IN RANGE ✓ (liquidity 7.5B)
-- **#5222313** [1200,3200] — IN RANGE ✓ (liquidity 47.1B)
-- **#5222895** [1200,3200] — IN RANGE ✓ (liquidity 26.5B)
-- **#5224785** [1200,3200] — IN RANGE ✓ (liquidity 15.0B)
-- **#5228803** [1200,3200] — IN RANGE ✓ (liquidity 11.1B — repositioned from #5228593 2026-06-02)
-- **#5237651** [200,2200] — IN RANGE ✓ (liquidity 208.3B — repositioned from #5222309 2026-06-02 ~21:25Z)
-- Inference: possible new OOR position [800,1200] with ~0.9146 DIEM (last tick log; tokenId unconfirmed; OUT OF RANGE at tick 1233)
+Active LP positions (on-chain-monitor 2026-06-03T08:14Z):
+- **#5237651** [200,2200] — IN RANGE ✓ (liquidity 208.3B)
+- **#5241362** [-200,1800] — IN RANGE ✓ (liquidity 42.9B — minted overnight post-reposition)
+- **#5241364** [-200,1800] — IN RANGE ✓ (liquidity 28.2B)
+- **#5241366** [-200,1800] — IN RANGE ✓ (liquidity 15.4B)
+- **#5241368** [-200,1800] — IN RANGE ✓ (liquidity 10.9B)
+- **#5241370** [-200,1800] — IN RANGE ✓ (liquidity 7.6B)
+- **#5243505** [-200,1800] — IN RANGE ✓ (liquidity 10.2B)
+- **#5243538** [-200,1800] — IN RANGE ✓ (liquidity 2.7B)
 
 Previously active (now burned): #5199715, #5199718, #5199719, #5218841, #5218945, #5196524, #5196526, #5190707, etc.
 
