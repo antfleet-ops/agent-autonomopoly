@@ -450,10 +450,15 @@ async function main() {
   const dec1Min = decExp1 * (100n - SLIPPAGE) / 100n;
   console.log(`        simulate → exp0=${formatUnits(decExp0, 18)} exp1=${formatUnits(decExp1, 18)}`);
 
+  // waitBlock=true: Privy simulates the next tx (collect) against the current
+  // head block. Without waiting for the next block, Privy may simulate collect
+  // before the decreaseLiquidity state is visible — its simulation "succeeds"
+  // (owed=0 returns 0,0) but the broadcast reverts on-chain where owed>0.
+  // Waiting for block N+1 guarantees Privy's collect simulation sees owed tokens.
   await send('decreaseLiquidity', ADDRESSES.NFPM_V3, encodeFunctionData({
     abi: NFPM_DECREASE_ABI, functionName: 'decreaseLiquidity',
     args: [{ tokenId, liquidity, amount0Min: dec0Min, amount1Min: dec1Min, deadline: tsDeadline() }],
-  }));
+  }), true /* waitBlock */);
   } // end !mintOnly && !skipDecrease block
 
   if (!mintOnly) {
