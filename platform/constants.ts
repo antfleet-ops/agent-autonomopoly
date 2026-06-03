@@ -42,6 +42,17 @@ export const ADDRESSES = {
   // ── Pools ─────────────────────────────────────────────────────────────
   // ETH/DIEM Uniswap v3 1% pool on Base — highest APY DIEM pool (655.91% as of 2026-05-14).
   ETH_DIEM_V3: '0x80d995189ecc593672aD4703b250a5e82672EB1D' as Address,
+
+  // ── Uniswap v4 (Base mainnet) ────────────────────────────────────────
+  // Source: docs/uniswap-v4-lp-reference.json
+  POSITION_MANAGER_V4: '0x7C5f5A4bBd8fD63184577525326123B519429bDc' as Address,
+  POOL_MANAGER_V4:     '0x498581fF718922c3f8e6A244956aF099B2652b2b' as Address,
+
+  // ── Liquid Protocol v0 ───────────────────────────────────────────────
+  // Source: docs/uniswap-v4-lp-reference.json (agent_pools.wstDIEM_WETH_v4)
+  INFERENCE_VAULT:    '0xa6076Ac24f21A9c526d6d32774d66cBB804Cf649' as Address,
+  VAULT_ROUTER:       '0xaa266759d6d546b3710D84E99ba49089812dCcBD' as Address,
+  CURVE_DIEM_WSTDIEM: '0x60b9bDfFE446A17202b0e56318ED3aE67bb2694E' as Address,
 } as const;
 
 // Uniswap v3 pool parameters for ETH/DIEM 1% pool.
