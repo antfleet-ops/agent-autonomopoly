@@ -1,39 +1,26 @@
----
-
-**Earnings snapshot — 2026-06-02**
-
-Wallet: `0x8767Df39eCeeaeB11554642237aC4E08660aB6A3`
-Mode: accumulate
+Snapshot complete. Here's the summary:
 
 ---
 
-**Cumulative DIEM harvested: 15.5706 / 100**
-Progress: 15.6% (+1.23 DIEM since last snapshot)
+**Earnings snapshot — 2026-06-03T00:28Z**
 
-| Event | Date | Amount |
-|-------|------|--------|
-| FeeLocker claim | 2026-06-01 09:16Z | +0.14321 DIEM |
-| FeeLocker claim | 2026-06-02 01:23Z | +1.08857 DIEM → reinvested #5228593 |
+Tick: ~1233 | DIEM/WETH: 0.8842 | FeeLocker: ~0.161 DIEM
 
-FeeLocker: 0 (claimed 01:23Z, rebuilding)
+```
+tokenId   range        status     tokensOwed1  feeLocker   daily delta
+5222311   [1200,3200]  IN RANGE   0            +0.161 DIEM +0.161 DIEM
+5222313   [1200,3200]  IN RANGE   0            +0.161 DIEM +0.161 DIEM
+5222895   [1200,3200]  IN RANGE   0            +0.161 DIEM +0.161 DIEM
+5224785   [1200,3200]  IN RANGE   0            +0.161 DIEM +0.161 DIEM
+5228803   [1200,3200]  IN RANGE   0            +0.161 DIEM +0.161 DIEM  ← first snapshot
+5237651   [200,2200]   IN RANGE   0            +0.161 DIEM +0.161 DIEM  ← first snapshot
+```
 
----
+**3 missing collect events backfilled to earnings.jsonl:**
+- FeeLocker +0.6161 DIEM (2026-06-02 13:02Z, tx `0x93446616...`) → cumulative 16.1867
+- NFPM #5222309 +0.2494 DIEM (2026-06-02 ~21:25Z, reposition close)
+- FeeLocker +0.8272 DIEM (2026-06-02 ~21:25Z, tx `0x5274f64f...`) → cumulative **17.0139**
 
-**Active positions (6 total) at tick 2169 (0.8049 WETH/DIEM)**
+**Cumulative DIEM: 17.0139 / 100** (+0.8272 vs last goals.json). Rate: ~1.27 DIEM/day. ~65 days to build mode.
 
-| tokenId | range | status |
-|---------|-------|--------|
-| 5222309 | [1400,3400] | IN RANGE |
-| 5222311 | [1200,3200] | IN RANGE |
-| 5222313 | [1200,3200] | IN RANGE |
-| 5222895 | [1200,3200] | IN RANGE |
-| 5224785 | [1200,3200] | IN RANGE |
-| 5228593 | [1000,2000] | **OUT OF RANGE** — tickUpper 2000 < tick 2169 |
-
----
-
-**Daily rate (Inference):** ~1.62 DIEM/day (1.0886 DIEM accrued in 16.12 hours, 09:16Z June 1 → 01:23Z June 2). 3.6× the prior 0.45 DIEM/day estimate — driven by 5 positions in range with larger LP principal.
-
-**Days to compute milestone:** (100 − 15.57) / 1.5 = **~56 days** (conservative) vs 190 days at old rate.
-
-**Action required:** Position #5228593 [1000,2000] is OUT OF RANGE. Its DIEM (1.0886) sits idle earning no fees. Reposition to a range covering tick 2169 (e.g., [1400,3400] or [1200,3200]) to put it back to work. Every day OOR at this size costs ~0.27 DIEM in missed fees.
+Wallet: 0.2637 DIEM. Inference: last tick LP'd ~0.9146 DIEM into possible [800,1200] OOR position — tokenId unconfirmed, acts as single-sided range order (converts to WETH if tick falls below 1200).

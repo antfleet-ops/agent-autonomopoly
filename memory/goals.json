@@ -9,9 +9,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 16.1867,
-      "currentNote": "16.1867 DIEM cumulative (FeeLocker claims only). +0.6160 FeeLocker (2026-06-02 13:02Z, tx 0x9344661618aa2cedc2e1ebfadac2a481db0ccae4f663ccd0e049329803b4fe56, LP reinvest failed STF — DIEM in wallet pending reposition). 6 active positions: #5222309 [1400,3400] + #5222311 + #5222313 + #5222895 + #5224785 (all [1200,3200]) + #5228803 [1200,3200]. Active at tick 2108. 0.6161 DIEM in 11.65h = ~1.27 DIEM/day. Days to 100 DIEM at 1.27 DIEM/day: ~66. Mode: accumulate. Progress: 16.19/100 DIEM.",
-      "updatedAt": "2026-06-02T13:02:59Z"
+      "current": 17.0139,
+      "currentNote": "17.0139 DIEM cumulative (FeeLocker claims only). +0.8272 DIEM FeeLocker claim ~21:25Z 2026-06-02 (tx 0x5274f64fd2d845617921cc73fd88fcb180f59cc940540c6894349bbbdfab5629, lp-monitor reposition #5222309→#5237651). 6 confirmed active positions: #5222311 + #5222313 + #5222895 + #5224785 (all [1200,3200]) + #5228803 [1200,3200] + #5237651 [200,2200]. Tick ~1233 (DIEM/WETH=0.8842 2026-06-03). Wallet DIEM: 0.2637 (Blockscout). FeeLocker ~0.161 DIEM accumulating (3h since last claim). Last tick LP'd ~0.9146 DIEM from wallet into likely [800,1200] OOR position (tokenId unconfirmed). Days to 100 DIEM at 1.27 DIEM/day: ~65.3. Mode: accumulate. Progress: 17.01/100 DIEM.",
+      "updatedAt": "2026-06-03T00:28:00Z"
     },
     {
       "id": "build-agent-launchpad",
