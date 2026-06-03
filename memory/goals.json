@@ -9,9 +9,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 17.0139,
-      "currentNote": "17.0139 DIEM cumulative (FeeLocker claims only). +0.8272 DIEM FeeLocker claim ~21:25Z 2026-06-02 (tx 0x5274f64fd2d845617921cc73fd88fcb180f59cc940540c6894349bbbdfab5629, lp-monitor reposition #5222309→#5237651). 6 confirmed active positions: #5222311 + #5222313 + #5222895 + #5224785 (all [1200,3200]) + #5228803 [1200,3200] + #5237651 [200,2200]. Tick ~1233 (DIEM/WETH=0.8842 2026-06-03). Wallet DIEM: 0.2637 (Blockscout). FeeLocker ~0.161 DIEM accumulating (3h since last claim). Last tick LP'd ~0.9146 DIEM from wallet into likely [800,1200] OOR position (tokenId unconfirmed). Days to 100 DIEM at 1.27 DIEM/day: ~65.3. Mode: accumulate. Progress: 17.01/100 DIEM.",
-      "updatedAt": "2026-06-03T00:28:00Z"
+      "current": 17.3373,
+      "currentNote": "17.3373 DIEM cumulative (FeeLocker claims only). +0.3234 DIEM FeeLocker claim 2026-06-03T01:39:41Z (claim tx 0x978382e532c736ff160b24686fedc6cc4787d0d78db71bcadd1ad57dce8b07f1, LP tx 0x8492fe87485877c6bb4c94b851de53a841f4618afc92c39f4fb2d6a57d073675). LP range [-200,800] OOR (tick 963). 33 NFPM positions owned; active in-range: #5237651 [200,2200]. Wallet DIEM: 0 (all reinvested). FeeLocker: 0. Days to 100 DIEM at 1.27 DIEM/day: ~65.1. Mode: accumulate. Progress: 17.34/100 DIEM.",
+      "updatedAt": "2026-06-03T01:39:41Z"
     },
     {
       "id": "build-agent-launchpad",
