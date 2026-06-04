@@ -114,4 +114,4 @@ date,skill,model,input_tokens,output_tokens,cache_read,cache_creation
 2026-06-04,tick,claude-sonnet-4-6,10,2497,244831,12744
 2026-06-04,heartbeat,claude-sonnet-4-6,10,14607,326801,53844
 2026-06-04,tick,claude-sonnet-4-6,10,2047,243467,12967
-2026-06-04,lp-monitor,claude-sonnet-4-6,8,2078,177335,33229
+2026-06-04,tick,claude-sonnet-4-6,10,1879,252345,13592
