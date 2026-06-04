@@ -9,9 +9,9 @@
       "status": "in_progress",
       "target": 100,
       "unit": "DIEM",
-      "current": 17.4995,
-      "currentNote": "17.4995 DIEM cumulative (FeeLocker claims only). +0.1622 DIEM FeeLocker claim 2026-06-03T13:07:10Z (claim tx 0x79d263b7dbc28907fd129ffb69af31df245662dd151cd6b73a2bae6e316b1ea0, LP reinvest failed STF — DIEM held in wallet). 40 NFPM positions owned; active in-range: #5237651 [200,2200], #5241362-5241370 [-200,1800], #5243505 [-200,1800], #5243538 [-200,1800]. Wallet DIEM: 0.1622 (LP reinvest failed, awaiting retry). FeeLocker: 0. Days to 100 DIEM at 1.27 DIEM/day: ~64.9. Mode: accumulate. Progress: 17.50/100 DIEM.",
-      "updatedAt": "2026-06-03T13:07:30Z"
+      "current": 17.6978,
+      "currentNote": "17.6978 DIEM cumulative (FeeLocker claims only). +0.1983 DIEM FeeLocker claim 2026-06-04T13:41:43Z (claim tx 0x36b28c1be427c2de18602055e0e8901b7f65b633918f1996bfec832e0a6f4109, LP minted tokenId #5253546-next at ticks [400,1400] — WARNING: out of range at currentTick 1462, no fees until tick drops). 43 NFPM positions owned; active in-range: #5241362-5241370 [-200,1800], #5243505 [-200,1800], #5243538 [-200,1800], #5253546 [0,2000]. FeeLocker: 0. Wallet DIEM: 0. Daily rate ~0.18 DIEM/12h claim. Mode: accumulate. Progress: 17.70/100 DIEM.",
+      "updatedAt": "2026-06-04T13:41:43Z"
     },
     {
       "id": "build-agent-launchpad",
