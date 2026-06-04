@@ -5,26 +5,27 @@ Token: AUTONO | CA: `0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e`
 FeeLocker: `0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF`
 Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
-## Current State (as of 2026-06-03T08:14Z on-chain-monitor)
+## Current State (as of 2026-06-04T14:46Z lp-monitor)
 
-Mode: **accumulate** — running on Venice (sDIEM restored), compounding LP
+Mode: **accumulate** — running on Venice (sDIEM active), compounding LP
 sDIEM staked on Venice: **4.5397** (Venice active)
-DIEM cumulative claimed: **17.0139 / 100** (17.01% to build-mode unlock) — claim-diem ran 13:09Z, may be higher
-DIEM in wallet: 0.1622 (on-chain 2026-06-03T08:14Z — tick+claim-diem ran 13:07-13:09Z, balance likely updated)
-FeeLocker claimable: 0.0000 DIEM (on-chain 2026-06-03T08:14Z; claim-diem ran 13:09Z)
-Current ETH/DIEM tick: **~266** (on-chain 2026-06-03T08:14Z — major DIEM appreciation since 2026-06-02 evening)
+DIEM cumulative claimed: **17.6978 / 100** (17.70% to build-mode unlock)
+DIEM in wallet: 0.0000 (post-claim-diem 13:43Z; wallet balance staked/compounded)
+FeeLocker claimable: ~0.1983 DIEM (lp-monitor claimed 0.0324 DIEM at 14:46Z; residual pending next claim-diem ~00:00Z)
+Current ETH/DIEM tick: **~1487** (on-chain 2026-06-04T07:24Z; major DIEM appreciation from ~266 overnight)
 
-Active LP positions (on-chain-monitor 2026-06-03T08:14Z):
-- **#5237651** [200,2200] — IN RANGE ✓ (liquidity 208.3B)
-- **#5241362** [-200,1800] — IN RANGE ✓ (liquidity 42.9B — minted overnight post-reposition)
+Active LP positions (lp-monitor 2026-06-04T14:46Z):
+- **#5241362** [-200,1800] — IN RANGE ✓ (liquidity 42.9B)
 - **#5241364** [-200,1800] — IN RANGE ✓ (liquidity 28.2B)
 - **#5241366** [-200,1800] — IN RANGE ✓ (liquidity 15.4B)
 - **#5241368** [-200,1800] — IN RANGE ✓ (liquidity 10.9B)
 - **#5241370** [-200,1800] — IN RANGE ✓ (liquidity 7.6B)
 - **#5243505** [-200,1800] — IN RANGE ✓ (liquidity 10.2B)
 - **#5243538** [-200,1800] — IN RANGE ✓ (liquidity 2.7B)
+- **#5253546** [0,2000] — IN RANGE ✓ (liquidity 161.4B)
+- **#5257576** [400,2400] — IN RANGE ✓ (repositioned from #5257322 at 14:46Z today)
 
-Previously active (now burned): #5199715, #5199718, #5199719, #5218841, #5218945, #5196524, #5196526, #5190707, etc.
+Previously active (now burned): #5249195, #5257322, #5237651, #5199715, #5199718, #5199719, #5218841, #5218945, #5196524, #5196526, #5190707, etc.
 
 ## On Every Tick — Dune First
 
