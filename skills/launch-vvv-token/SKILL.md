@@ -23,7 +23,7 @@ If no queue entry, use defaults: `creator = AGENT`, `marketcapVvv = 50`.
 ## Execution
 
 ```bash
-node --import tsx scripts/launch-vvv-token.ts \
+node --import tsx scripts/queue-intent.ts launch-vvv-token \
   --name "<name>" \
   --symbol "<symbol>" \
   --creator "<creator>" \

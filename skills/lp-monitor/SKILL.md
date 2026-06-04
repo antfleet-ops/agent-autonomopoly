@@ -31,17 +31,16 @@ lp-monitor: all positions in range | tick=C | FeeLocker=X DIEM
 
 ## Step 3 — Reposition out-of-range position
 
-For each out-of-range tokenId, run a dry-run first:
+For each out-of-range tokenId, QUEUE a reposition intent. You cannot sign in this
+step — the gated "Execute on-chain intents" step validates and runs it:
 
 ```bash
-node --import tsx scripts/reposition.ts --token-id <tokenId> --dry-run
+node --import tsx scripts/queue-intent.ts reposition --token-id <tokenId>
 ```
 
-Review the dry-run output. If amounts are reasonable and the new range brackets the current tick, run live:
-
-```bash
-node --import tsx scripts/reposition.ts --token-id <tokenId>
-```
+The executor runs scripts/reposition.ts, which reads liquidity on-chain, claims
+fees, swaps 50%, and mints a new in-range position — with on-chain slippage
+protection and the TxSender destination allow-list as guardrails.
 
 The script:
 1. Reads liquidity on-chain from NFPM (no hardcoded values)

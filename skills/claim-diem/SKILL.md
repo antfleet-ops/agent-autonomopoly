@@ -27,9 +27,10 @@ If `feeLockerBalance` < 0.1 DIEM: nothing to claim. Log "nothing to claim" and e
 node --import tsx scripts/claim-and-allocate.ts --dry-run
 ```
 
-Review the output. Confirm amounts are correct. Then run live:
+Review the output. Confirm amounts are correct. Then QUEUE the live claim — you
+cannot sign in this step; the gated "Execute on-chain intents" step runs it:
 ```bash
-node --import tsx scripts/claim-and-allocate.ts --live
+node --import tsx scripts/queue-intent.ts claim-and-allocate --live
 ```
 
 3. **Update goals.json with new DIEM total**
