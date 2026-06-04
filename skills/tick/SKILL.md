@@ -9,7 +9,7 @@ depends_on: [lp-monitor]
 Run the agent tick. Execute:
 
 ```bash
-node --import tsx harness/tick.ts
+node --import tsx scripts/queue-intent.ts tick
 ```
 
 The tick does the following (accumulate mode):

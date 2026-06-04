@@ -215,14 +215,12 @@ jobs:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
           NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
-          # ── Agent wallet — Privy server wallet (NO private key stored here) ──
-          # Signing: PRIVY_APP_SECRET is the credential for Privy's API (Basic auth).
-          # The agent never holds a private key. Privy holds it; we authenticate
-          # via PRIVY_APP_ID:PRIVY_APP_SECRET to request signatures.
+          # ── On-chain READS only — the Privy signing credential is NOT here. ──
+          # The LLM cannot sign. It queues allow-listed intents via
+          # scripts/queue-intent.ts; the separate "Execute on-chain intents" step
+          # below holds PRIVY_* and performs ALL signing. This removes the wallet
+          # credential from any context an injection could reach.
           RPC_URL: ${{ secrets.RPC_URL }}
-          PRIVY_APP_ID: ${{ secrets.PRIVY_APP_ID }}
-          PRIVY_APP_SECRET: ${{ secrets.PRIVY_APP_SECRET }}
-          PRIVY_WALLET_ID: ${{ secrets.PRIVY_WALLET_ID }}
           AGENT_WALLET: '0x8767Df39eCeeaeB11554642237aC4E08660aB6A3'
           DIEM_TOKEN_ADDRESS: '0xF4d97F2da56e8c3098f3a8D538DB630A2606a024'
           VVV_STAKING_ADDRESS: ${{ secrets.VVV_STAKING_ADDRESS }}
@@ -582,6 +580,32 @@ jobs:
           echo "SKILL_TOTAL_TOKENS=$TOTAL_TOKENS" >> "$GITHUB_OUTPUT"
 
           echo "::notice::Token usage — input: $INPUT_TOKENS, output: $OUTPUT_TOKENS, cache_read: $CACHE_READ, cache_creation: $CACHE_CREATION, total: $TOTAL_TOKENS"
+
+      - name: Execute on-chain intents
+        id: execute
+        if: steps.work.outputs.mode != '' && steps.run.outcome == 'success'
+        env:
+          # Signing chokepoint: holds the Privy credential, runs NO LLM. It executes
+          # only the allow-listed intents the model queued in the (no-Privy) Run step.
+          # Full on-chain + data env so the scripts have what they need — safe because
+          # there is no prompt-injection surface in this step.
+          RPC_URL: ${{ secrets.RPC_URL }}
+          PRIVY_APP_ID: ${{ secrets.PRIVY_APP_ID }}
+          PRIVY_APP_SECRET: ${{ secrets.PRIVY_APP_SECRET }}
+          PRIVY_WALLET_ID: ${{ secrets.PRIVY_WALLET_ID }}
+          PRIVY_GAS_POLICY_ID: ${{ secrets.PRIVY_GAS_POLICY_ID }}
+          AGENT_WALLET: '0x8767Df39eCeeaeB11554642237aC4E08660aB6A3'
+          DIEM_TOKEN_ADDRESS: '0xF4d97F2da56e8c3098f3a8D538DB630A2606a024'
+          VVV_STAKING_ADDRESS: ${{ secrets.VVV_STAKING_ADDRESS }}
+          VENICE_API_KEY: ${{ secrets.VENICE_API_KEY }}
+          DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
+          NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
+          LAUNCH_CREATOR_ALLOWLIST: ${{ secrets.LAUNCH_CREATOR_ALLOWLIST }}
+        run: node --import tsx scripts/execute-intents.ts
 
       - name: Log token usage
         if: steps.work.outputs.mode != ''
