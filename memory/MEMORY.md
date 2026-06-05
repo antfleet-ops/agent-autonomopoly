@@ -5,27 +5,24 @@ Token: AUTONO | CA: `0xb3d7e0c3c39a1d3f1b304663065a2f83ddf56d8e`
 FeeLocker: `0xF7d3BE3FC0de76fA5550C29A8F6fa53667B876FF`
 Creator: @mogcapital (Telegram uid: 7584647259) — only authorized human
 
-## Current State (as of 2026-06-04T14:46Z lp-monitor)
+## Current State (as of 2026-06-05T00:15Z track-earnings)
 
 Mode: **accumulate** — running on Venice (sDIEM active), compounding LP
 sDIEM staked on Venice: **4.5397** (Venice active)
-DIEM cumulative claimed: **17.6978 / 100** (17.70% to build-mode unlock)
-DIEM in wallet: 0.0000 (post-claim-diem 13:43Z; wallet balance staked/compounded)
-FeeLocker claimable: ~0.1983 DIEM (lp-monitor claimed 0.0324 DIEM at 14:46Z; residual pending next claim-diem ~00:00Z)
-Current ETH/DIEM tick: **~1487** (on-chain 2026-06-04T07:24Z; major DIEM appreciation from ~266 overnight)
+DIEM cumulative claimed: **17.8919 / 100** (17.89% to build-mode unlock)
+DIEM in wallet: 0.0000 | ETH: 0.008524 | WETH: 5.6536
+FeeLocker claimable: ~0.020 DIEM (accumulating since 23:10Z claim 2026-06-04)
+Current ETH/DIEM tick: **~1828** (DIEM/WETH=0.8327 DexScreener 2026-06-05; major shift from 1487 as DIEM appreciated)
+Daily FeeLocker rate: **~0.485 DIEM/day** (observed 2026-06-04; ETA ~169 days to 100 DIEM)
 
-Active LP positions (lp-monitor 2026-06-04T14:46Z):
-- **#5241362** [-200,1800] — IN RANGE ✓ (liquidity 42.9B)
-- **#5241364** [-200,1800] — IN RANGE ✓ (liquidity 28.2B)
-- **#5241366** [-200,1800] — IN RANGE ✓ (liquidity 15.4B)
-- **#5241368** [-200,1800] — IN RANGE ✓ (liquidity 10.9B)
-- **#5241370** [-200,1800] — IN RANGE ✓ (liquidity 7.6B)
-- **#5243505** [-200,1800] — IN RANGE ✓ (liquidity 10.2B)
-- **#5243538** [-200,1800] — IN RANGE ✓ (liquidity 2.7B)
-- **#5253546** [0,2000] — IN RANGE ✓ (liquidity 161.4B)
-- **#5257576** [400,2400] — IN RANGE ✓ (repositioned from #5257322 at 14:46Z today)
+Active LP positions (track-earnings 2026-06-05T00:15Z — inference, RPC unavailable):
+- **#5257576** [400,2400] — IN RANGE ✓ at tick 1828 (0.083 WETH + 0.115 DIEM, minted 14:45Z 2026-06-04)
+- **#5259057** [1000,3000] — IN RANGE ✓ (0.102 WETH + 0.145 DIEM, minted 23:13:11Z 2026-06-04)
+- **#5259058** [1000,3000] — IN RANGE ✓ PRIMARY (5.841 WETH + 8.526 DIEM, minted 23:13:29Z 2026-06-04)
+- 2 additional positions from 23:12Z reposition (tokenIds unresolved — need live RPC)
 
-Previously active (now burned): #5249195, #5257322, #5237651, #5199715, #5199718, #5199719, #5218841, #5218945, #5196524, #5196526, #5190707, etc.
+Recently repositioned (2026-06-04 23:10-23:13Z): #5241362, #5253546, and 4 OOR [-200,1800] positions
+Previously active (now burned): #5249195, #5257322, #5241362-5241370, #5243505, #5243538, #5253546, #5237651, #5199715, #5199718, #5199719, #5218841, #5218945, etc.
 
 ## On Every Tick — Dune First
 
