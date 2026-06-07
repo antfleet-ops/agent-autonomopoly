@@ -39,12 +39,12 @@
     "last_dispatch": "2026-06-07T15:08:48Z",
     "last_status": "failed",
     "last_success": "2026-06-03T08:14:23Z",
-    "total_runs": 53,
+    "total_runs": 54,
     "total_successes": 10,
-    "total_failures": 43,
-    "consecutive_failures": 14,
+    "total_failures": 44,
+    "consecutive_failures": 15,
     "success_rate": 0.19,
-    "last_failed": "2026-06-07T20:01:21Z",
+    "last_failed": "2026-06-07T23:46:49Z",
     "last_error": "Not logged in · Please run /login"
   },
   "claim-diem": {
