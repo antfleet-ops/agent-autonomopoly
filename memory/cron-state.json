@@ -12,12 +12,12 @@
     "last_dispatch": "2026-06-11T12:30:22Z"
   },
   "lp-monitor": {
-    "last_status": "dispatched",
-    "last_failed": "2026-06-10T11:57:44Z",
-    "total_runs": 205,
+    "last_status": "failed",
+    "last_failed": "2026-06-11T12:30:48Z",
+    "total_runs": 207,
     "total_successes": 78,
-    "total_failures": 127,
-    "consecutive_failures": 20,
+    "total_failures": 129,
+    "consecutive_failures": 22,
     "success_rate": 0.38,
     "last_error": "Not logged in · Please run /login",
     "last_dispatch": "2026-06-11T12:30:22Z",
